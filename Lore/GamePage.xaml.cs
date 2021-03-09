@@ -42,6 +42,8 @@ namespace Lore
 
         public GamePage()
         {
+            var rootFrame = Window.Current.Content as Frame;
+
             this.InitializeComponent();
         }
 

@@ -236,5 +236,10 @@ namespace Lore
         {
             (sender as Button).Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
         }
+
+        private void newGameButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(GamePage));
+        }
     }
 }
