@@ -1,0 +1,51 @@
+﻿<Page
+    x:Class="Lore.NewGamePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Lore"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="#002854">
+
+    <Grid Width="1920">
+        <Grid.Resources>
+            <SolidColorBrush x:Key="brush" Color="#0913b0"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200" />
+            <RowDefinition Height="450" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" BorderBrush="{StaticResource brush}" BorderThickness="4 4 4 4">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#eb08ee" FontSize="60">또다른 지식의 성전  제 1 부</TextBlock>
+                <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#05f9f7" FontSize="30">캐릭터 만들기 프로그램   제 1.5 탄</TextBlock>
+            </Grid>
+        </Border>
+        <Border Grid.Row="1" BorderBrush="{StaticResource brush}" BorderThickness="4 4 4 4">
+            <Grid Margin="10, 10, 0, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="700"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="당신의 이름은 :" Foreground="#70ee80" FontSize="30"></TextBlock>
+                <TextBox Grid.Row="0" Grid.Column="1" Height="50"/>
+                
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="당신의 성별은 :" Foreground="#70ee80" FontSize="30"></TextBlock>
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
+                    <TextBlock Text="남성" Foreground="#70ee80" FontSize="30"/>
+                    <TextBlock Text="여성" Foreground="#000000" FontSize="30"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

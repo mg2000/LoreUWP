@@ -54,6 +54,8 @@ namespace Lore
 
         private static float mLineHeight =  symbolText.FontSize * 1.5f;
 
+        private int mFocusItem = 1;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -67,30 +69,60 @@ namespace Lore
                     prologControl.Visibility = Visibility.Collapsed;
 
                     mainmenuPanel.Visibility = Visibility.Visible;
-                    newGameButton.Focus(FocusState.Programmatic);
                 }
                 else
                 {
-                    if (newGameButton.FocusState != FocusState.Unfocused)
+                    if (args.VirtualKey == VirtualKey.Enter)
                     {
-                        if (args.VirtualKey == VirtualKey.Down)
-                            loadGameButton.Focus(FocusState.Programmatic);
-                        else if (args.VirtualKey == VirtualKey.Up)
-                            exitGameButton.Focus(FocusState.Programmatic);
+                        if (mFocusItem == 1)
+                            Frame.Navigate(typeof(NewGamePage));
                     }
-                    else if (loadGameButton.FocusState != FocusState.Unfocused)
+                    else if (mFocusItem == 1)
                     {
                         if (args.VirtualKey == VirtualKey.Down)
-                            exitGameButton.Focus(FocusState.Programmatic);
+                        {
+                            newGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
+                            loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                            mFocusItem = 2;
+                        }
                         else if (args.VirtualKey == VirtualKey.Up)
-                            newGameButton.Focus(FocusState.Programmatic);
+                        {
+                            newGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
+                            exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                            mFocusItem = 3;
+                        }
+                            
                     }
-                    else if (exitGameButton.FocusState != FocusState.Unfocused)
+                    else if (mFocusItem == 2)
                     {
                         if (args.VirtualKey == VirtualKey.Down)
-                            newGameButton.Focus(FocusState.Programmatic);
+                        {
+                            loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
+                            exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                            mFocusItem = 3;
+                        }
                         else if (args.VirtualKey == VirtualKey.Up)
-                            loadGameButton.Focus(FocusState.Programmatic);
+                        {
+                            loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
+                            newGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                            mFocusItem = 1;
+                        }
+                    }
+                    else if (mFocusItem == 3)
+                    {
+                        if (args.VirtualKey == VirtualKey.Down)
+                        {
+                            exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
+                            newGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                            mFocusItem = 1;
+                        }
+                        else if (args.VirtualKey == VirtualKey.Up)
+                        {
+                            exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
+                            loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+                            mFocusItem = 2;
+                        }
+                            
                     }
                 }
             };

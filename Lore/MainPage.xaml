@@ -29,9 +29,9 @@
                 <RowDefinition Height="105" />
             </Grid.RowDefinitions>
 
-            <Button x:Name="newGameButton" Content="1] 새로운 주인공을 생성 시킴" FontSize="30" Grid.Row="1" Foreground="#5350f7" Margin="380,0,0,0" Background="{x:Null}" UseSystemFocusVisuals="False" GotFocus="MenuButton_GotFocus" LostFocus="MenuButton_LostFocus" Click="newGameButton_Click"/>
-            <Button x:Name="loadGameButton" Content="2] 이전의 게임을 재개 시킴" FontSize="30" Grid.Row="2"  Foreground="#5350f7" Margin="380,0,0,0" Background="{x:Null}" UseSystemFocusVisuals="False" GotFocus="MenuButton_GotFocus" LostFocus="MenuButton_LostFocus"/>
-            <Button x:Name="exitGameButton" Content="3] 게임 종료" FontSize="30" Grid.Row="3"  Foreground="#5350f7" Margin="380,0,0,0" Background="{x:Null}" UseSystemFocusVisuals="False" GotFocus="MenuButton_GotFocus" LostFocus="MenuButton_LostFocus"/>
+            <TextBlock x:Name="newGameItem" Text="1] 새로운 주인공을 생성 시킴" FontSize="30" Grid.Row="1" Foreground="#ffffff" Margin="380,0,0,0"/>
+            <TextBlock x:Name="loadGameItem" Text="2] 이전의 게임을 재개 시킴" FontSize="30" Grid.Row="2"  Foreground="#5350f7" Margin="380,0,0,0"/>
+            <TextBlock x:Name="exitGameItem" Text="3] 게임 종료" FontSize="30" Grid.Row="3"  Foreground="#5350f7" Margin="380,0,0,0"/>
         </Grid>
 
         <TextBlock Foreground="#ffe97d" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" TextAlignment="Center">
