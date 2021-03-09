@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -56,6 +57,49 @@ namespace Lore
         public MainPage()
         {
             this.InitializeComponent();
+            Window.Current.CoreWindow.KeyUp += (sender, args) =>
+            {
+                Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
+
+                if (prologControl.Visibility == Visibility.Visible)
+                {
+                    mTargetVelocity = 0;
+                    prologControl.Visibility = Visibility.Collapsed;
+
+                    mainmenuPanel.Visibility = Visibility.Visible;
+                    newGameButton.Focus(FocusState.Programmatic);
+                }
+                else
+                {
+                    if (newGameButton.FocusState != FocusState.Unfocused)
+                    {
+                        if (args.VirtualKey == VirtualKey.Down)
+                            loadGameButton.Focus(FocusState.Programmatic);
+                        else if (args.VirtualKey == VirtualKey.Up)
+                            exitGameButton.Focus(FocusState.Programmatic);
+                    }
+                    else if (loadGameButton.FocusState != FocusState.Unfocused)
+                    {
+                        if (args.VirtualKey == VirtualKey.Down)
+                            exitGameButton.Focus(FocusState.Programmatic);
+                        else if (args.VirtualKey == VirtualKey.Up)
+                            newGameButton.Focus(FocusState.Programmatic);
+                    }
+                    else if (exitGameButton.FocusState != FocusState.Unfocused)
+                    {
+                        if (args.VirtualKey == VirtualKey.Down)
+                            newGameButton.Focus(FocusState.Programmatic);
+                        else if (args.VirtualKey == VirtualKey.Up)
+                            loadGameButton.Focus(FocusState.Programmatic);
+                    }
+                }
+            };
+
+            //Window.Current.CoreWindow.CharacterReceived += (sender, args) =>
+            //{
+                
+                
+            //};
         }
 
         private void prologControl_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
@@ -181,5 +225,16 @@ namespace Lore
             "",
             "                                                     제작자  안 영기  드림"
         };
+
+        private void MenuButton_GotFocus(object sender, RoutedEventArgs e)
+        {
+            (sender as Button).Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
+        }
+
+
+        private void MenuButton_LostFocus(object sender, RoutedEventArgs e)
+        {
+            (sender as Button).Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
+        }
     }
 }
