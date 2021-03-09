@@ -97,7 +97,7 @@ namespace Lore
                 return;
             }
 
-            var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(64 * 50, 64 * 30));
+            var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(64 * 46, 64 * 23));
             args.DrawingSession.Transform = transform;
 
             var size = sender.Size.ToVector2();
