@@ -319,7 +319,20 @@
                     </StackPanel>
                 </Border>
                 <Border x:Name="CompleteFriendPanel"  Grid.Column="1" BorderBrush="{StaticResource brush}" BorderThickness="4,0,0,0" Visibility="Collapsed">
-                    <TextBlock Text="아무키나 누르십시오 ...." Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                    <Grid Margin="0,50,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="500"/>
+                            <RowDefinition Height="100"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Text="당신 일행의 구성원들" Foreground="White" FontSize="30" HorizontalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Row="1" x:Name="FinalFriendsText" Foreground="Yellow" FontSize="30" HorizontalAlignment="Center" LineStackingStrategy="BlockLineHeight" LineHeight="40"></TextBlock>
+                        <TextBlock Grid.Row="2" Foreground="IndianRed" FontSize="30" HorizontalAlignment="Center">
+                            만약 이 일행이 마음에 들지 않는다면
+                            <LineBreak/>
+                            좌측 상단의 Esc] 를 누르시오.
+                        </TextBlock>
+                    </Grid>
                 </Border>
             </Grid>
         </Border>

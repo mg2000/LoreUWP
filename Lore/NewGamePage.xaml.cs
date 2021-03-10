@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
@@ -110,6 +112,7 @@ namespace Lore
 			SelectClass,
 			CompleteCreate,
 			SelectFriend,
+			Confirm
 		}
 		private FocusItem mFocusItem = FocusItem.Name;
 		private string mFocusGender = "male";
@@ -132,7 +135,7 @@ namespace Lore
 
 			var friend = new Lore()
 			{
-				Name = "Hercules",
+				Name = "헤라클레스",
 				Gender = "male",
 				Class = 1,
 				Strength = 17,
@@ -150,7 +153,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Titan",
+				Name = "타이탄",
 				Gender = "male",
 				Class = 1,
 				Strength = 14,
@@ -168,7 +171,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Merlin",
+				Name = "머린",
 				Gender = "male",
 				Class = 2,
 				Strength = 11,
@@ -186,7 +189,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Betelgeuse",
+				Name = "베텔규스",
 				Gender = "female",
 				Class = 2,
 				Strength = 14,
@@ -204,7 +207,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Genius Kie",
+				Name = "지니어스 기",
 				Gender = "male",
 				Class = 4,
 				Strength = 14,
@@ -222,7 +225,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Bellatrix",
+				Name = "벨라트릭스",
 				Gender = "female",
 				Class = 4,
 				Strength = 14,
@@ -240,7 +243,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Regulus",
+				Name = "레굴루스",
 				Gender = "male",
 				Class = 5,
 				Strength = 19,
@@ -258,7 +261,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Procyon",
+				Name = "프로사이언",
 				Gender = "male",
 				Class = 5,
 				Strength = 17,
@@ -276,7 +279,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Arcturus",
+				Name = "악튜러스",
 				Gender = "male",
 				Class = 6,
 				Strength = 7,
@@ -294,7 +297,7 @@ namespace Lore
 
 			friend = new Lore()
 			{
-				Name = "Algol",
+				Name = "알골",
 				Gender = "male",
 				Class = 6,
 				Strength = 11,
@@ -466,7 +469,7 @@ namespace Lore
 						}
 
 						if (mTransdata[i] == 1)
-							mFriendControlList[i].Foreground = new SolidColorBrush(Colors.Yellow);
+							mFriendControlList[i].Foreground = new SolidColorBrush(Colors.DarkGray);
 						else
 							mFriendControlList[i].Foreground = new SolidColorBrush(Colors.White);
 					}
@@ -979,6 +982,147 @@ namespace Lore
 							mTransdata[mFriendID] = 0;
 
 						UpdateFriendInfo();
+
+						int count = 0;
+						for (var i = 0; i < mTransdata.Length; i++)
+						{
+							if (mTransdata[i] == 1)
+								count++;
+						}
+
+						if (count == 4)
+						{
+							var friendsNames = "";
+							for (var i = 0; i < mTransdata.Length; i++)
+							{
+								if (mTransdata[i] == 1)
+								{
+									if (friendsNames == "")
+										friendsNames = mFriendList[i].Name;
+									else
+										friendsNames += "\r\n" + mFriendList[i].Name;
+								}
+							}
+
+							FinalFriendsText.Text = friendsNames;
+
+							FriendStatStatPanel.Visibility = Visibility.Collapsed;
+							CompleteFriendPanel.Visibility = Visibility.Visible;
+
+							mFocusItem = FocusItem.Confirm;
+						}
+					}
+				}
+				else if (mFocusItem == FocusItem.Confirm)
+				{
+					if (args.VirtualKey == VirtualKey.Enter)
+					{
+						for (var i = 0; i < mTransdata.Length; i++)
+						{
+							if (mTransdata[i] == 1)
+							{
+								mFriendList[i].HP = mFriendList[i].Endurance;
+								mFriendList[i].SP = mFriendList[i].Endurance;
+								mFriendList[i].ESP = mFriendList[i].Concentration;
+								mPlayerList.Add(mFriendList[i]);
+							}
+						}
+
+						foreach (var player in mPlayerList)
+                        {
+							player.Poison = 0;
+							player.Unconscious = 0;
+							player.Dead = 0;
+
+							for (var i = 0; i < player.Level.Length; i++)
+								player.Level[i] = 1;
+
+							player.AC = 0;
+							if (player.Class == 1)
+								player.AC = 1;
+
+							player.Experience = 0;
+							player.Weapon = 0;
+							player.Armor = 0;
+							player.WeaPower = 2;
+							if (player.Class == 1)
+								player.WeaPower = 3;
+							else if (player.Class == 5)
+								player.WeaPower = 12;
+							player.ShiPower = 0;
+							player.ArmPower = 0;
+
+							var acc = player.Accuracy[0];
+							switch (player.Class)
+                            {
+								case 1:
+								case 5:
+								case 7:
+								case 8:
+									player.Accuracy[1] = 5;
+									player.Accuracy[2] = 5;
+									break;
+								case 2:
+									player.Accuracy[0] = 5;
+									player.Accuracy[1] = acc;
+									player.Accuracy[2] = 5;
+									break;
+								case 3:
+									player.Accuracy[0] = 5;
+									player.Accuracy[1] = 5;
+									player.Accuracy[2] = acc;
+									break;
+								case 4:
+									player.Accuracy[1] = acc;
+									player.Accuracy[2] = 8;
+									break;
+								case 6:
+									player.Accuracy[1] = 5;
+									player.Accuracy[2] = acc;
+									break;
+								default:
+									player.Accuracy[1] = 5;
+									player.Accuracy[2] = 5;
+									break;
+							}
+						}
+
+						var party = new LorePlayer()
+						{
+							Map = 6,
+							XAxis = 51,
+							YAxis = 31,
+							Food = 20,
+							Gold = 2000
+						};
+						for (var i = 0; i < party.Etc.Length; i++)
+							party.Etc[i] = 0;
+
+						var saveData = new SaveData()
+						{
+							PlayerList = mPlayerList,
+							Party = party,
+							Map = new Map()
+							{
+								Width = 0,
+								Height = 0,
+								Data = new byte[0]
+							}
+						};
+
+						var saveJSON = JsonConvert.SerializeObject(saveData);
+
+						var storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+						var saveFile = await storageFolder.CreateFileAsync("loreSave.dat", Windows.Storage.CreationCollisionOption.ReplaceExisting);
+						await FileIO.WriteTextAsync(saveFile, saveJSON);
+
+						Window.Current.CoreWindow.KeyUp -= newGamePageKeyEvent;
+						Frame.Navigate(typeof(GamePage));
+					}
+					else if (args.VirtualKey == VirtualKey.Escape)
+                    {
+						Window.Current.CoreWindow.KeyUp -= newGamePageKeyEvent;
+						Frame.Navigate(typeof(MainPage));
 					}
 				}
 			};
