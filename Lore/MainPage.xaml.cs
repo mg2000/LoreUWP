@@ -15,6 +15,7 @@ using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -59,7 +60,9 @@ namespace Lore
         public MainPage()
         {
             this.InitializeComponent();
-            Window.Current.CoreWindow.KeyUp += (sender, args) =>
+
+            TypedEventHandler<CoreWindow, KeyEventArgs> mainPageKeyEvent = null;
+            mainPageKeyEvent = (sender, args) =>
             {
                 Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
 
@@ -75,7 +78,10 @@ namespace Lore
                     if (args.VirtualKey == VirtualKey.Enter)
                     {
                         if (mFocusItem == 1)
+                        {
+                            Window.Current.CoreWindow.KeyUp -= mainPageKeyEvent;
                             Frame.Navigate(typeof(NewGamePage));
+                        }
                     }
                     else if (mFocusItem == 1)
                     {
@@ -91,7 +97,7 @@ namespace Lore
                             exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
                             mFocusItem = 3;
                         }
-                            
+
                     }
                     else if (mFocusItem == 2)
                     {
@@ -122,16 +128,12 @@ namespace Lore
                             loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
                             mFocusItem = 2;
                         }
-                            
+
                     }
                 }
             };
 
-            //Window.Current.CoreWindow.CharacterReceived += (sender, args) =>
-            //{
-                
-                
-            //};
+            Window.Current.CoreWindow.KeyUp += mainPageKeyEvent;
         }
 
         private void prologControl_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
@@ -257,21 +259,5 @@ namespace Lore
             "",
             "                                                     제작자  안 영기  드림"
         };
-
-        private void MenuButton_GotFocus(object sender, RoutedEventArgs e)
-        {
-            (sender as Button).Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
-        }
-
-
-        private void MenuButton_LostFocus(object sender, RoutedEventArgs e)
-        {
-            (sender as Button).Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
-        }
-
-        private void newGameButton_Click(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(GamePage));
-        }
     }
 }

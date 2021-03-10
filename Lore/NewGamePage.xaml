@@ -14,7 +14,7 @@
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="200" />
-            <RowDefinition Height="450" />
+            <RowDefinition Height="750" />
         </Grid.RowDefinitions>
         <Border Grid.Row="0" BorderBrush="{StaticResource brush}" BorderThickness="4 4 4 4">
             <Grid>
@@ -26,25 +26,146 @@
                 <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#05f9f7" FontSize="30">캐릭터 만들기 프로그램   제 1.5 탄</TextBlock>
             </Grid>
         </Border>
-        <Border Grid.Row="1" BorderBrush="{StaticResource brush}" BorderThickness="4 4 4 4">
-            <Grid Margin="10, 10, 0, 0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="700"/>
-                </Grid.ColumnDefinitions>
+        <Border x:Name="DefaultInputGrid" Grid.Row="1" BorderBrush="{StaticResource brush}" BorderThickness="4 4 4 4">
+            <Grid  Margin="10, 10, 0, 0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100" />
                     <RowDefinition Height="100" />
+                    <RowDefinition Height="200" />
+                    <RowDefinition Height="100" />
+                    <RowDefinition Height="300" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="당신의 이름은 :" Foreground="#70ee80" FontSize="30"></TextBlock>
-                <TextBox Grid.Row="0" Grid.Column="1" Height="50"/>
-                
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="당신의 성별은 :" Foreground="#70ee80" FontSize="30"></TextBlock>
-                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-                    <TextBlock Text="남성" Foreground="#70ee80" FontSize="30"/>
-                    <TextBlock Text="여성" Foreground="#000000" FontSize="30"/>
+                <StackPanel x:Name="UserNameInputPanel" Grid.Row="0" Orientation="Horizontal" Visibility="Visible">
+                    <TextBlock Text="당신의 이름은 :" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                    <TextBox x:Name="UserNameText" Height="50" Width="300" VerticalAlignment="Center"/>
                 </StackPanel>
+                <StackPanel x:Name="UserNameResultPanel" Grid.Row="0" Orientation="Horizontal" Visibility="Collapsed">
+                    <TextBlock x:Name="UserNameResultLabel" Text="당신의 이름은 ___입니다." Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                </StackPanel>
+
+                <StackPanel x:Name="UserGenderInputPanel" Grid.Row="1" Orientation="Horizontal" Visibility="Collapsed">
+                    <TextBlock Text="당신의 성별은 :" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                    <TextBlock x:Name="UserGenderMale"  Text="남성" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="UserGenderFemale" Text="여성" Foreground="Black" FontSize="30" VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel x:Name="UserGenderResultPanel" Grid.Row="1" Orientation="Horizontal" Visibility="Collapsed">
+                    <TextBlock x:Name="UserGenderResultLabel" Text="당신의 성별은 ___입니다." Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                </StackPanel>
+
+                <TextBlock x:Name="QuestionTitle" Grid.Row="2" Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,70,0,0" Visibility="Collapsed">
+                    지금 부터는 묻는 말에 대답을 해 주십시오.
+                    <LineBreak/>
+                    그리고, 자신에게 맞는 답을 소신있게 눌러 주십시오.
+                </TextBlock>
+                <TextBlock x:Name="QuestionLabel" Grid.Row="3" Foreground="LightCyan" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed">
+                    당신이 한 밤중에 공부하고 있을때 밖에서 무슨 소리가 들렸다
+                </TextBlock>
+                <StackPanel x:Name="AnswerPanel" Grid.Row="4" VerticalAlignment="Center" Visibility="Collapsed">
+                    <TextBlock x:Name="AnswerLabel1"  Foreground="Yellow" FontSize="30" HorizontalAlignment="Left"  Margin="600,0,0,0">1] 밖으로 나가서 알아본다</TextBlock>
+                    <TextBlock x:Name="AnswerLabel2"  Foreground="LightCyan" FontSize="30" HorizontalAlignment="Left"  Margin="600,20,0,0">2] 그 소리가 무엇일까 생각을 한다</TextBlock>
+                    <TextBlock x:Name="AnswerLabel3"  Foreground="LightCyan" FontSize="30" HorizontalAlignment="Left"  Margin="600,20,0,0">3] 공부에만 열중한다</TextBlock>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <Border x:Name="ExtraInputGrid" Grid.Row="1" BorderBrush="{StaticResource brush}" BorderThickness="4 4 4 4" Visibility="Collapsed">
+            <Grid Margin="10, 0, 0, 0">
+                <Grid.Resources>
+                    <SolidColorBrush x:Key="brush" Color="#0913b0"/>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="500"/>
+                    <ColumnDefinition Width="500"/>
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" BorderBrush="{StaticResource brush}" BorderThickness="0,0,4,0">
+                    <StackPanel Margin="30">
+                        <TextBlock x:Name="UserNameFinalText" Text="당신의 이름은 :" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock x:Name="UserGenderFinaltext" Text="당신의 성별은 :" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                        <Grid Margin="0,100,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="○ 체력 :" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="StrengthText" Text="" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="○ 정신력 :" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="MentalityText" Text="" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="○ 집중력 :" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="ConcentrationText" Text="" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="○ 인내력 :" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="EnduranceText" Text="" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="○ 저항력 :" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="4" Grid.Column="1" x:Name="ResistanceText" Text="" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                        </Grid>
+
+                        <Grid Margin="0,100,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="체력 지수 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="HPText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="마법 지수 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="SPText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="초감각 지수 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="ESPText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="레벨 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="3" Grid.Column="1" Foreground="Cyan" FontSize="30" VerticalAlignment="Center">1</TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" BorderBrush="{StaticResource brush}" BorderThickness="4,0,0,0">
+                    <StackPanel Margin="30">
+                        <TextBlock Text="선택하시오..." Foreground="White" FontSize="30" VerticalAlignment="Center"></TextBlock>
+
+                        <Grid Margin="0,100,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="남아있는 지수 : " Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="0" Grid.Column="1" x:Name="RemainPointText" Text="" Foreground="White" FontSize="30" VerticalAlignment="Center">40</TextBlock>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" x:Name="AgilityLabel" Text="→ 민첩성 : " Foreground="Yellow" FontSize="30" VerticalAlignment="Center" Margin="0, 40, 0, 0"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="1" x:Name="AgilityText" Text="" Foreground="White" FontSize="30" VerticalAlignment="Center" Margin="0, 40, 0, 0">0</TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="0" x:Name="AccuracyLabel" Text="정확성 : " Foreground="Yellow" FontSize="30" VerticalAlignment="Center" Margin="36, 0, 0, 0"></TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="1" x:Name="AccuracyText" Text="" Foreground="White" FontSize="30" VerticalAlignment="Center">0</TextBlock>
+                            <TextBlock Grid.Row="3" Grid.Column="0" x:Name="LuckLabel" Text="행운 : " Foreground="Yellow" FontSize="30" VerticalAlignment="Center" Margin="36, 0, 0, 0"></TextBlock>
+                            <TextBlock Grid.Row="3" Grid.Column="1" x:Name="LuckText" Text="" Foreground="White" FontSize="30" VerticalAlignment="Center">0</TextBlock>
+                        </Grid>
+                    </StackPanel>
+                </Border>
             </Grid>
         </Border>
     </Grid>
