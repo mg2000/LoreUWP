@@ -315,8 +315,9 @@ namespace Lore
 			TypedEventHandler<CoreWindow, KeyEventArgs> newGamePageKeyEvent = null;
 			newGamePageKeyEvent = async (sender, args) =>
 			{
-				string GetClassName(int classID) {
-					var className = "";		
+				string GetClassName(int classID)
+				{
+					var className = "";
 					switch (classID)
 					{
 						case 1:
@@ -355,8 +356,9 @@ namespace Lore
 					}
 					return className;
 				}
-			
-				void ShowQuestion() {
+
+				void ShowQuestion()
+				{
 					mAnswerID = 0;
 
 					AnswerLabel1.Foreground = new SolidColorBrush(Colors.Yellow);
@@ -424,7 +426,8 @@ namespace Lore
 						ClassWanderer.Foreground = new SolidColorBrush(Colors.White);
 				}
 
-				void UpdateFriendInfo() {
+				void UpdateFriendInfo()
+				{
 					FriendNameText.Text = mFriendList[mFriendID].Name;
 					FriendGenderText.Text = mFriendList[mFriendID].Gender == "male" ? "남성" : "여성";
 					FriendClassText.Text = GetClassName(mFriendList[mFriendID].Class);
@@ -442,6 +445,31 @@ namespace Lore
 					FriendHPText.Text = mFriendList[mFriendID].Endurance.ToString();
 					FriendSPText.Text = mFriendList[mFriendID].Mentality.ToString();
 					FriendESPText.Text = mFriendList[mFriendID].Concentration.ToString();
+
+					for (var i = 0; i < mFriendControlList.Count; i++)
+					{
+						if (i == mFriendID)
+						{
+							mFriendControlList[i].Text = "→ " + mFriendList[i].Name;
+							if (i == 0)
+								mFriendControlList[i].Margin = new Thickness(0, 40, 0, 0);
+							else
+								mFriendControlList[i].Margin = new Thickness(0, 0, 0, 0);
+						}
+						else
+						{
+							mFriendControlList[i].Text = mFriendList[i].Name;
+							if (i == 0)
+								mFriendControlList[i].Margin = new Thickness(39, 40, 0, 0);
+							else
+								mFriendControlList[i].Margin = new Thickness(39, 0, 0, 0);
+						}
+
+						if (mTransdata[i] == 1)
+							mFriendControlList[i].Foreground = new SolidColorBrush(Colors.Yellow);
+						else
+							mFriendControlList[i].Foreground = new SolidColorBrush(Colors.White);
+					}
 				}
 
 				Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
@@ -499,17 +527,20 @@ namespace Lore
 						mFocusItem = FocusItem.Question;
 					}
 				}
-				else if (mFocusItem == FocusItem.Question) {
+				else if (mFocusItem == FocusItem.Question)
+				{
 					if (args.VirtualKey == VirtualKey.Up)
 					{
-						if (mAnswerID == 0) {
+						if (mAnswerID == 0)
+						{
 							AnswerLabel1.Foreground = new SolidColorBrush(Colors.LightCyan);
 							AnswerLabel2.Foreground = new SolidColorBrush(Colors.LightCyan);
 							AnswerLabel3.Foreground = new SolidColorBrush(Colors.Yellow);
 
 							mAnswerID = 2;
 						}
-						else if (mAnswerID == 1) {
+						else if (mAnswerID == 1)
+						{
 							AnswerLabel1.Foreground = new SolidColorBrush(Colors.Yellow);
 							AnswerLabel2.Foreground = new SolidColorBrush(Colors.LightCyan);
 							AnswerLabel3.Foreground = new SolidColorBrush(Colors.LightCyan);
@@ -517,14 +548,15 @@ namespace Lore
 							mAnswerID = 0;
 
 						}
-						else if (mAnswerID == 2) {
+						else if (mAnswerID == 2)
+						{
 							AnswerLabel1.Foreground = new SolidColorBrush(Colors.LightCyan);
 							AnswerLabel2.Foreground = new SolidColorBrush(Colors.Yellow);
 							AnswerLabel3.Foreground = new SolidColorBrush(Colors.LightCyan);
 
 							mAnswerID = 1;
 						}
-						
+
 					}
 					else if (args.VirtualKey == VirtualKey.Down)
 					{
@@ -535,7 +567,7 @@ namespace Lore
 							AnswerLabel3.Foreground = new SolidColorBrush(Colors.LightCyan);
 
 							mAnswerID = 1;
-							
+
 						}
 						else if (mAnswerID == 1)
 						{
@@ -554,16 +586,20 @@ namespace Lore
 							mAnswerID = 0;
 						}
 					}
-					else if (args.VirtualKey == VirtualKey.Enter) {
+					else if (args.VirtualKey == VirtualKey.Enter)
+					{
 						mQuestionID++;
 						if (mQuestionID < mQuestionList.Length)
 						{
 							mTransdata[mAnswerID]++;
 							ShowQuestion();
 						}
-						else {
-							for (var i = 0; i < 5; i++) {
-								switch (mTransdata[i]) {
+						else
+						{
+							for (var i = 0; i < 5; i++)
+							{
+								switch (mTransdata[i])
+								{
 									case 0:
 										mTransdata[i] = 5;
 										break;
@@ -598,11 +634,13 @@ namespace Lore
 							mPlayerList[0].Resistance = mTransdata[4];
 
 							var offset = 4;
-							if (mPlayerList[0].Gender == "male") {
+							if (mPlayerList[0].Gender == "male")
+							{
 								mPlayerList[0].Strength += offset;
 								if (mPlayerList[0].Strength <= 20)
 									offset = 0;
-								else {
+								else
+								{
 									offset = mPlayerList[0].Strength - 20;
 									mPlayerList[0].Strength = 20;
 								}
@@ -620,7 +658,8 @@ namespace Lore
 								if (mPlayerList[0].Resistance > 20)
 									mPlayerList[0].Resistance = 20;
 							}
-							else {
+							else
+							{
 								mPlayerList[0].Mentality += offset;
 								if (mPlayerList[0].Mentality <= 20)
 									offset = 0;
@@ -678,8 +717,10 @@ namespace Lore
 						}
 					}
 				}
-				else if (mFocusItem == FocusItem.AssignPoint) {
-					void UpdateStatFocus() {
+				else if (mFocusItem == FocusItem.AssignPoint)
+				{
+					void UpdateStatFocus()
+					{
 						if (mAssignID == 0)
 						{
 							AgilityLabel.Text = "→ 민첩성 : ";
@@ -691,7 +732,8 @@ namespace Lore
 							LuckLabel.Text = "행운 : ";
 							LuckLabel.Margin = new Thickness(39, 0, 0, 0);
 						}
-						else if (mAssignID == 1) {
+						else if (mAssignID == 1)
+						{
 							AgilityLabel.Text = "민첩성 : ";
 							AgilityLabel.Margin = new Thickness(39, 40, 0, 0);
 
@@ -701,7 +743,8 @@ namespace Lore
 							LuckLabel.Text = "행운 : ";
 							LuckLabel.Margin = new Thickness(39, 0, 0, 0);
 						}
-						else {
+						else
+						{
 							AgilityLabel.Text = "민첩성 : ";
 							AgilityLabel.Margin = new Thickness(39, 40, 0, 0);
 
@@ -713,7 +756,8 @@ namespace Lore
 						}
 					}
 
-					void UpdateStat() {
+					void UpdateStat()
+					{
 						RemainPointText.Text = mRemainPoint.ToString();
 
 						if (mAssignID == 0)
@@ -728,7 +772,8 @@ namespace Lore
 
 					if (args.VirtualKey == VirtualKey.Left)
 					{
-						if (mTransdata[mAssignID] > 0) {
+						if (mTransdata[mAssignID] > 0)
+						{
 							mTransdata[mAssignID]--;
 							mRemainPoint++;
 
@@ -745,7 +790,8 @@ namespace Lore
 							UpdateStat();
 						}
 					}
-					else if (args.VirtualKey == VirtualKey.Down) {
+					else if (args.VirtualKey == VirtualKey.Down)
+					{
 						if (mAssignID == 2)
 							mAssignID = 0;
 						else
@@ -753,7 +799,8 @@ namespace Lore
 
 						UpdateStatFocus();
 					}
-					else if (args.VirtualKey == VirtualKey.Up) {
+					else if (args.VirtualKey == VirtualKey.Up)
+					{
 						if (mAssignID == 0)
 							mAssignID = 2;
 						else
@@ -761,11 +808,14 @@ namespace Lore
 
 						UpdateStatFocus();
 					}
-					else if (args.VirtualKey == VirtualKey.Enter) {
-						if (mRemainPoint > 0) {
+					else if (args.VirtualKey == VirtualKey.Enter)
+					{
+						if (mRemainPoint > 0)
+						{
 							await new MessageDialog("남은 포인트를 모두 할당해 주십시오.", "할당 미완료").ShowAsync();
 						}
-						else {
+						else
+						{
 							mPlayerList[0].Agility = mTransdata[0];
 							mPlayerList[0].Accuracy[0] = mTransdata[1];
 							mPlayerList[0].Luck = mTransdata[2];
@@ -849,8 +899,10 @@ namespace Lore
 						}
 					}
 				}
-				else if (mFocusItem == FocusItem.SelectClass) {
-					if (args.VirtualKey == VirtualKey.Up) {
+				else if (mFocusItem == FocusItem.SelectClass)
+				{
+					if (args.VirtualKey == VirtualKey.Up)
+					{
 						for (var i = mClassFocusID - 1 < 0 ? 7 : mClassFocusID - 1; i != mClassFocusID; i = i - 1 < 0 ? 7 : i - 1)
 						{
 							if (mTransdata[i] == 1)
@@ -861,7 +913,8 @@ namespace Lore
 							}
 						}
 					}
-					else if (args.VirtualKey == VirtualKey.Down) {
+					else if (args.VirtualKey == VirtualKey.Down)
+					{
 						for (var i = (mClassFocusID + 1) % 8; i != mClassFocusID; i = (i + 1) % 8)
 						{
 							if (mTransdata[i] == 1)
@@ -873,11 +926,12 @@ namespace Lore
 						}
 
 					}
-					else if (args.VirtualKey == VirtualKey.Enter) {
+					else if (args.VirtualKey == VirtualKey.Enter)
+					{
 						mPlayerList[0].Class = mClassFocusID + 1;
 
 						var className = GetClassName(mPlayerList[0].Class);
-						
+
 
 						UserClassFinalText.Text = $"당신의 계급은 {className} 입니다";
 						UserClassFinalText.Visibility = Visibility.Visible;
@@ -888,13 +942,44 @@ namespace Lore
 						mFocusItem = FocusItem.CompleteCreate;
 					}
 				}
-				else if (mFocusItem == FocusItem.CompleteCreate) {
+				else if (mFocusItem == FocusItem.CompleteCreate)
+				{
 					ExtraInputGrid.Visibility = Visibility.Collapsed;
 					SelectFriendGrid.Visibility = Visibility.Visible;
+
+					for (var i = 0; i < mTransdata.Length; i++)
+						mTransdata[i] = 0;
 
 					UpdateFriendInfo();
 
 					mFocusItem = FocusItem.SelectFriend;
+				}
+				else if (mFocusItem == FocusItem.SelectFriend)
+				{
+					if (args.VirtualKey == VirtualKey.Up)
+					{
+						if (mFriendID == 0)
+							mFriendID = mFriendControlList.Count - 1;
+						else
+							mFriendID--;
+
+						UpdateFriendInfo();
+					}
+					else if (args.VirtualKey == VirtualKey.Down)
+					{
+						mFriendID = (mFriendID + 1) % mFriendControlList.Count;
+
+						UpdateFriendInfo();
+					}
+					else if (args.VirtualKey == VirtualKey.Enter)
+					{
+						if (mTransdata[mFriendID] == 0)
+							mTransdata[mFriendID] = 1;
+						else
+							mTransdata[mFriendID] = 0;
+
+						UpdateFriendInfo();
+					}
 				}
 			};
 

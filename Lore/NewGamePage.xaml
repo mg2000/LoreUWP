@@ -230,7 +230,7 @@
                     <StackPanel Margin="30">
                         <TextBlock Text="그 사람의 능력 수치 ---" Foreground="White" FontSize="30" VerticalAlignment="Center"></TextBlock>
 
-                        <Grid Margin="0,100,0,0">
+                        <Grid Margin="0,30,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
@@ -278,17 +278,17 @@
                             <TextBlock Grid.Row="4" Grid.Column="0" Text="저항력 :" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
                             <TextBlock Grid.Row="4" Grid.Column="1" x:Name="FriendResistanceText" Text="" Foreground="LightCyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
 
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="민첩성 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
-                            <TextBlock Grid.Row="1" Grid.Column="3" x:Name="FriendAgilityText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="2" Text="민첩성 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="1" Grid.Column="3" x:Name="FriendAgilityText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
 
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="정확성 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
-                            <TextBlock Grid.Row="2" Grid.Column="3" x:Name="FriendAccuracyText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="정확성 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="3" x:Name="FriendAccuracyText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
 
-                            <TextBlock Grid.Row="3" Grid.Column="2" Text="행  운 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
-                            <TextBlock Grid.Row="3" Grid.Column="3" x:Name="FriendLuckText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
+                            <TextBlock Grid.Row="3" Grid.Column="2" Text="행  운 :" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Grid.Row="3" Grid.Column="3" x:Name="FriendLuckText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center"></TextBlock>
                         </Grid>
 
-                        <Grid Margin="0,100,0,0">
+                        <Grid Margin="0,50,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
