@@ -107,26 +107,255 @@ namespace Lore
 			Gender,
 			Question,
 			AssignPoint,
+			SelectClass,
+			CompleteCreate,
+			SelectFriend,
 		}
 		private FocusItem mFocusItem = FocusItem.Name;
 		private string mFocusGender = "male";
 		private int mQuestionID = 0;
 		private int mAnswerID = 0;
-		private readonly int[] mTransdata = { 0, 0, 0, 0, 0 };
+		private readonly int[] mTransdata = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 		private int mRemainPoint = 40;
 		private int mAssignID = 0;
+		private int mClassFocusID = 0;
+		private int mFriendID = 0;
 		
 		private readonly List<Lore> mPlayerList = new List<Lore>();
+		private readonly List<Lore> mFriendList = new List<Lore>();
+		private readonly List<TextBlock> mFriendControlList = new List<TextBlock>();
 
 		public NewGamePage()
 		{
 			this.InitializeComponent();
+			UserNameText.Focus(FocusState.Programmatic);
+
+			var friend = new Lore()
+			{
+				Name = "Hercules",
+				Gender = "male",
+				Class = 1,
+				Strength = 17,
+				Mentality = 5,
+				Concentration = 5,
+				Endurance = 17,
+				Resistance = 11,
+				Agility = 15,
+				Luck = 10
+			};
+			friend.Accuracy[0] = 15;
+			mFriendList.Add(friend);
+			FriendHercules.Text = "→ " + friend.Name;
+			mFriendControlList.Add(FriendHercules);
+
+			friend = new Lore()
+			{
+				Name = "Titan",
+				Gender = "male",
+				Class = 1,
+				Strength = 14,
+				Mentality = 5,
+				Concentration = 7,
+				Endurance = 14,
+				Resistance = 14,
+				Agility = 16,
+				Luck = 7
+			};
+			friend.Accuracy[0] = 17;
+			mFriendList.Add(friend);
+			FriendTitan.Text = friend.Name;
+			mFriendControlList.Add(FriendTitan);
+
+			friend = new Lore()
+			{
+				Name = "Merlin",
+				Gender = "male",
+				Class = 2,
+				Strength = 11,
+				Mentality = 19,
+				Concentration = 14,
+				Endurance = 5,
+				Resistance = 5,
+				Agility = 7,
+				Luck = 15
+			};
+			friend.Accuracy[0] = 18;
+			mFriendList.Add(friend);
+			FriendMerlin.Text = friend.Name;
+			mFriendControlList.Add(FriendMerlin);
+
+			friend = new Lore()
+			{
+				Name = "Betelgeuse",
+				Gender = "female",
+				Class = 2,
+				Strength = 14,
+				Mentality = 17,
+				Concentration = 5,
+				Endurance = 7,
+				Resistance = 7,
+				Agility = 11,
+				Luck = 14
+			};
+			friend.Accuracy[0] = 15;
+			mFriendList.Add(friend);
+			FriendBetelgeuse.Text = friend.Name;
+			mFriendControlList.Add(FriendBetelgeuse);
+
+			friend = new Lore()
+			{
+				Name = "Genius Kie",
+				Gender = "male",
+				Class = 4,
+				Strength = 14,
+				Mentality = 11,
+				Concentration = 7,
+				Endurance = 11,
+				Resistance = 11,
+				Agility = 11,
+				Luck = 9
+			};
+			friend.Accuracy[0] = 20;
+			mFriendList.Add(friend);
+			FriendGeniusKie.Text = friend.Name;
+			mFriendControlList.Add(FriendGeniusKie);
+
+			friend = new Lore()
+			{
+				Name = "Bellatrix",
+				Gender = "female",
+				Class = 4,
+				Strength = 14,
+				Mentality = 11,
+				Concentration = 5,
+				Endurance = 11,
+				Resistance = 14,
+				Agility = 14,
+				Luck = 11
+			};
+			friend.Accuracy[0] = 15;
+			mFriendList.Add(friend);
+			FriendBellatrix.Text = friend.Name;
+			mFriendControlList.Add(FriendBellatrix);
+
+			friend = new Lore()
+			{
+				Name = "Regulus",
+				Gender = "male",
+				Class = 5,
+				Strength = 19,
+				Mentality = 5,
+				Concentration = 5,
+				Endurance = 17,
+				Resistance = 7,
+				Agility = 15,
+				Luck = 11
+			};
+			friend.Accuracy[0] = 13;
+			mFriendList.Add(friend);
+			FriendRegulus.Text = friend.Name;
+			mFriendControlList.Add(FriendRegulus);
+
+			friend = new Lore()
+			{
+				Name = "Procyon",
+				Gender = "male",
+				Class = 5,
+				Strength = 17,
+				Mentality = 5,
+				Concentration = 5,
+				Endurance = 17,
+				Resistance = 11,
+				Agility = 17,
+				Luck = 9
+			};
+			friend.Accuracy[0] = 14;
+			mFriendList.Add(friend);
+			FriendProcyon.Text = friend.Name;
+			mFriendControlList.Add(FriendProcyon);
+
+			friend = new Lore()
+			{
+				Name = "Arcturus",
+				Gender = "male",
+				Class = 6,
+				Strength = 7,
+				Mentality = 5,
+				Concentration = 5,
+				Endurance = 11,
+				Resistance = 19,
+				Agility = 18,
+				Luck = 15
+			};
+			friend.Accuracy[0] = 7;
+			mFriendList.Add(friend);
+			FriendArcturus.Text = friend.Name;
+			mFriendControlList.Add(FriendArcturus);
+
+			friend = new Lore()
+			{
+				Name = "Algol",
+				Gender = "male",
+				Class = 6,
+				Strength = 11,
+				Mentality = 5,
+				Concentration = 7,
+				Endurance = 14,
+				Resistance = 17,
+				Agility = 17,
+				Luck = 16
+			};
+			friend.Accuracy[0] = 9;
+			mFriendList.Add(friend);
+			FriendAlgol.Text = friend.Name;
+			mFriendControlList.Add(FriendAlgol);
 
 			mPlayerList.Add(new Lore());
 
 			TypedEventHandler<CoreWindow, KeyEventArgs> newGamePageKeyEvent = null;
-			newGamePageKeyEvent = (sender, args) =>
+			newGamePageKeyEvent = async (sender, args) =>
 			{
+				string GetClassName(int classID) {
+					var className = "";		
+					switch (classID)
+					{
+						case 1:
+							className = "기사";
+							break;
+						case 2:
+							className = "마법사";
+							break;
+						case 3:
+							className = "에스퍼";
+							break;
+						case 4:
+							className = "전사";
+							break;
+						case 5:
+							className = "전투승";
+							break;
+						case 6:
+							className = "닌자";
+							break;
+						case 7:
+							className = "사냥꾼";
+							break;
+						case 8:
+							className = "떠돌이";
+							break;
+						case 9:
+							className = "혼령";
+							break;
+						case 10:
+							className = "반신";
+							break;
+						default:
+							className = "불확실함";
+							break;
+					}
+					return className;
+				}
+			
 				void ShowQuestion() {
 					mAnswerID = 0;
 
@@ -140,6 +369,81 @@ namespace Lore
 					AnswerLabel3.Text = mQuestionList[mQuestionID].Answer[2];
 				}
 
+				void UpdateClassFocus()
+				{
+					switch (mClassFocusID)
+					{
+						case 0:
+							ClassKnight.Foreground = new SolidColorBrush(Colors.Yellow);
+							break;
+						case 1:
+							ClassMagician.Foreground = new SolidColorBrush(Colors.Yellow);
+							break;
+						case 2:
+							ClassEsper.Foreground = new SolidColorBrush(Colors.Yellow);
+							break;
+						case 3:
+							ClassWarrior.Foreground = new SolidColorBrush(Colors.Yellow);
+							break;
+						case 4:
+							ClassMonk.Foreground = new SolidColorBrush(Colors.Yellow);
+							break;
+						case 5:
+							ClassNinja.Foreground = new SolidColorBrush(Colors.Yellow);
+							break;
+						case 6:
+							ClassHunter.Foreground = new SolidColorBrush(Colors.Yellow);
+							break;
+						case 7:
+							ClassWanderer.Foreground = new SolidColorBrush(Colors.Yellow);
+							break;
+					}
+
+					if (mClassFocusID != 0 && mTransdata[0] == 1)
+						ClassKnight.Foreground = new SolidColorBrush(Colors.White);
+
+					if (mClassFocusID != 1 && mTransdata[1] == 1)
+						ClassMagician.Foreground = new SolidColorBrush(Colors.White);
+
+					if (mClassFocusID != 2 && mTransdata[2] == 1)
+						ClassEsper.Foreground = new SolidColorBrush(Colors.White);
+
+					if (mClassFocusID != 3 && mTransdata[3] == 1)
+						ClassWarrior.Foreground = new SolidColorBrush(Colors.White);
+
+					if (mClassFocusID != 4 && mTransdata[4] == 1)
+						ClassMonk.Foreground = new SolidColorBrush(Colors.White);
+
+					if (mClassFocusID != 5 && mTransdata[5] == 1)
+						ClassNinja.Foreground = new SolidColorBrush(Colors.White);
+
+					if (mClassFocusID != 6 && mTransdata[6] == 1)
+						ClassHunter.Foreground = new SolidColorBrush(Colors.White);
+
+					if (mClassFocusID != 7 && mTransdata[7] == 1)
+						ClassWanderer.Foreground = new SolidColorBrush(Colors.White);
+				}
+
+				void UpdateFriendInfo() {
+					FriendNameText.Text = mFriendList[mFriendID].Name;
+					FriendGenderText.Text = mFriendList[mFriendID].Gender == "male" ? "남성" : "여성";
+					FriendClassText.Text = GetClassName(mFriendList[mFriendID].Class);
+
+					FriendStrengthText.Text = mFriendList[mFriendID].Strength.ToString();
+					FriendMentalityText.Text = mFriendList[mFriendID].Mentality.ToString();
+					FriendConcentrationText.Text = mFriendList[mFriendID].Concentration.ToString();
+					FriendEnduranceText.Text = mFriendList[mFriendID].Endurance.ToString();
+					FriendResistanceText.Text = mFriendList[mFriendID].Resistance.ToString();
+
+					FriendAgilityText.Text = mFriendList[mFriendID].Agility.ToString();
+					FriendAccuracyText.Text = mFriendList[mFriendID].Accuracy[0].ToString();
+					FriendLuckText.Text = mFriendList[mFriendID].Luck.ToString();
+
+					FriendHPText.Text = mFriendList[mFriendID].Endurance.ToString();
+					FriendSPText.Text = mFriendList[mFriendID].Mentality.ToString();
+					FriendESPText.Text = mFriendList[mFriendID].Concentration.ToString();
+				}
+
 				Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
 
 				if (mFocusItem == FocusItem.Name)
@@ -147,7 +451,7 @@ namespace Lore
 					if (args.VirtualKey == VirtualKey.Enter)
 					{
 						if (UserNameText.Text == "")
-							new MessageDialog("이름을 입력해 주십시오.", "이름 미입력").ShowAsync();
+							await new MessageDialog("이름을 입력해 주십시오.", "이름 미입력").ShowAsync();
 						else
 						{
 							mPlayerList[0].Name = UserNameText.Text;
@@ -258,7 +562,7 @@ namespace Lore
 							ShowQuestion();
 						}
 						else {
-							for (var i = 0; i < mTransdata.Length; i++) {
+							for (var i = 0; i < 5; i++) {
 								switch (mTransdata[i]) {
 									case 0:
 										mTransdata[i] = 5;
@@ -345,8 +649,8 @@ namespace Lore
 							mPlayerList[0].Gender = mFocusGender;
 							var genderKor = mPlayerList[0].Gender == "male" ? "남성" : "여성";
 
-							UserNameResultLabel.Text = $"당신의 이름은 {mPlayerList[0].Name}입니다.";
-							UserNameFinalText.Text = $"당신의 성별은 {genderKor}입니다.";
+							UserNameFinalText.Text = $"당신의 이름은 {mPlayerList[0].Name}입니다.";
+							UserGenderFinalText.Text = $"당신의 성별은 {genderKor}입니다.";
 
 							StrengthText.Text = mPlayerList[0].Strength.ToString();
 							MentalityText.Text = mPlayerList[0].Mentality.ToString();
@@ -375,6 +679,40 @@ namespace Lore
 					}
 				}
 				else if (mFocusItem == FocusItem.AssignPoint) {
+					void UpdateStatFocus() {
+						if (mAssignID == 0)
+						{
+							AgilityLabel.Text = "→ 민첩성 : ";
+							AgilityLabel.Margin = new Thickness(0, 40, 0, 0);
+
+							AccuracyLabel.Text = "정확성 : ";
+							AccuracyLabel.Margin = new Thickness(39, 0, 0, 0);
+
+							LuckLabel.Text = "행운 : ";
+							LuckLabel.Margin = new Thickness(39, 0, 0, 0);
+						}
+						else if (mAssignID == 1) {
+							AgilityLabel.Text = "민첩성 : ";
+							AgilityLabel.Margin = new Thickness(39, 40, 0, 0);
+
+							AccuracyLabel.Text = "→ 정확성 : ";
+							AccuracyLabel.Margin = new Thickness(0, 0, 0, 0);
+
+							LuckLabel.Text = "행운 : ";
+							LuckLabel.Margin = new Thickness(39, 0, 0, 0);
+						}
+						else {
+							AgilityLabel.Text = "민첩성 : ";
+							AgilityLabel.Margin = new Thickness(39, 40, 0, 0);
+
+							AccuracyLabel.Text = "정확성 : ";
+							AccuracyLabel.Margin = new Thickness(39, 0, 0, 0);
+
+							LuckLabel.Text = "→ 행운 : ";
+							LuckLabel.Margin = new Thickness(0, 0, 0, 0);
+						}
+					}
+
 					void UpdateStat() {
 						RemainPointText.Text = mRemainPoint.ToString();
 
@@ -396,7 +734,6 @@ namespace Lore
 
 							UpdateStat();
 						}
-
 					}
 					else if (args.VirtualKey == VirtualKey.Right)
 					{
@@ -408,6 +745,156 @@ namespace Lore
 							UpdateStat();
 						}
 					}
+					else if (args.VirtualKey == VirtualKey.Down) {
+						if (mAssignID == 2)
+							mAssignID = 0;
+						else
+							mAssignID++;
+
+						UpdateStatFocus();
+					}
+					else if (args.VirtualKey == VirtualKey.Up) {
+						if (mAssignID == 0)
+							mAssignID = 2;
+						else
+							mAssignID--;
+
+						UpdateStatFocus();
+					}
+					else if (args.VirtualKey == VirtualKey.Enter) {
+						if (mRemainPoint > 0) {
+							await new MessageDialog("남은 포인트를 모두 할당해 주십시오.", "할당 미완료").ShowAsync();
+						}
+						else {
+							mPlayerList[0].Agility = mTransdata[0];
+							mPlayerList[0].Accuracy[0] = mTransdata[1];
+							mPlayerList[0].Luck = mTransdata[2];
+
+							AddStatPanel.Visibility = Visibility.Collapsed;
+
+							AgilityResultText.Text = mPlayerList[0].Agility.ToString();
+							AgilityResultLabel.Visibility = Visibility.Visible;
+							AgilityResultText.Visibility = Visibility.Visible;
+
+							AccuracyResultText.Text = mPlayerList[0].Accuracy[0].ToString();
+							AccuracyResultLabel.Visibility = Visibility.Visible;
+							AccuracyResultText.Visibility = Visibility.Visible;
+
+							LuckResultText.Text = mPlayerList[0].Luck.ToString();
+							LuckResultLabel.Visibility = Visibility.Visible;
+							LuckResultText.Visibility = Visibility.Visible;
+
+							for (var i = 0; i < 8; i++)
+								mTransdata[i] = 0;
+
+							if (mPlayerList[0].Strength > 13 && mPlayerList[0].Endurance > 13 && mPlayerList[0].Agility > 11 && mPlayerList[0].Accuracy[0] > 11)
+							{
+								ClassKnight.Foreground = new SolidColorBrush(Colors.White);
+								mTransdata[0] = 1;
+							}
+
+							if (mPlayerList[0].Mentality > 13 && mPlayerList[0].Accuracy[0] > 14)
+							{
+								ClassMagician.Foreground = new SolidColorBrush(Colors.White);
+								mTransdata[1] = 1;
+							}
+
+							if (mPlayerList[0].Mentality > 10 && mPlayerList[0].Concentration > 13 & mPlayerList[0].Accuracy[0] > 12)
+							{
+								ClassEsper.Foreground = new SolidColorBrush(Colors.White);
+								mTransdata[2] = 1;
+							}
+
+							if (mPlayerList[0].Strength > 13 && mPlayerList[0].Mentality > 10 && mPlayerList[0].Endurance > 10 && mPlayerList[0].Resistance > 10)
+							{
+								ClassWarrior.Foreground = new SolidColorBrush(Colors.White);
+								mTransdata[3] = 1;
+							}
+
+							if (mPlayerList[0].Strength > 16 && mPlayerList[0].Agility > 13 && mPlayerList[0].Accuracy[0] > 11)
+							{
+								ClassMonk.Foreground = new SolidColorBrush(Colors.White);
+								mTransdata[4] = 1;
+							}
+
+							if (mPlayerList[0].Resistance > 16 && mPlayerList[0].Agility > 16 && mPlayerList[0].Luck > 9)
+							{
+								ClassNinja.Foreground = new SolidColorBrush(Colors.White);
+								mTransdata[5] = 1;
+							}
+
+							if (mPlayerList[0].Accuracy[0] > 18)
+							{
+								ClassHunter.Foreground = new SolidColorBrush(Colors.White);
+								mTransdata[6] = 1;
+							}
+
+							mTransdata[7] = 1;
+
+							for (var i = 0; i < 8; i++)
+							{
+								if (mTransdata[i] == 1)
+								{
+									mClassFocusID = i;
+									break;
+								}
+							}
+
+							UpdateClassFocus();
+
+
+							SelectClassPanel.Visibility = Visibility.Visible;
+
+							mFocusItem = FocusItem.SelectClass;
+						}
+					}
+				}
+				else if (mFocusItem == FocusItem.SelectClass) {
+					if (args.VirtualKey == VirtualKey.Up) {
+						for (var i = mClassFocusID - 1 < 0 ? 7 : mClassFocusID - 1; i != mClassFocusID; i = i - 1 < 0 ? 7 : i - 1)
+						{
+							if (mTransdata[i] == 1)
+							{
+								mClassFocusID = i;
+								UpdateClassFocus();
+								break;
+							}
+						}
+					}
+					else if (args.VirtualKey == VirtualKey.Down) {
+						for (var i = (mClassFocusID + 1) % 8; i != mClassFocusID; i = (i + 1) % 8)
+						{
+							if (mTransdata[i] == 1)
+							{
+								mClassFocusID = i;
+								UpdateClassFocus();
+								break;
+							}
+						}
+
+					}
+					else if (args.VirtualKey == VirtualKey.Enter) {
+						mPlayerList[0].Class = mClassFocusID + 1;
+
+						var className = GetClassName(mPlayerList[0].Class);
+						
+
+						UserClassFinalText.Text = $"당신의 계급은 {className} 입니다";
+						UserClassFinalText.Visibility = Visibility.Visible;
+
+						SelectClassPanel.Visibility = Visibility.Collapsed;
+						CompleteCreatePanel.Visibility = Visibility.Visible;
+
+						mFocusItem = FocusItem.CompleteCreate;
+					}
+				}
+				else if (mFocusItem == FocusItem.CompleteCreate) {
+					ExtraInputGrid.Visibility = Visibility.Collapsed;
+					SelectFriendGrid.Visibility = Visibility.Visible;
+
+					UpdateFriendInfo();
+
+					mFocusItem = FocusItem.SelectFriend;
 				}
 			};
 
