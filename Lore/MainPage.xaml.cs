@@ -12,6 +12,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Gaming.XboxLive.Storage;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI;
@@ -62,7 +63,7 @@ namespace Lore
             this.InitializeComponent();
 
             TypedEventHandler<CoreWindow, KeyEventArgs> mainPageKeyEvent = null;
-            mainPageKeyEvent = (sender, args) =>
+            mainPageKeyEvent = async (sender, args) =>
             {
                 Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
 
@@ -79,6 +80,11 @@ namespace Lore
                     {
                         if (mFocusItem == 1)
                         {
+
+                            var users = await User.FindAllAsync();
+                            var gameSaveTask = await GameSaveProvider.GetForUserAsync(users[0], "00000000-0000-0000-0000-000063336555");
+
+
                             Window.Current.CoreWindow.KeyUp -= mainPageKeyEvent;
                             Frame.Navigate(typeof(NewGamePage));
                         }

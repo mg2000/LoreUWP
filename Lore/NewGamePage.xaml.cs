@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Gaming.XboxLive.Storage;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI;
