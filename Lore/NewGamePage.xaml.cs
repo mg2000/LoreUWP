@@ -1030,7 +1030,7 @@ namespace Lore
 						}
 
 						foreach (var player in mPlayerList)
-                        {
+						{
 							player.Poison = 0;
 							player.Unconscious = 0;
 							player.Dead = 0;
@@ -1055,7 +1055,7 @@ namespace Lore
 
 							var acc = player.Accuracy[0];
 							switch (player.Class)
-                            {
+							{
 								case 1:
 								case 5:
 								case 7:
@@ -1113,7 +1113,7 @@ namespace Lore
 
 						var saveJSON = JsonConvert.SerializeObject(saveData);
 
-						var storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
+						var storageFolder = ApplicationData.Current.LocalFolder;
 						var saveFile = await storageFolder.CreateFileAsync("loreSave.dat", Windows.Storage.CreationCollisionOption.ReplaceExisting);
 						await FileIO.WriteTextAsync(saveFile, saveJSON);
 
@@ -1121,7 +1121,7 @@ namespace Lore
 						Frame.Navigate(typeof(GamePage));
 					}
 					else if (args.VirtualKey == VirtualKey.Escape)
-                    {
+					{
 						Window.Current.CoreWindow.KeyUp -= newGamePageKeyEvent;
 						Frame.Navigate(typeof(MainPage));
 					}

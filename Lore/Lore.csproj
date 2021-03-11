@@ -141,6 +141,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\lore_sprite.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Assets\lore_tile.bmp" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -182,6 +185,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\TOWN1.MAP" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\TOWN2.MAP" />
+    <Content Include="Assets\TOWN3.MAP" />
+    <Content Include="Assets\TOWN4.MAP" />
+    <Content Include="Assets\TOWN5.MAP" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

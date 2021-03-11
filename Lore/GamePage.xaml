@@ -7,9 +7,50 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
-    Background="#3f1060">
+    Background="#0000a5">
 
-    <Canvas Width="800" Height="600">
-        <canvas:CanvasAnimatedControl x:Name="canvas" ClearColor="Black" Canvas.Left="0" Canvas.Top="0" Width="576" Height="576" CreateResources="canvas_CreateResources" Draw="canvas_Draw"/>
-    </Canvas>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <canvas:CanvasAnimatedControl Grid.Column="0" x:Name="canvas" ClearColor="Black" Canvas.Left="0" Canvas.Top="0" Width="576" Height="576" CreateResources="canvas_CreateResources" Draw="canvas_Draw"/>
+            <StackPanel Grid.Column="1" Background="#525252" Margin="30,30,30,30">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Grid.Row="0" Margin="30,30,30,30">
+                        <RichTextBlock x:Name="DialogText" FontSize="30"  Height="300"></RichTextBlock>
+                    </StackPanel>
+                    <TextBlock Grid.Row="1" x:Name="ContinueText" FontSize="30" Margin="30,30,30,30" Foreground="Yellow" Visibility="Collapsed">아무키나 누르십시오 ...</TextBlock>
+                </Grid>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" Margin="30,30,30,30" Background="#525252">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Foreground="White" FontSize="30">이름</TextBlock>
+            <TextBlock Grid.Column="1" Foreground="White" FontSize="30">체력</TextBlock>
+            <TextBlock Grid.Column="2" Foreground="White" FontSize="30">마력</TextBlock>
+            <TextBlock Grid.Column="3" Foreground="White" FontSize="30">초능력</TextBlock>
+            <TextBlock Grid.Column="4" Foreground="White" FontSize="30">방어</TextBlock>
+            <TextBlock Grid.Column="5" Foreground="White" FontSize="30">레벨</TextBlock>
+            <TextBlock Grid.Column="6" Foreground="White" FontSize="30">상태</TextBlock>
+        </Grid>
+    </Grid>
 </Page>
