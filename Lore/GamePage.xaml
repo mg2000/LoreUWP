@@ -20,7 +20,7 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <canvas:CanvasAnimatedControl Grid.Column="0" x:Name="canvas" ClearColor="Black" Canvas.Left="0" Canvas.Top="0" Width="576" Height="576" CreateResources="canvas_CreateResources" Draw="canvas_Draw" Margin="0, 30, 0, 0"/>
-            <StackPanel Grid.Column="1" Background=" #525252" Margin="30,30,30,0">
+            <StackPanel Grid.Column="1" Background="#525252" Margin="30,30,30,0">
                 <Grid >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
