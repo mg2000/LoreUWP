@@ -48,8 +48,17 @@ namespace Lore
 		private int mMaxEnemy = 0;
 
 		private int mTalkMode = 0;
+		private bool mNextMode = false;
 		private int mTalkX = 0;
 		private int mTalkY = 0;
+
+		private List<TextBlock> mPlayerNameList = new List<TextBlock>();
+		private List<TextBlock> mPlayerHPList = new List<TextBlock>();
+		private List<TextBlock> mPlayerSPList = new List<TextBlock>();
+		private List<TextBlock> mPlayerESPList = new List<TextBlock>();
+		private List<TextBlock> mPlayerACList = new List<TextBlock>();
+		private List<TextBlock> mPlayerLevelList = new List<TextBlock>();
+		private List<TextBlock> mPlayerConditionList = new List<TextBlock>();
 
 		public GamePage()
 		{
@@ -57,20 +66,77 @@ namespace Lore
 
 			this.InitializeComponent();
 
-			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyEvent = null;
-			gamePageKeyEvent = async (sender, args) =>
+			mPlayerNameList.Add(PlayerName0);
+			mPlayerNameList.Add(PlayerName1);
+			mPlayerNameList.Add(PlayerName2);
+			mPlayerNameList.Add(PlayerName3);
+			mPlayerNameList.Add(PlayerName4);
+			mPlayerNameList.Add(PlayerName5);
+
+			mPlayerHPList.Add(PlayerHP0);
+			mPlayerHPList.Add(PlayerHP1);
+			mPlayerHPList.Add(PlayerHP2);
+			mPlayerHPList.Add(PlayerHP3);
+			mPlayerHPList.Add(PlayerHP4);
+			mPlayerHPList.Add(PlayerHP5);
+
+			mPlayerSPList.Add(PlayerSP0);
+			mPlayerSPList.Add(PlayerSP1);
+			mPlayerSPList.Add(PlayerSP2);
+			mPlayerSPList.Add(PlayerSP3);
+			mPlayerSPList.Add(PlayerSP4);
+			mPlayerSPList.Add(PlayerSP5);
+
+			mPlayerESPList.Add(PlayerESP0);
+			mPlayerESPList.Add(PlayerESP1);
+			mPlayerESPList.Add(PlayerESP2);
+			mPlayerESPList.Add(PlayerESP3);
+			mPlayerESPList.Add(PlayerESP4);
+			mPlayerESPList.Add(PlayerESP5);
+
+			mPlayerACList.Add(PlayerAC0);
+			mPlayerACList.Add(PlayerAC1);
+			mPlayerACList.Add(PlayerAC2);
+			mPlayerACList.Add(PlayerAC3);
+			mPlayerACList.Add(PlayerAC4);
+			mPlayerACList.Add(PlayerAC5);
+
+			mPlayerLevelList.Add(PlayerLevel0);
+			mPlayerLevelList.Add(PlayerLevel1);
+			mPlayerLevelList.Add(PlayerLevel2);
+			mPlayerLevelList.Add(PlayerLevel3);
+			mPlayerLevelList.Add(PlayerLevel4);
+			mPlayerLevelList.Add(PlayerLevel5);
+
+			mPlayerConditionList.Add(PlayerCondition0);
+			mPlayerConditionList.Add(PlayerCondition1);
+			mPlayerConditionList.Add(PlayerCondition2);
+			mPlayerConditionList.Add(PlayerCondition3);
+			mPlayerConditionList.Add(PlayerCondition4);
+			mPlayerConditionList.Add(PlayerCondition5);
+
+
+			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
+			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
+			gamePageKeyDownEvent = async (sender, args) =>
 			{
-				DialogText.Blocks.Clear();
+				Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
+
+				if (ContinueText.Visibility == Visibility.Visible)
+				{
+					if (mNextMode)
+					{
+						ContinueText.Visibility = Visibility.Collapsed;
+						mNextMode = false;
+					}
+					else
+						return;
+				}
 
 				if (mTalkMode > 0)
 				{
-					//ContinueText.Visibility = Visibility.Collapsed;
-					//TalkMode(mTalkX, mTalkY);
-
-					DialogText.Blocks.Clear();
-
-					var paragraph = new Paragraph();
-					DialogText.Blocks.Add(paragraph);
+					ContinueText.Visibility = Visibility.Collapsed;
+					TalkMode(mTalkX, mTalkY, args.VirtualKey);
 				}
 				else if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.Right)
 				{
@@ -169,7 +235,13 @@ namespace Lore
 				}
 			};
 
-			Window.Current.CoreWindow.KeyDown += gamePageKeyEvent;
+			gamePageKeyUpEvent = async (sender, args) => {
+				if (ContinueText.Visibility == Visibility.Visible)
+					mNextMode = true;
+			};
+
+			Window.Current.CoreWindow.KeyDown += gamePageKeyDownEvent;
+			Window.Current.CoreWindow.KeyUp += gamePageKeyUpEvent;
 		}
 
 		private int AppendText(RichTextBlock textBlock, Paragraph paragraph, int prevLen, string text)
@@ -244,11 +316,11 @@ namespace Lore
 				Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x95, 0x95, 0x95)),
 				Background = new SolidColorBrush(Colors.Transparent),
 				Ranges = { new TextRange()
-										{
-											StartIndex = totalLen,
-											Length = run.Text.Length
-										}
-									}
+					{
+						StartIndex = totalLen,
+						Length = run.Text.Length
+					}
+				}
 			});
 
 			totalLen += run.Text.Length;
@@ -256,28 +328,86 @@ namespace Lore
 			return totalLen;
 		}
 
-		private void TalkMode(int moveX, int moveY)
+		private void TalkMode(int moveX, int moveY, VirtualKey key = VirtualKey.None)
 		{
+			int GetPrevTextLength() {
+				var strLen = 0;
+
+				foreach (Paragraph prevParagraph in DialogText.Blocks)
+				{
+					foreach (Run prevRun in prevParagraph.Inlines)
+					{
+						strLen += prevRun.Text.Length;
+					}
+				}
+
+				return strLen;
+			}
+
 			if ((moveX == 49 && moveY == 50) || (moveX == 51 && moveY == 50))
 			{
-				DialogText.Blocks.Clear();
+				if (mTalkMode == 0)
+				{
+					DialogText.TextHighlighters.Clear();
+					DialogText.Blocks.Clear();
 
-				var paragraph = new Paragraph();
-				DialogText.Blocks.Add(paragraph);
+					var paragraph = new Paragraph();
+					DialogText.Blocks.Add(paragraph);
 
-				var run = new Run();
+					if ((mParty.Etc[29] & 1) == 1)
+						AppendText(DialogText, paragraph, 0, "행운을 빌겠소 !!!");
+					else if (mParty.Etc[9] < 3)
+						AppendText(DialogText, paragraph, 0, "저희 성주님을 만나 보십시오.");
+					else
+					{
+						AppendText(DialogText, paragraph, 0, "당신은 이 게임 세계에 도전하고 싶습니까 ?\r\n(Y/n)");
 
-				var strLen = 0;
-				strLen = AppendText(DialogText, paragraph, strLen, "저희 성주님을 만나 보십시오.");
+						mTalkMode = 1;
+						mTalkX = moveX;
+						mTalkY = moveY;
+					}
+				}
+				else if (mTalkMode == 1 && key == VirtualKey.Y) {
+					var paragraph = new Paragraph();
+					DialogText.Blocks.Add(paragraph);
 
-				paragraph.Inlines.Add(run);
+					mMapLayer[48 + mMapWidth * 51] = 47;
+					mMapLayer[49 + mMapWidth * 51] = 44;
+					mMapLayer[50 + mMapWidth * 51] = 44;
+					mMapLayer[51 + mMapWidth * 51] = 44;
+					mMapLayer[52 + mMapWidth * 51] = 47;
+					mMapLayer[48 + mMapWidth * 52] = 47;
+					mMapLayer[49 + mMapWidth * 52] = 44;
+					mMapLayer[50 + mMapWidth * 52] = 44;
+					mMapLayer[51 + mMapWidth * 52] = 44;
+					mMapLayer[52 + mMapWidth * 52] = 45;
+
+					var strLen = GetPrevTextLength();
+					strLen = AppendText(DialogText, paragraph, strLen, "\r\n예.\r\n\r\n");
+					AppendText(DialogText, paragraph, strLen, "이제부터 당신은 진정한 이 세계에 발을 디디게 되는 것입니다.");
+
+					ContinueText.Visibility = Visibility.Visible;
+					mParty.Etc[29] = mParty.Etc[29] | 1;
+					
+					mTalkMode = 0;
+				}
+				else if (mTalkMode == 1 && key == VirtualKey.N)
+				{
+					var paragraph = new Paragraph();
+					DialogText.Blocks.Add(paragraph);
+
+					var strLen = GetPrevTextLength();
+					strLen = AppendText(DialogText, paragraph, strLen, "\r\n아니오.\r\n\r\n");
+					AppendText(DialogText, paragraph, strLen, "다시 생각 해보십시오.");
+
+					ContinueText.Visibility = Visibility.Visible;
+					mTalkMode = 0;
+				}
 			}
 			else if (moveX == 50 && moveY == 27)
 			{
-				Debug.WriteLine("테스트 중...");
-				for (var i = 0; i < DialogText.Blocks.Count; i++)
-					DialogText.Blocks.RemoveAt(i);
-
+				DialogText.TextHighlighters.Clear();
+				DialogText.Blocks.Clear();
 
 				var paragraph = new Paragraph();
 				DialogText.Blocks.Add(paragraph);
@@ -285,16 +415,44 @@ namespace Lore
 				if (mTalkMode == 0)
 				{
 					var strLen = 0;
-					if (mTalkMode == 0)
+					if (mParty.Etc[9] == 0)
 					{
 						strLen = AppendText(DialogText, paragraph, strLen, "나는 [color=62e4f2]로드 안[/color]이오.\r\n");
-						strLen = AppendText(DialogText, paragraph, strLen, "이제부터 당신은 이 게임에서 새로운 인물로서 생을 시작하게 될것이오. 그럼 나의 이야기를 시작하겠소.");
-						//ContinueText.Visibility = Visibility.Visible;
-					}
+						AppendText(DialogText, paragraph, strLen, "이제부터 당신은 이 게임에서 새로운 인물로서 생을 시작하게 될것이오. 그럼 나의 이야기를 시작하겠소.");
+						ContinueText.Visibility = Visibility.Visible;
 
-					mTalkMode = 1;
+						mParty.Etc[9]++;
+
+						mTalkMode = 1;
+						mTalkX = moveX;
+						mTalkY = moveY;
+					}
+					else if (mParty.Etc[9] == 3) {
+						strLen = AppendText(DialogText, paragraph, strLen, " 대륙의 남서쪽에 있는 [color=62e4f2]'메나스'[/color]를 탐사해 주시오.");
+						ContinueText.Visibility = Visibility.Visible;
+					}
+				}
+				else if (mTalkMode == 1) {
+					var strLen = 0;
+					strLen = AppendText(DialogText, paragraph, strLen, " 이 세계는 내가 통치하는 동안에는 무척 평화로운 세상이 진행되어 왔었소. 그러나 그것은 한 운명의 장난으로 무참히 깨어져 버렸소.\r\n");
+					strLen = AppendText(DialogText, paragraph, strLen, " 한날, 대기의 공간이 진동하며 난데없는 푸른 번개가 대륙들 중의 하나를 강타했소." +
+					"  공간은 휘어지고 시간은 진동하며  이 세계를 공포 속으로 몰고 갔소.\r\n" +
+					"  그 번개의 위력으로 그 불운한 대륙은  황폐화된 용암 대지로 변하고 말았고, 다른 하나의 대륙은 충돌시의 진동에 의해 바다 깊이 가라앉아 버렸소.\r\n");
+					ContinueText.Visibility = Visibility.Visible;
+					mParty.Etc[9]++;
+
+					mTalkMode = 2;
 					mTalkX = moveX;
 					mTalkY = moveY;
+				}
+				else if (mTalkMode == 2) {
+					var strLen = 0;
+					strLen = AppendText(DialogText, paragraph, strLen, " 네크로맨서 의 영향력은 이미 로어 대륙까지 도달해있소.  또한 그들은 이 대륙의 남서쪽에 '메나스' 라고 불리우는 지하 동굴을 얼마전에 구축했소.  그래서, 그 동굴의 존재 때문에 우리들은 그에게 위협을 당하게 되었던 것이오.");
+					ContinueText.Visibility = Visibility.Visible;
+
+					mParty.Etc[9]++;
+
+					mTalkMode = 0;
 				}
 			}
 		}
@@ -525,12 +683,71 @@ namespace Lore
 			if (3 > mMaxEnemy || mMaxEnemy > 7)
 				mMaxEnemy = 5;
 
+			DisplayPlayerInfo();
+
 			switch (mParty.Etc[11])
 			{
 
 			}
 		}
-		
+
+		private void DisplayPlayerInfo() {
+			for (var i = 0; i < mPlayerList.Count; i++) {
+				mPlayerNameList[i].Text = mPlayerList[i].Name;
+				mPlayerNameList[i].Foreground = new SolidColorBrush(Colors.White);
+
+				mPlayerACList[i].Text = mPlayerList[i].AC.ToString();
+				mPlayerLevelList[i].Text = mPlayerList[i].Level[0].ToString();
+			}
+
+			DisplayHP();
+			DisplaySP();
+			DisplayESP();
+			DisplayCondition();
+		}
+
+		private void DisplayHP() {
+			for (var i = 0; i < mPlayerList.Count; i++)
+				mPlayerHPList[i].Text = mPlayerList[i].HP.ToString();
+		}
+
+		private void DisplaySP()
+		{
+			for (var i = 0; i < mPlayerList.Count; i++)
+				mPlayerSPList[i].Text = mPlayerList[i].SP.ToString();
+		}
+
+		private void DisplayESP()
+		{
+			for (var i = 0; i < mPlayerList.Count; i++)
+				mPlayerESPList[i].Text = mPlayerList[i].ESP.ToString();
+		}
+
+		private void DisplayCondition()
+		{
+			for (var i = 0; i < mPlayerList.Count; i++)
+				mPlayerConditionList[i].Text = GetConditionName(i);
+		}
+
+		private string GetConditionName(int index) {
+			if (mPlayerList[index].HP <= 0 && mPlayerList[index].Unconscious == 0)
+				mPlayerList[index].Unconscious = 1;
+
+			if (mPlayerList[index].Unconscious > mPlayerList[index].Endurance * mPlayerList[index].Level[0] && mPlayerList[index].Dead == 0)
+				mPlayerList[index].Dead = 1;
+
+			if (mPlayerList[index].Dead > 0)
+				return "사망";
+
+			if (mPlayerList[index].Unconscious > 0)
+				return "의식불명";
+
+			if (mPlayerList[index].Poison > 0)
+				return "중독";
+
+			return "좋음";
+		}
+
 		private enum PositionType {
 			Town,
 			Ground,

@@ -19,7 +19,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <canvas:CanvasAnimatedControl Grid.Column="0" x:Name="canvas" ClearColor="Black" Canvas.Left="0" Canvas.Top="0" Width="576" Height="576" CreateResources="canvas_CreateResources" Draw="canvas_Draw"/>
+            <canvas:CanvasAnimatedControl Grid.Column="0" x:Name="canvas" ClearColor="Black" Canvas.Left="0" Canvas.Top="0" Width="576" Height="576" CreateResources="canvas_CreateResources" Draw="canvas_Draw" Margin="0, 30, 0, 0"/>
             <StackPanel Grid.Column="1" Background="#525252" Margin="30,30,30,30">
                 <Grid >
                     <Grid.RowDefinitions>
@@ -27,13 +27,22 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <StackPanel Grid.Row="0" Margin="30,30,30,30">
-                        <RichTextBlock x:Name="DialogText" FontSize="30"  Height="300"></RichTextBlock>
+                        <RichTextBlock x:Name="DialogText" FontSize="30"  Height="300" IsTextSelectionEnabled="False"></RichTextBlock>
                     </StackPanel>
                     <TextBlock Grid.Row="1" x:Name="ContinueText" FontSize="30" Margin="30,30,30,30" Foreground="Yellow" Visibility="Collapsed">아무키나 누르십시오 ...</TextBlock>
                 </Grid>
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="1" Margin="30,30,30,30" Background="#525252">
+        <Grid Grid.Row="1" Margin="30, 30, 30, 30" Padding="30,30,30,30" Background="#525252">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
@@ -42,15 +51,62 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
-                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Foreground="White" FontSize="30">이름</TextBlock>
-            <TextBlock Grid.Column="1" Foreground="White" FontSize="30">체력</TextBlock>
-            <TextBlock Grid.Column="2" Foreground="White" FontSize="30">마력</TextBlock>
-            <TextBlock Grid.Column="3" Foreground="White" FontSize="30">초능력</TextBlock>
-            <TextBlock Grid.Column="4" Foreground="White" FontSize="30">방어</TextBlock>
-            <TextBlock Grid.Column="5" Foreground="White" FontSize="30">레벨</TextBlock>
-            <TextBlock Grid.Column="6" Foreground="White" FontSize="30">상태</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="0" Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">이름</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1" Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">체력</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="2" Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">마력</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="3" Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">초능력</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="4" Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">방어</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="5" Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">레벨</TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="6" Foreground="White" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center">상태</TextBlock>
+
+            <TextBlock x:Name="PlayerName0" Grid.Row="1" Grid.Column="0" Foreground="DarkRed" FontSize="30" VerticalAlignment="Center">빈 슬롯</TextBlock>
+            <TextBlock x:Name="PlayerHP0" Grid.Row="1" Grid.Column="1" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerSP0" Grid.Row="1" Grid.Column="2" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerESP0" Grid.Row="1" Grid.Column="3" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerAC0" Grid.Row="1" Grid.Column="4" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerLevel0" Grid.Row="1" Grid.Column="5" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerCondition0" Grid.Row="1" Grid.Column="6" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+
+            <TextBlock x:Name="PlayerName1" Grid.Row="2" Grid.Column="0" Foreground="DarkRed" FontSize="30" VerticalAlignment="Center">빈 슬롯</TextBlock>
+            <TextBlock x:Name="PlayerHP1" Grid.Row="2" Grid.Column="1" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerSP1" Grid.Row="2" Grid.Column="2" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerESP1" Grid.Row="2" Grid.Column="3" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerAC1" Grid.Row="2" Grid.Column="4" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerLevel1" Grid.Row="2" Grid.Column="5" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerCondition1" Grid.Row="2" Grid.Column="6" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+
+            <TextBlock x:Name="PlayerName2" Grid.Row="3" Grid.Column="0" Foreground="DarkRed" FontSize="30" VerticalAlignment="Center">빈 슬롯</TextBlock>
+            <TextBlock x:Name="PlayerHP2" Grid.Row="3" Grid.Column="1" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerSP2" Grid.Row="3" Grid.Column="2" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerESP2" Grid.Row="3" Grid.Column="3" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerAC2" Grid.Row="3" Grid.Column="4" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerLevel2" Grid.Row="3" Grid.Column="5" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerCondition2" Grid.Row="3" Grid.Column="6" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+
+            <TextBlock x:Name="PlayerName3" Grid.Row="4" Grid.Column="0" Foreground="DarkRed" FontSize="30" VerticalAlignment="Center">빈 슬롯</TextBlock>
+            <TextBlock x:Name="PlayerHP3" Grid.Row="4" Grid.Column="1" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerSP3" Grid.Row="4" Grid.Column="2" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerESP3" Grid.Row="4" Grid.Column="3" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerAC3" Grid.Row="4" Grid.Column="4" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerLevel3" Grid.Row="4" Grid.Column="5" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerCondition3" Grid.Row="4" Grid.Column="6" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+
+            <TextBlock x:Name="PlayerName4" Grid.Row="5" Grid.Column="0" Foreground="DarkRed" FontSize="30" VerticalAlignment="Center">빈 슬롯</TextBlock>
+            <TextBlock x:Name="PlayerHP4" Grid.Row="5" Grid.Column="1" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerSP4" Grid.Row="5" Grid.Column="2" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerESP4" Grid.Row="5" Grid.Column="3" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerAC4" Grid.Row="5" Grid.Column="4" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerLevel4" Grid.Row="5" Grid.Column="5" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerCondition4" Grid.Row="5" Grid.Column="6" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+
+            <TextBlock x:Name="PlayerName5" Grid.Row="6" Grid.Column="0" Foreground="DarkRed" FontSize="30" VerticalAlignment="Center">빈 슬롯</TextBlock>
+            <TextBlock x:Name="PlayerHP5" Grid.Row="6" Grid.Column="1" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerSP5" Grid.Row="6" Grid.Column="2" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerESP5" Grid.Row="6" Grid.Column="3" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerAC5" Grid.Row="6" Grid.Column="4" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerLevel5" Grid.Row="6" Grid.Column="5" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
+            <TextBlock x:Name="PlayerCondition5" Grid.Row="6" Grid.Column="6" Foreground="White" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
         </Grid>
     </Grid>
 </Page>
