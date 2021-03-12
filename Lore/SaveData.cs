@@ -25,5 +25,15 @@ namespace Lore
             get;
             set;
         }
+
+        public int Encounter {
+            get;
+            set;
+		}
+
+        public int MaxEnemy {
+            get;
+            set;
+		}
     }
 }

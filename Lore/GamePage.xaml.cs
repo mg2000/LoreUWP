@@ -60,6 +60,8 @@ namespace Lore
 		private List<TextBlock> mPlayerLevelList = new List<TextBlock>();
 		private List<TextBlock> mPlayerConditionList = new List<TextBlock>();
 
+		private Random mRand = new Random();
+
 		public GamePage()
 		{
 			var rootFrame = Window.Current.Content as Frame;
@@ -205,11 +207,12 @@ namespace Lore
 							else if (mMapLayer[x + mMapWidth * y] == 23)
 							{
 								// Sign
+								ShowSign(x, y);
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 24)
 							{
-								// Water
-								MovePlayer(x, y);
+								if (EnterWater())
+									MovePlayer(x, y);
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 25)
 							{
@@ -428,7 +431,7 @@ namespace Lore
 						mTalkY = moveY;
 					}
 					else if (mParty.Etc[9] == 3) {
-						strLen = AppendText(DialogText, paragraph, strLen, " 대륙의 남서쪽에 있는 [color=62e4f2]'메나스'[/color]를 탐사해 주시오.");
+						strLen = AppendText(DialogText, paragraph, strLen, " 대륙의 남서쪽에 있는 '[color=62e4f2]메나스[/color]'를 탐사해 주시오.");
 						ContinueText.Visibility = Visibility.Visible;
 					}
 				}
@@ -677,9 +680,11 @@ namespace Lore
 			if (mPosition != PositionType.Town || mParty.Map == 26)
 				mFace = mFace + 4;
 
+			mEncounter = saveData.Encounter;
 			if (1 > mEncounter || mEncounter > 3)
 				mEncounter = 2;
 
+			mMaxEnemy = saveData.MaxEnemy;
 			if (3 > mMaxEnemy || mMaxEnemy > 7)
 				mMaxEnemy = 5;
 
@@ -746,6 +751,169 @@ namespace Lore
 				return "중독";
 
 			return "좋음";
+		}
+
+		private bool EnterWater() {
+			if (mParty.Etc[1] > 0)
+			{
+				mParty.Etc[1]--;
+
+				if (mRand.Next(mEncounter * 30) == 0)
+					EncounterEnemy();
+
+				return true;
+			}
+			else
+				return false;
+		}
+
+		private void EncounterEnemy() {
+
+		}
+
+		private void ShowSign(int x, int y)
+		{
+			DialogText.TextHighlighters.Clear();
+			DialogText.Blocks.Clear();
+
+			var paragraph = new Paragraph();
+			DialogText.Blocks.Add(paragraph);
+
+			var strLen = 0;
+			strLen = AppendText(DialogText, paragraph, strLen, "푯말에 쓰여있기로 ...\r\n\r\n");
+
+			if (mParty.Map == 2)
+			{
+				if (x == 30 && y == 43)
+					AppendText(DialogText, paragraph, strLen, "          WIVERN 가는길\r\n");
+				else if ((x == 28 && y == 49) || (x == 34 && x == 71))
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "  북쪽 :\r\n");
+					strLen = AppendText(DialogText, paragraph, strLen, "       VALIANT PEOPLES 가는길\r\n");
+					strLen = AppendText(DialogText, paragraph, strLen, "  남쪽 :\r\n");
+					AppendText(DialogText, paragraph, strLen, "       GAIA TERRA 가는길");
+				}
+				else if (x == 43 && y == 76)
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "  북동쪽 :\r\n");
+					strLen = AppendText(DialogText, paragraph, strLen, "       QUAKE 가는길\r\n");
+					strLen = AppendText(DialogText, paragraph, strLen, "  남서쪽 :\r\n");
+					AppendText(DialogText, paragraph, strLen, "       GAIA TERRA 가는길\r\n");
+				}
+			}
+			else if (mParty.Map == 6)
+			{
+				if (x == 50 && y == 83)
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "       여기는 '[color=62e4f2]CASTLE LORE[/color]'성\r\n");
+					strLen = AppendText(DialogText, paragraph, strLen, "         여러분을 환영합니다\r\n\r\n");
+					AppendText(DialogText, paragraph, strLen, "[color=ff00ff]Lord Ahn[/color]");
+				}
+				else if (x == 23 && y == 30)
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "\r\n             여기는 LORE 주점\r\n");
+					AppendText(DialogText, paragraph, strLen, "       여러분 모두를 환영합니다 !!");
+				}
+				else if ((x == 50 && y == 17) || (x == 51 && y == 17))
+					AppendText(DialogText, paragraph, strLen, "\r\n          LORE 왕립  죄수 수용소");
+			}
+			else if (mParty.Map == 7)
+			{
+				if (x == 38 && y == 67)
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "        여기는 '[color=62e4f2]LASTDITCH[/color]'성\r\n");
+					AppendText(DialogText, paragraph, strLen, "         여러분을 환영합니다");
+				}
+				else if (x == 38 && y == 7)
+					AppendText(DialogText, paragraph, strLen, "       여기는 PYRAMID 의 입구");
+				else if (x == 53 && y == 8)
+					AppendText(DialogText, paragraph, strLen, "       여기는 PYRAMID 의 입구");
+			}
+			else if (mParty.Map == 8)
+			{
+				if (x == 38 && y == 66)
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "      여기는 '[color=62e4f2]VALIANT PEOPLES[/color]'성\r\n");
+					strLen = AppendText(DialogText, paragraph, strLen, "    우리의 미덕은 굽히지 않는 용기\r\n");
+					AppendText(DialogText, paragraph, strLen, "   우리는 어떤 악에도 굽히지 않는다");
+				}
+				else
+					AppendText(DialogText, paragraph, strLen, "     여기는 EVIL SEAL 의 입구");
+			}
+			else if (mParty.Map == 9)
+			{
+				if (x == 23 && y == 25)
+					AppendText(DialogText, paragraph, strLen, "       여기는 국왕의 보물 창고");
+				else
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "         여기는 '[color=62e4f2]GAIA TERRAS[/color]'성\r\n");
+					AppendText(DialogText, paragraph, strLen, "          여러분을 환영합니다");
+				}
+			}
+			else if (mParty.Map == 12)
+			{
+				if (x == 23 && y == 67)
+					AppendText(DialogText, paragraph, strLen, "               X 는 7");
+				else if (x == 26 && y == 67)
+					AppendText(DialogText, paragraph, strLen, "               Y 는 9");
+				else if (y == 55)
+				{
+					var j = (x - 6) / 7 + 12;
+					AppendText(DialogText, paragraph, strLen, $"           문의 번호는 '[color=62e4f2]{j}[/color]'");
+				}
+				else if (x == 25 && y == 41)
+					AppendText(DialogText, paragraph, strLen, "            Z 는 2 * Y + X");
+				else if (x == 25 && y == 32)
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "        패스코드 x 패스코드 는 Z 라면\r\n\r\n");
+					AppendText(DialogText, paragraph, strLen, "            패스코드는 무엇인가 ?");
+				}
+				else if (y == 28)
+				{
+					var j = (x - 3) / 5 + 2;
+					AppendText(DialogText, paragraph, strLen, $"           패스코드는 '[color=62e4f2]{j}[/color]'");
+				}
+			}
+			else if (mParty.Map == 15)
+			{
+				if (x == 25 && y == 62)
+					AppendText(DialogText, paragraph, strLen, "\r\n            길의 마지막");
+				else if (x == 21 && y == 14)
+					AppendText(DialogText, paragraph, strLen, "\r\n     (12,15) 로 공간이동 하시오");
+				else if (x == 10 && y == 13)
+					AppendText(DialogText, paragraph, strLen, "\r\n     (13,7) 로 공간이동 하시오");
+				else if (x == 26 && y == 13)
+					AppendText(DialogText, paragraph, strLen, "\r\n   황금의 갑옷은 (45,19) 에 숨겨져있음");
+
+			}
+			else if (mParty.Map == 17)
+			{
+				if (x == 67 && y == 46)
+					AppendText(DialogText, paragraph, strLen, "\r\n    하! 하! 하!  너는 우리에게 속았다");
+				else if (x == 57 && y == 52)
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "\r\n      [color=90ee90]이 게임을 만든 사람[/color]\r\n");
+					strLen = AppendText(DialogText, paragraph, strLen, "  : 동아 대학교 전기 공학과");
+					AppendText(DialogText, paragraph, strLen, "        92 학번  안 영기");
+				}
+				else if (x == 50 && y == 29)
+				{
+					strLen = AppendText(DialogText, paragraph, strLen, "\r\n       오른쪽 : Hidra 의 보물창고\r\n");
+					AppendText(DialogText, paragraph, strLen, "         위쪽이 진짜 보물창고임");
+				}
+			}
+			else if (mParty.Map == 19)
+			{
+				strLen = AppendText(DialogText, paragraph, strLen, "       이 길을 통과하고자하는 사람은\r\n");
+				AppendText(DialogText, paragraph, strLen, "     양측의 늪속에 있는 레버를 당기시오");
+			}
+			else if (mParty.Map == 23)
+			{
+				strLen = AppendText(DialogText, paragraph, strLen, "      (25,27)에 있는 레버를 움직이면");
+				strLen = AppendText(DialogText, paragraph, strLen, "          성을 볼수 있을 것이오.\r\n\r\n");
+				AppendText(DialogText, paragraph, strLen, "             [color=90ee90]제작자 안 영기 씀[/color]");
+				mMapLayer[24 + mMapWidth * 26] = 52;
+			}
 		}
 
 		private enum PositionType {
