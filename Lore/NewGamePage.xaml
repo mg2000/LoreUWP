@@ -8,19 +8,19 @@
     mc:Ignorable="d"
     Background="#002854">
 
-    <Grid Width="1920">
+    <Grid>
         <Grid.Resources>
             <SolidColorBrush x:Key="brush" Color="#0913b0"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="200" />
-            <RowDefinition Height="750" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="8*" />
         </Grid.RowDefinitions>
         <Border Grid.Row="0" BorderBrush="{StaticResource brush}" BorderThickness="4 4 4 4">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="100" />
-                    <RowDefinition Height="100" />
+                    <RowDefinition Height="5*" />
+                    <RowDefinition Height="5*" />
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#eb08ee" FontSize="60">또다른 지식의 성전  제 1 부</TextBlock>
                 <TextBlock Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#05f9f7" FontSize="30">캐릭터 만들기 프로그램   제 1.5 탄</TextBlock>
@@ -29,16 +29,16 @@
         <Border x:Name="DefaultInputGrid" Grid.Row="1" BorderBrush="{StaticResource brush}" BorderThickness="4 4 4 4">
             <Grid  Margin="10, 10, 0, 0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="100" />
-                    <RowDefinition Height="100" />
-                    <RowDefinition Height="200" />
-                    <RowDefinition Height="100" />
-                    <RowDefinition Height="300" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="3*" />
                 </Grid.RowDefinitions>
 
                 <StackPanel x:Name="UserNameInputPanel" Grid.Row="0" Orientation="Horizontal" Visibility="Visible">
                     <TextBlock Text="당신의 이름은 :" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
-                    <TextBox x:Name="UserNameText" Height="50" Width="300" VerticalAlignment="Center"/>
+                    <TextBox x:Name="UserNameText" Height="50" Width="300" FontSize="30" VerticalAlignment="Center" Margin="30, 0, 0, 0"/>
                 </StackPanel>
                 <StackPanel x:Name="UserNameResultPanel" Grid.Row="0" Orientation="Horizontal" Visibility="Collapsed">
                     <TextBlock x:Name="UserNameResultLabel" Text="당신의 이름은 ___입니다." Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
@@ -46,8 +46,8 @@
 
                 <StackPanel x:Name="UserGenderInputPanel" Grid.Row="1" Orientation="Horizontal" Visibility="Collapsed">
                     <TextBlock Text="당신의 성별은 :" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
-                    <TextBlock x:Name="UserGenderMale"  Text="남성" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="UserGenderFemale" Text="여성" Foreground="Black" FontSize="30" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="UserGenderMale"  Text="남성" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center" Margin="30, 0, 0, 0"/>
+                    <TextBlock x:Name="UserGenderFemale" Text="여성" Foreground="Black" FontSize="30" VerticalAlignment="Center" Margin="30, 0, 0, 0"/>
                 </StackPanel>
                 <StackPanel x:Name="UserGenderResultPanel" Grid.Row="1" Orientation="Horizontal" Visibility="Collapsed">
                     <TextBlock x:Name="UserGenderResultLabel" Text="당신의 성별은 ___입니다." Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
@@ -74,16 +74,16 @@
                     <SolidColorBrush x:Key="brush" Color="#0913b0"/>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="800"/>
-                    <ColumnDefinition Width="800"/>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="5*"/>
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0" BorderBrush="{StaticResource brush}" BorderThickness="0,0,4,0">
                     <StackPanel Margin="30">
                         <TextBlock x:Name="UserNameFinalText" Text="당신의 이름은" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
                         <TextBlock x:Name="UserGenderFinalText" Text="당신의 성별은" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock x:Name="UserClassFinalText" Text="당신의 계급은" Foreground="LightGreen" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
+                        <TextBlock x:Name="UserClassFinalText" Text="당신의 계급은" Foreground="Transparent" FontSize="30" VerticalAlignment="Center"></TextBlock>
 
-                        <Grid Margin="0,100,0,0">
+                        <Grid Margin="0,70,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
@@ -123,7 +123,7 @@
                             <TextBlock Grid.Row="2" Grid.Column="3" x:Name="LuckResultText" Text="" Foreground="Cyan" FontSize="30" VerticalAlignment="Center" Visibility="Collapsed"></TextBlock>
                         </Grid>
 
-                        <Grid Margin="0,100,0,0">
+                        <Grid Margin="0,70,0,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition/>
                                 <RowDefinition/>
@@ -203,8 +203,8 @@
                     <SolidColorBrush x:Key="brush" Color="#0913b0"/>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="800"/>
-                    <ColumnDefinition Width="800"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0" BorderBrush="{StaticResource brush}" BorderThickness="0,0,4,0">
                     <StackPanel Margin="30">
@@ -321,9 +321,9 @@
                 <Border x:Name="CompleteFriendPanel"  Grid.Column="1" BorderBrush="{StaticResource brush}" BorderThickness="4,0,0,0" Visibility="Collapsed">
                     <Grid Margin="0,50,0,0">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="100"/>
-                            <RowDefinition Height="500"/>
-                            <RowDefinition Height="100"/>
+                            <RowDefinition Height="1*"/>
+                            <RowDefinition Height="5*"/>
+                            <RowDefinition Height="1.5*"/>
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Text="당신 일행의 구성원들" Foreground="White" FontSize="30" HorizontalAlignment="Center"></TextBlock>
                         <TextBlock Grid.Row="1" x:Name="FinalFriendsText" Foreground="Yellow" FontSize="30" HorizontalAlignment="Center" LineStackingStrategy="BlockLineHeight" LineHeight="40"></TextBlock>

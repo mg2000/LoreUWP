@@ -63,8 +63,31 @@ namespace Lore
 		{
 			this.InitializeComponent();
 
-			TypedEventHandler<CoreWindow, KeyEventArgs> mainPageKeyEvent = null;
-			mainPageKeyEvent = async (sender, args) =>
+			SystemNavigationManager.GetForCurrentView().BackRequested += (sender, e) =>
+			{
+				if (!e.Handled)
+				{
+					e.Handled = true;
+				}
+			};
+
+			SyncSaveData();
+		}
+
+		private async void SyncSaveData()
+        {
+			var users = await User.FindAllAsync();
+			//var gameSaveTask = await GameSaveProvider.GetForUserAsync(users[0], "00000000-0000-0000-0000-000063336555");
+
+			//Debug.WriteLine($"클라우드 동기화 연결 결과: {gameSaveTask.Status}");
+
+			InitializeKeyEvent();
+		}
+
+		private void InitializeKeyEvent()
+        {
+			TypedEventHandler<CoreWindow, KeyEventArgs> mainPageKeyUpEvent = null;
+			mainPageKeyUpEvent = async (sender, args) =>
 			{
 				Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
 
@@ -77,35 +100,32 @@ namespace Lore
 				}
 				else
 				{
-					if (args.VirtualKey == VirtualKey.Enter)
+					if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
 					{
 						if (mFocusItem == 1)
 						{
-
-							var users = await User.FindAllAsync();
-							var gameSaveTask = await GameSaveProvider.GetForUserAsync(users[0], "00000000-0000-0000-0000-000063336555");
-
-
-							Window.Current.CoreWindow.KeyUp -= mainPageKeyEvent;
+							Window.Current.CoreWindow.KeyUp -= mainPageKeyUpEvent;
 							Frame.Navigate(typeof(NewGamePage));
 						}
-						else if (mFocusItem == 2) {
-							Window.Current.CoreWindow.KeyUp -= mainPageKeyEvent;
+						else if (mFocusItem == 2)
+						{
+							Window.Current.CoreWindow.KeyUp -= mainPageKeyUpEvent;
 							Frame.Navigate(typeof(GamePage));
 						}
-						else {
+						else
+						{
 							CoreApplication.Exit();
 						}
 					}
 					else if (mFocusItem == 1)
 					{
-						if (args.VirtualKey == VirtualKey.Down)
+						if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadDPadDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown)
 						{
 							newGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
 							loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
 							mFocusItem = 2;
 						}
-						else if (args.VirtualKey == VirtualKey.Up)
+						else if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadDPadUp || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp)
 						{
 							newGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
 							exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
@@ -115,13 +135,13 @@ namespace Lore
 					}
 					else if (mFocusItem == 2)
 					{
-						if (args.VirtualKey == VirtualKey.Down)
+						if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadDPadDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown)
 						{
 							loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
 							exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
 							mFocusItem = 3;
 						}
-						else if (args.VirtualKey == VirtualKey.Up)
+						else if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadDPadUp || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp)
 						{
 							loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
 							newGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
@@ -130,13 +150,13 @@ namespace Lore
 					}
 					else if (mFocusItem == 3)
 					{
-						if (args.VirtualKey == VirtualKey.Down)
+						if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadDPadDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown)
 						{
 							exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
 							newGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
 							mFocusItem = 1;
 						}
-						else if (args.VirtualKey == VirtualKey.Up)
+						else if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadDPadUp || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp)
 						{
 							exitGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x53, 0x50, 0xf7));
 							loadGameItem.Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xff, 0xff, 0xff));
@@ -147,7 +167,7 @@ namespace Lore
 				}
 			};
 
-			Window.Current.CoreWindow.KeyUp += mainPageKeyEvent;
+			Window.Current.CoreWindow.KeyUp += mainPageKeyUpEvent;
 		}
 
 		private void prologControl_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)

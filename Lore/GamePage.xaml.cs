@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.System;
+using Windows.System.Profile;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -59,6 +60,11 @@ namespace Lore
 		private List<TextBlock> mPlayerACList = new List<TextBlock>();
 		private List<TextBlock> mPlayerLevelList = new List<TextBlock>();
 		private List<TextBlock> mPlayerConditionList = new List<TextBlock>();
+		
+		private List<TextBlock> mMenuList = new List<TextBlock>();
+		private MenuMode mMenuMode = MenuMode.None;
+		private int mMenuCount = 0;
+		private int mMenuFocusID = 0;
 
 		private Random mRand = new Random();
 
@@ -117,6 +123,14 @@ namespace Lore
 			mPlayerConditionList.Add(PlayerCondition4);
 			mPlayerConditionList.Add(PlayerCondition5);
 
+			mMenuList.Add(GameMenuText0);
+			mMenuList.Add(GameMenuText1);
+			mMenuList.Add(GameMenuText2);
+			mMenuList.Add(GameMenuText3);
+			mMenuList.Add(GameMenuText4);
+			mMenuList.Add(GameMenuText5);
+			mMenuList.Add(GameMenuText6);
+			mMenuList.Add(GameMenuText7);
 
 			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
 			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
@@ -140,7 +154,9 @@ namespace Lore
 					ContinueText.Visibility = Visibility.Collapsed;
 					TalkMode(mTalkX, mTalkY, args.VirtualKey);
 				}
-				else if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.Right)
+				else if (mMenuMode == MenuMode.None && (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.Right ||
+				 args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickLeft || args.VirtualKey == VirtualKey.GamepadLeftThumbstickRight ||
+				 args.VirtualKey == VirtualKey.GamepadDPadUp || args.VirtualKey == VirtualKey.GamepadDPadDown || args.VirtualKey == VirtualKey.GamepadDPadLeft || args.VirtualKey == VirtualKey.GamepadDPadRight))
 				{
 					void MovePlayer(int moveX, int moveY)
 					{
@@ -151,7 +167,7 @@ namespace Lore
 					var x = mParty.XAxis;
 					var y = mParty.YAxis;
 
-					if (args.VirtualKey == VirtualKey.Up)
+					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadDPadUp || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp)
 					{
 						y--;
 						if (mPosition == PositionType.Town)
@@ -159,7 +175,7 @@ namespace Lore
 						else
 							mFace = 5;
 					}
-					else if (args.VirtualKey == VirtualKey.Down)
+					else if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadDPadDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown)
 					{
 						y++;
 						if (mPosition == PositionType.Town)
@@ -167,7 +183,7 @@ namespace Lore
 						else
 							mFace = 4;
 					}
-					else if (args.VirtualKey == VirtualKey.Left)
+					else if (args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.GamepadLeftThumbstickLeft || args.VirtualKey == VirtualKey.GamepadDPadLeft)
 					{
 						x--;
 						if (mPosition == PositionType.Town)
@@ -175,7 +191,7 @@ namespace Lore
 						else
 							mFace = 7;
 					}
-					else if (args.VirtualKey == VirtualKey.Right)
+					else if (args.VirtualKey == VirtualKey.Right || args.VirtualKey == VirtualKey.GamepadLeftThumbstickRight || args.VirtualKey == VirtualKey.GamepadDPadRight)
 					{
 						x++;
 						if (mPosition == PositionType.Town)
@@ -241,224 +257,406 @@ namespace Lore
 			gamePageKeyUpEvent = async (sender, args) => {
 				if (ContinueText.Visibility == Visibility.Visible)
 					mNextMode = true;
+				else if (mTalkMode == 0 && mMenuMode == MenuMode.None && (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadMenu))
+                {
+					AppendText(new string[] { "당신의 명령을 고르시오 ===>" });
+
+					ShowMenu(MenuMode.Game, new string[]
+					{
+						"일행의 상황을 본다",
+						"개인의 상황을 본다",
+						"일행의 건강 상태를 본다",
+						"마법을 사용한다",
+						"초능력을 사용한다",
+						"여기서 쉰다",
+						"게임 선택 상황"
+					});
+                }
+				else if (mMenuMode != MenuMode.None)
+                {
+					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp)
+                    {
+						if (mMenuFocusID == 0)
+							mMenuFocusID = mMenuCount - 1;
+						else
+							mMenuFocusID--;
+
+						FocusMenuItem();
+
+					}
+					else if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadDPadDown)
+                    {
+						mMenuFocusID = (mMenuFocusID + 1) % mMenuCount;
+						FocusMenuItem();
+
+					}
+					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
+					{
+						if (mMenuMode == MenuMode.Game)
+						{
+							AppendText(new string[] { "" });
+							HideMenu();
+						}
+					}
+					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
+                    {
+						HideMenu();
+						if (mMenuMode == MenuMode.Game)
+                        {
+							if (mMenuFocusID == 0)
+							{
+								string CheckEnable(int i)
+								{
+									if (mParty.Etc[i] == 0)
+										return "불가";
+									else
+										return "가능";
+								}
+
+								AppendText(new string[] { $"X 축 = {mParty.XAxis + 1 }",
+									$"Y 축 = {mParty.YAxis + 1}",
+									"",
+									$"남은 식량 = {mParty.Food}",
+									$"남은 황금 = {mParty.Gold}",
+									"",
+									$"마법의 횃불 : {CheckEnable(0)}",
+									$"공중 부상 : {CheckEnable(3)}",
+									$"물위를 걸음 : {CheckEnable(1)}",
+									$"늪위를 걸음 : {CheckEnable(2)}"
+								});
+
+								mMenuMode = MenuMode.None;
+							}
+							else
+							{
+								AppendText(new string[] { "능력을 보고싶은 인물을 선택하시오" });
+								ShowCharacterMenu(MenuMode.ViewCharacter);
+							}
+                        }
+						else if (mMenuMode == MenuMode.ViewCharacter)
+                        {
+							mMenuMode = MenuMode.None;
+
+							var shieldStr = mPlayerList[mMenuFocusID].Shield != 0 ? $"[color = 00ff00]방패 - {Common.GetDefenceStr(mPlayerList[mMenuFocusID].Weapon)}[/ color]" : "";
+							var armorStr = mPlayerList[mMenuFocusID].Armor != 0 ? $"[color=00ff00]갑옷 - {Common.GetDefenceStr(mPlayerList[mMenuFocusID].Weapon)}[/color]" : "";
+
+							AppendText(new string[] { $"# 이름 : {mPlayerList[mMenuFocusID].Name}",
+								$"# 성별 : {Common.GetGenderStr(mPlayerList[mMenuFocusID])}",
+								$"# 계급 : {Common.GetClassStr(mPlayerList[mMenuFocusID])}",
+								"",
+								$"[color=00ffff]체력 : {mPlayerList[mMenuFocusID].Strength}[/color]\t[color=00ffff]정신력 : {mPlayerList[mMenuFocusID].Mentality}[/color]\t[color=00ffff]집중력 : {mPlayerList[mMenuFocusID].Concentration}[/color]\t[color=00ffff]인내력 : {mPlayerList[mMenuFocusID].Endurance}[/color]",
+								$"[color=00ffff]저항력 : {mPlayerList[mMenuFocusID].Resistance}[/color]\t[color=00ffff]민첩성 : {mPlayerList[mMenuFocusID].Agility}[/color]\t[color=00ffff]행운 : {mPlayerList[mMenuFocusID].Luck}[/color]",
+								"",
+								$"[color=00ffff]무기의 정확성 : {mPlayerList[mMenuFocusID].Accuracy[0]}[/color]\t\t[color=00ffff]전투 레벨 : {mPlayerList[mMenuFocusID].Level[0]}[/color]",
+								$"[color=00ffff]정신력의 정확성 : {mPlayerList[mMenuFocusID].Accuracy[1]}[/color]\t[color=00ffff]마법 레벨 : {mPlayerList[mMenuFocusID].Level[1]}[/color]",
+								$"[color=00ffff]초감각의 정확성 : {mPlayerList[mMenuFocusID].Accuracy[2]}[/color]\t[color=00ffff]초감각 레벨 : {mPlayerList[mMenuFocusID].Level[2]}[/color]",
+								"",
+								$"[color=00ffff]## 경험치 : {mPlayerList[mMenuFocusID].Experience}[/color]",
+								"",
+								$"[color=00ff00]사용 무기 - {Common.GetWeaponStr(mPlayerList[mMenuFocusID].Weapon)}[/color]\t{shieldStr}\t{armorStr}"
+							});
+						}
+					}
+				}
 			};
 
 			Window.Current.CoreWindow.KeyDown += gamePageKeyDownEvent;
 			Window.Current.CoreWindow.KeyUp += gamePageKeyUpEvent;
 		}
 
-		private int AppendText(RichTextBlock textBlock, Paragraph paragraph, int prevLen, string text)
-		{
-			var totalLen = prevLen;
-			var startIdx = 0;
-			while ((startIdx = text.IndexOf("[")) >= 0)
-			{
-				var preRun = new Run();
-				preRun.Text = text.Substring(0, startIdx);
-				totalLen += preRun.Text.Length;
-				text = text.Substring(startIdx + 1);
+		private void ShowCharacterMenu(MenuMode menuMode)
+        {
+			AppendText(new string[] { "[color=90ee90]한명을 고르시오 ---[/color]" }, true);
 
-				paragraph.Inlines.Add(preRun);
-				textBlock.TextHighlighters.Add(new TextHighlighter()
-				{
-					Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x95, 0x95, 0x95)),
-					Background = new SolidColorBrush(Colors.Transparent),
-					Ranges = { new TextRange()
-										{
-											StartIndex = prevLen,
-											Length = preRun.Text.Length
-										}
-									}
-				});
+			var menuStr = new string[mPlayerList.Count];
+			for (var i = 0; i < mPlayerList.Count; i++)
+				menuStr[i] = mPlayerList[i].Name;
 
-				startIdx = text.IndexOf("]");
-				if (startIdx < 0)
-					break;
-
-				var tag = text.Substring(0, startIdx);
-				text = text.Substring(startIdx + 1);
-				var tagData = tag.Split("=");
-
-				var endTag = $"[/{tagData[0]}]";
-				startIdx = text.IndexOf(endTag);
-
-				if (startIdx < 0)
-					break;
-
-
-				if (tagData[0] == "color" && tagData.Length > 1 && tagData[1].Length == 6)
-				{
-					var tagRun = new Run();
-					tagRun.Text = text.Substring(0, startIdx);
-
-					paragraph.Inlines.Add(tagRun);
-					textBlock.TextHighlighters.Add(new TextHighlighter()
-					{
-						Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(tagData[1].Substring(0, 2), 16), Convert.ToByte(tagData[1].Substring(2, 2), 16), Convert.ToByte(tagData[1].Substring(4, 2), 16))),
-						Background = new SolidColorBrush(Colors.Transparent),
-						Ranges = { new TextRange()
-										{
-											StartIndex = totalLen,
-											Length = tagRun.Text.Length
-										}
-									}
-					});
-
-					totalLen += tagRun.Text.Length;
-				}
-
-				text = text.Substring(startIdx + endTag.Length);
-			}
-
-			var run = new Run();
-			run.Text = text;
-
-			paragraph.Inlines.Add(run);
-			textBlock.TextHighlighters.Add(new TextHighlighter()
-			{
-				Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0x95, 0x95, 0x95)),
-				Background = new SolidColorBrush(Colors.Transparent),
-				Ranges = { new TextRange()
-					{
-						StartIndex = totalLen,
-						Length = run.Text.Length
-					}
-				}
-			});
-
-			totalLen += run.Text.Length;
-
-			return totalLen;
+			ShowMenu(menuMode, menuStr);
 		}
 
-		private void TalkMode(int moveX, int moveY, VirtualKey key = VirtualKey.None)
+		private void FocusMenuItem()
 		{
-			int GetPrevTextLength() {
-				var strLen = 0;
+			for (var i = 0; i < mMenuCount; i++)
+			{
+				if (i == mMenuFocusID)
+					mMenuList[i].Foreground = new SolidColorBrush(Colors.Yellow);
+				else
+					mMenuList[i].Foreground = new SolidColorBrush(Colors.LightGray);
+			}
+		}
 
+		private void ShowMenu(MenuMode menuMode, string[] menuItem)
+        {
+			mMenuMode = menuMode;
+			mMenuCount = menuItem.Length;
+			mMenuFocusID = 0;
+
+			for (var i = 0; i < mMenuCount && i < mMenuList.Count; i++)
+            {
+				mMenuList[i].Text = menuItem[i];
+				mMenuList[i].Visibility = Visibility.Visible;
+            }
+			
+			FocusMenuItem();
+		}
+
+		private void HideMenu()
+        {
+			for (var i = 0; i < mMenuCount; i++)
+			{
+				mMenuList[i].Visibility = Visibility.Collapsed;
+			}
+		}
+
+		private void AppendText(string[] text, bool append = false)
+		{
+			var totalLen = 0;
+
+			if (append)
+			{
 				foreach (Paragraph prevParagraph in DialogText.Blocks)
 				{
 					foreach (Run prevRun in prevParagraph.Inlines)
 					{
-						strLen += prevRun.Text.Length;
+						totalLen += prevRun.Text.Length;
 					}
 				}
-
-				return strLen;
 			}
+			else
+            {
+				DialogText.TextHighlighters.Clear();
+				DialogText.Blocks.Clear();
+            }
 
+			var paragraph = new Paragraph();
+			DialogText.Blocks.Add(paragraph);
+
+			for (var i = 0; i < text.Length; i++)
+			{
+				string str;
+				if (i == 0)
+					str = text[i];
+				else
+					str = "\r\n" + text[i];
+
+				var startIdx = 0;
+				while ((startIdx = str.IndexOf("[")) >= 0)
+				{
+					var preRun = new Run();
+					preRun.Text = str.Substring(0, startIdx);
+					
+					paragraph.Inlines.Add(preRun);
+					DialogText.TextHighlighters.Add(new TextHighlighter()
+					{
+						Foreground = new SolidColorBrush(Colors.LightGray),
+						Background = new SolidColorBrush(Colors.Transparent),
+						Ranges = { new TextRange()
+							{
+								StartIndex = totalLen,
+								Length = preRun.Text.Length
+							}
+						}
+					});
+
+					totalLen += preRun.Text.Length;
+					str = str.Substring(startIdx + 1);
+
+					startIdx = str.IndexOf("]");
+					if (startIdx < 0)
+						break;
+
+					var tag = str.Substring(0, startIdx);
+					str = str.Substring(startIdx + 1);
+					var tagData = tag.Split("=");
+
+					var endTag = $"[/{tagData[0]}]";
+					startIdx = str.IndexOf(endTag);
+
+					if (startIdx < 0)
+						break;
+
+
+					if (tagData[0] == "color" && tagData.Length > 1 && tagData[1].Length == 6)
+					{
+						var tagRun = new Run();
+						tagRun.Text = str.Substring(0, startIdx);
+
+						paragraph.Inlines.Add(tagRun);
+						DialogText.TextHighlighters.Add(new TextHighlighter()
+						{
+							Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(tagData[1].Substring(0, 2), 16), Convert.ToByte(tagData[1].Substring(2, 2), 16), Convert.ToByte(tagData[1].Substring(4, 2), 16))),
+							Background = new SolidColorBrush(Colors.Transparent),
+							Ranges = { new TextRange()
+											{
+												StartIndex = totalLen,
+												Length = tagRun.Text.Length
+											}
+										}
+						});
+
+						totalLen += tagRun.Text.Length;
+					}
+
+					str = str.Substring(startIdx + endTag.Length);
+				}
+
+				var run = new Run();
+				run.Text = str;
+
+				paragraph.Inlines.Add(run);
+				DialogText.TextHighlighters.Add(new TextHighlighter()
+				{
+					Foreground = new SolidColorBrush(Colors.LightGray),
+					Background = new SolidColorBrush(Colors.Transparent),
+					Ranges = { new TextRange()
+						{
+							StartIndex = totalLen,
+							Length = run.Text.Length
+						}
+					}
+				});
+
+				totalLen += run.Text.Length;
+			}
+		}
+
+		private void TalkMode(int moveX, int moveY, VirtualKey key = VirtualKey.None)
+		{
 			if ((moveX == 49 && moveY == 50) || (moveX == 51 && moveY == 50))
 			{
 				if (mTalkMode == 0)
 				{
-					DialogText.TextHighlighters.Clear();
-					DialogText.Blocks.Clear();
-
-					var paragraph = new Paragraph();
-					DialogText.Blocks.Add(paragraph);
-
 					if ((mParty.Etc[29] & 1) == 1)
-						AppendText(DialogText, paragraph, 0, "행운을 빌겠소 !!!");
+						AppendText(new string[] { "행운을 빌겠소 !!!" });
 					else if (mParty.Etc[9] < 3)
-						AppendText(DialogText, paragraph, 0, "저희 성주님을 만나 보십시오.");
+						AppendText(new string[] { "저희 성주님을 만나 보십시오." });
 					else
 					{
-						AppendText(DialogText, paragraph, 0, "당신은 이 게임 세계에 도전하고 싶습니까 ?\r\n(Y/n)");
+						AppendText(new string[] { "당신은 이 게임 세계에 도전하고 싶습니까 ?",
+						AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Xbox" ? "(A: 예 / B: 아니오)" : "(Y/n)" });
 
 						mTalkMode = 1;
 						mTalkX = moveX;
 						mTalkY = moveY;
 					}
 				}
-				else if (mTalkMode == 1 && key == VirtualKey.Y) {
-					var paragraph = new Paragraph();
-					DialogText.Blocks.Add(paragraph);
+                else if (mTalkMode == 1 && (key == VirtualKey.Y || key == VirtualKey.GamepadA))
+                {
+                    mMapLayer[48 + mMapWidth * 51] = 47;
+                    mMapLayer[49 + mMapWidth * 51] = 44;
+                    mMapLayer[50 + mMapWidth * 51] = 44;
+                    mMapLayer[51 + mMapWidth * 51] = 44;
+                    mMapLayer[52 + mMapWidth * 51] = 47;
+                    mMapLayer[48 + mMapWidth * 52] = 47;
+                    mMapLayer[49 + mMapWidth * 52] = 44;
+                    mMapLayer[50 + mMapWidth * 52] = 44;
+                    mMapLayer[51 + mMapWidth * 52] = 44;
+                    mMapLayer[52 + mMapWidth * 52] = 45;
 
-					mMapLayer[48 + mMapWidth * 51] = 47;
-					mMapLayer[49 + mMapWidth * 51] = 44;
-					mMapLayer[50 + mMapWidth * 51] = 44;
-					mMapLayer[51 + mMapWidth * 51] = 44;
-					mMapLayer[52 + mMapWidth * 51] = 47;
-					mMapLayer[48 + mMapWidth * 52] = 47;
-					mMapLayer[49 + mMapWidth * 52] = 44;
-					mMapLayer[50 + mMapWidth * 52] = 44;
-					mMapLayer[51 + mMapWidth * 52] = 44;
-					mMapLayer[52 + mMapWidth * 52] = 45;
+                    AppendText(new string[] { "",
+						"예.",
+						"",
+						"이제부터 당신은 진정한 이 세계에 발을 디디게 되는 것입니다." }, true);
 
-					var strLen = GetPrevTextLength();
-					strLen = AppendText(DialogText, paragraph, strLen, "\r\n예.\r\n\r\n");
-					AppendText(DialogText, paragraph, strLen, "이제부터 당신은 진정한 이 세계에 발을 디디게 되는 것입니다.");
+                    ContinueText.Visibility = Visibility.Visible;
+                    mParty.Etc[29] = mParty.Etc[29] | 1;
 
-					ContinueText.Visibility = Visibility.Visible;
-					mParty.Etc[29] = mParty.Etc[29] | 1;
-					
-					mTalkMode = 0;
-				}
-				else if (mTalkMode == 1 && key == VirtualKey.N)
-				{
-					var paragraph = new Paragraph();
-					DialogText.Blocks.Add(paragraph);
+                    mTalkMode = 0;
+                }
+                else if (mTalkMode == 1 && (key == VirtualKey.N || key == VirtualKey.GamepadB))
+                {
+					AppendText(new string[] { "",
+						"아니오.",
+						"",
+						"다시 생각 해보십시오." }, true);
 
-					var strLen = GetPrevTextLength();
-					strLen = AppendText(DialogText, paragraph, strLen, "\r\n아니오.\r\n\r\n");
-					AppendText(DialogText, paragraph, strLen, "다시 생각 해보십시오.");
+                    ContinueText.Visibility = Visibility.Visible;
+                    mTalkMode = 0;
+                }
+            }
+            else if (moveX == 50 && moveY == 27)
+            {
+                if (mTalkMode == 0)
+                {
+                    if (mParty.Etc[9] == 0)
+                    {
+                        AppendText(new string[] { "나는 [color=62e4f2]로드 안[/color]이오.",
+							"이제부터 당신은 이 게임에서 새로운 인물로서 생을 시작하게 될것이오. 그럼 나의 이야기를 시작하겠소." });
+                        ContinueText.Visibility = Visibility.Visible;
 
-					ContinueText.Visibility = Visibility.Visible;
-					mTalkMode = 0;
-				}
-			}
-			else if (moveX == 50 && moveY == 27)
-			{
-				DialogText.TextHighlighters.Clear();
-				DialogText.Blocks.Clear();
+                        mParty.Etc[9]++;
 
-				var paragraph = new Paragraph();
-				DialogText.Blocks.Add(paragraph);
+                        mTalkMode = 1;
+                        mTalkX = moveX;
+                        mTalkY = moveY;
+                    }
+                    else if (mParty.Etc[9] == 3)
+                    {
+						AppendText(new string[] { " 대륙의 남서쪽에 있는 '[color=62e4f2]메나스[/color]'를 탐사해 주시오." });
+                        ContinueText.Visibility = Visibility.Visible;
+                    }
+					else if (mParty.Etc[9] == 4)
+                    {
+						AppendText(new string[] { "당신들의 성공을 축하하오 !!",
+						"[color=62e4f2][EXP + 1000][/color]" });
 
-				if (mTalkMode == 0)
-				{
-					var strLen = 0;
-					if (mParty.Etc[9] == 0)
-					{
-						strLen = AppendText(DialogText, paragraph, strLen, "나는 [color=62e4f2]로드 안[/color]이오.\r\n");
-						AppendText(DialogText, paragraph, strLen, "이제부터 당신은 이 게임에서 새로운 인물로서 생을 시작하게 될것이오. 그럼 나의 이야기를 시작하겠소.");
-						ContinueText.Visibility = Visibility.Visible;
+						mPlayerList.ForEach(delegate (Lore player)
+						{
+							player.Experience += 1000;
+						});
 
 						mParty.Etc[9]++;
-
-						mTalkMode = 1;
-						mTalkX = moveX;
-						mTalkY = moveY;
-					}
-					else if (mParty.Etc[9] == 3) {
-						strLen = AppendText(DialogText, paragraph, strLen, " 대륙의 남서쪽에 있는 '[color=62e4f2]메나스[/color]'를 탐사해 주시오.");
 						ContinueText.Visibility = Visibility.Visible;
 					}
-				}
-				else if (mTalkMode == 1) {
-					var strLen = 0;
-					strLen = AppendText(DialogText, paragraph, strLen, " 이 세계는 내가 통치하는 동안에는 무척 평화로운 세상이 진행되어 왔었소. 그러나 그것은 한 운명의 장난으로 무참히 깨어져 버렸소.\r\n");
-					strLen = AppendText(DialogText, paragraph, strLen, " 한날, 대기의 공간이 진동하며 난데없는 푸른 번개가 대륙들 중의 하나를 강타했소." +
-					"  공간은 휘어지고 시간은 진동하며  이 세계를 공포 속으로 몰고 갔소.\r\n" +
-					"  그 번개의 위력으로 그 불운한 대륙은  황폐화된 용암 대지로 변하고 말았고, 다른 하나의 대륙은 충돌시의 진동에 의해 바다 깊이 가라앉아 버렸소.\r\n");
+					else if (mParty.Etc[9] == 5)
+                    {
+						AppendText(new string[] { " 드디어 나는 당신들의 능력을 믿을수 있게 되었소.  그렇다면 당신들에게 Necromancer 응징이라는 막중한 임무를 한번 맡겨 보겠소.",
+							"먼저 대륙의 동쪽에 있는 '[color=62e4f2]LASTDITCH[/color]'에 가보도록 하시오. '[color=62e4f2]LASTDITCH[/color]'성에는 지금 많은 근심에 쌓여있소. 그들을 도와 주시오." });
+
+						mParty.Etc[9]++;
+						ContinueText.Visibility = Visibility.Visible;
+					}
+					else if (mParty.Etc[9] == 6)
+                    {
+						AppendText(new string[] { " 당신은 이제 스스로 행동해 나가시오." });
+						ContinueText.Visibility = Visibility.Visible;
+					}
+                }
+                else if (mTalkMode == 1)
+                {
+					AppendText(new string[] { " 이 세계는 내가 통치하는 동안에는 무척 평화로운 세상이 진행되어 왔었소. 그러나 그것은 한 운명의 장난으로 무참히 깨어져 버렸소.",
+						" 한날, 대기의 공간이 진동하며 난데없는 푸른 번개가 대륙들 중의 하나를 강타했소. 공간은 휘어지고 시간은 진동하며  이 세계를 공포 속으로 몰고 갔소." +
+						"  그 번개의 위력으로 그 불운한 대륙은  황폐화된 용암 대지로 변하고 말았고, 다른 하나의 대륙은 충돌시의 진동에 의해 바다 깊이 가라앉아 버렸소.",
+						" 그런 일이 있은 한참 후에,  이상하게도 용암대지의 대륙으로부터 강한 생명의 기운이 발산되기 시작 했소." +
+						"  그래서, 우리들은 그 원인을 알아보기 위해 'LORE 특공대'를 조직하기로 합의를 하고 " +
+						"이곳에 있는 거의 모든 용사들을 모아서 용암 대지로 변한 그 대륙으로 급히 그들을 파견하였지만 여태껏 아무 소식도 듣지못했소. 그들이 생존해 있는지 조차도 말이오.",
+						" 이런 저런 방법을 통하여 그들의 생사를 알아려던중 우연히 우리들은 '[color=62e4f2]Necromancer[/color]'라고 불리우는  용암 대지속의  새로운 세력의 존재를" +
+						"알아내었고,  그때의 그들은 이미 막강한 세력으로 성장해가고 있는중 이었소.  그때의 번개는 그가 이 공간으로 이동하는 수단이었소. 즉 그는 이 공간의 인물이 아닌 다른 차원을 가진공간에서 왔던 것이오."
+					});
 					ContinueText.Visibility = Visibility.Visible;
-					mParty.Etc[9]++;
+                    mParty.Etc[9]++;
 
-					mTalkMode = 2;
-					mTalkX = moveX;
-					mTalkY = moveY;
-				}
-				else if (mTalkMode == 2) {
-					var strLen = 0;
-					strLen = AppendText(DialogText, paragraph, strLen, " 네크로맨서 의 영향력은 이미 로어 대륙까지 도달해있소.  또한 그들은 이 대륙의 남서쪽에 '메나스' 라고 불리우는 지하 동굴을 얼마전에 구축했소.  그래서, 그 동굴의 존재 때문에 우리들은 그에게 위협을 당하게 되었던 것이오.");
-					ContinueText.Visibility = Visibility.Visible;
+                    mTalkMode = 2;
+                    mTalkX = moveX;
+                    mTalkY = moveY;
+                }
+                else if (mTalkMode == 2)
+                {
+					AppendText(new string[] { " 그는 현재 이 세계의 반을  그의 세력권 안에 넣고 있소. 여기서 당신의 궁극적인 임무는 바로 '[color=62e4f2]Necromancer의 야심을 봉쇄 시키는 것[/color]'이라는 걸 명심해 두시오.",
+						" 네크로맨서 의 영향력은 이미 로어 대륙까지 도달해있소.  또한 그들은 이 대륙의 남서쪽에 '메나스' 라고 불리우는 지하 동굴을 얼마전에 구축했소.  그래서, 그 동굴의 존재 때문에 우리들은 그에게 위협을 당하게 되었던 것이오.",
+						" 하지만, LORE 특공대가 이 대륙을 떠난후로는 그 일당들에게 대적할 용사는  이미 남아있지 않았소. 그래서 부탁하건데, 그 동굴을 중심부까지 탐사해 주시오.",
+						" 나는 당신들에게 Necromancer에 대한 일을 맡기고 싶지만, 아직은 당신들의  확실한 능력을 모르는 상태이지요.  그래서 이 일은 당신들의 잠재력을 증명해 주는 좋은 기회가 될것이오.",
+						" 만약 당신들이 무기가 필요하다면 무기고에서 약간의 무기를 가져가도록 허락하겠소."
+					});
+                    ContinueText.Visibility = Visibility.Visible;
 
-					mParty.Etc[9]++;
+                    mParty.Etc[9]++;
 
-					mTalkMode = 0;
-				}
-			}
-		}
+                    mTalkMode = 0;
+                }
+            }
+        }
 
 		private void canvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
 		{
@@ -536,7 +734,8 @@ namespace Lore
 
 			Vector4 tint = Vector4.One;
 
-			mMapTiles.Draw(sb, layer[index], mMapTiles.SpriteSize * new Vector2(column, row), tint);
+			if (mMapTiles != null)
+				mMapTiles.Draw(sb, layer[index], mMapTiles.SpriteSize * new Vector2(column, row), tint);
 		}
 
 		private async Task LoadFile() {
@@ -697,7 +896,7 @@ namespace Lore
 		}
 
 		private void DisplayPlayerInfo() {
-			for (var i = 0; i < mPlayerList.Count; i++) {
+			for (var i = 0; i < mPlayerList.Count && i < 6; i++) {
 				mPlayerNameList[i].Text = mPlayerList[i].Name;
 				mPlayerNameList[i].Foreground = new SolidColorBrush(Colors.White);
 
@@ -712,25 +911,25 @@ namespace Lore
 		}
 
 		private void DisplayHP() {
-			for (var i = 0; i < mPlayerList.Count; i++)
+			for (var i = 0; i < mPlayerList.Count && i < 6; i++)
 				mPlayerHPList[i].Text = mPlayerList[i].HP.ToString();
 		}
 
 		private void DisplaySP()
 		{
-			for (var i = 0; i < mPlayerList.Count; i++)
+			for (var i = 0; i < mPlayerList.Count && i < 6; i++)
 				mPlayerSPList[i].Text = mPlayerList[i].SP.ToString();
 		}
 
 		private void DisplayESP()
 		{
-			for (var i = 0; i < mPlayerList.Count; i++)
+			for (var i = 0; i < mPlayerList.Count && i < 6; i++)
 				mPlayerESPList[i].Text = mPlayerList[i].ESP.ToString();
 		}
 
 		private void DisplayCondition()
 		{
-			for (var i = 0; i < mPlayerList.Count; i++)
+			for (var i = 0; i < mPlayerList.Count && i < 6; i++)
 				mPlayerConditionList[i].Text = GetConditionName(i);
 		}
 
@@ -773,148 +972,147 @@ namespace Lore
 
 		private void ShowSign(int x, int y)
 		{
-			DialogText.TextHighlighters.Clear();
-			DialogText.Blocks.Clear();
-
-			var paragraph = new Paragraph();
-			DialogText.Blocks.Add(paragraph);
-
-			var strLen = 0;
-			strLen = AppendText(DialogText, paragraph, strLen, "푯말에 쓰여있기로 ...\r\n\r\n");
+            AppendText(new string[] { "푯말에 쓰여있기로 ...\r\n\r\n" });
 
 			if (mParty.Map == 2)
 			{
 				if (x == 30 && y == 43)
-					AppendText(DialogText, paragraph, strLen, "          WIVERN 가는길\r\n");
+					AppendText(new string[] { "          WIVERN 가는길" }, true);
 				else if ((x == 28 && y == 49) || (x == 34 && x == 71))
 				{
-					strLen = AppendText(DialogText, paragraph, strLen, "  북쪽 :\r\n");
-					strLen = AppendText(DialogText, paragraph, strLen, "       VALIANT PEOPLES 가는길\r\n");
-					strLen = AppendText(DialogText, paragraph, strLen, "  남쪽 :\r\n");
-					AppendText(DialogText, paragraph, strLen, "       GAIA TERRA 가는길");
+
+					AppendText(new string[] { "  북쪽 :",
+						"       VALIANT PEOPLES 가는길",
+						"  남쪽 :",
+						"       GAIA TERRA 가는길" }, true);
 				}
 				else if (x == 43 && y == 76)
 				{
-					strLen = AppendText(DialogText, paragraph, strLen, "  북동쪽 :\r\n");
-					strLen = AppendText(DialogText, paragraph, strLen, "       QUAKE 가는길\r\n");
-					strLen = AppendText(DialogText, paragraph, strLen, "  남서쪽 :\r\n");
-					AppendText(DialogText, paragraph, strLen, "       GAIA TERRA 가는길\r\n");
+					AppendText(new string[] { "  북동쪽 :",
+						"       QUAKE 가는길",
+						"  남서쪽 :",
+						"       GAIA TERRA 가는길" }, true);
 				}
 			}
 			else if (mParty.Map == 6)
 			{
 				if (x == 50 && y == 83)
 				{
-					strLen = AppendText(DialogText, paragraph, strLen, "       여기는 '[color=62e4f2]CASTLE LORE[/color]'성\r\n");
-					strLen = AppendText(DialogText, paragraph, strLen, "         여러분을 환영합니다\r\n\r\n");
-					AppendText(DialogText, paragraph, strLen, "[color=ff00ff]Lord Ahn[/color]");
+					AppendText(new string[] { "       여기는 '[color=62e4f2]CASTLE LORE[/color]'성",
+						"         여러분을 환영합니다",
+						"",
+						"[color=ff00ff]Lord Ahn[/color]" }, true);
 				}
 				else if (x == 23 && y == 30)
 				{
-					strLen = AppendText(DialogText, paragraph, strLen, "\r\n             여기는 LORE 주점\r\n");
-					AppendText(DialogText, paragraph, strLen, "       여러분 모두를 환영합니다 !!");
+					AppendText(new string[] { "",
+						"             여기는 LORE 주점",
+						"       여러분 모두를 환영합니다 !!" }, true);
 				}
 				else if ((x == 50 && y == 17) || (x == 51 && y == 17))
-					AppendText(DialogText, paragraph, strLen, "\r\n          LORE 왕립  죄수 수용소");
+					AppendText(new string[] { "",
+					"          LORE 왕립  죄수 수용소" }, true);
 			}
 			else if (mParty.Map == 7)
 			{
 				if (x == 38 && y == 67)
 				{
-					strLen = AppendText(DialogText, paragraph, strLen, "        여기는 '[color=62e4f2]LASTDITCH[/color]'성\r\n");
-					AppendText(DialogText, paragraph, strLen, "         여러분을 환영합니다");
+					AppendText(new string[] { "        여기는 '[color=62e4f2]LASTDITCH[/color]'성",
+						"         여러분을 환영합니다" }, true);
 				}
 				else if (x == 38 && y == 7)
-					AppendText(DialogText, paragraph, strLen, "       여기는 PYRAMID 의 입구");
+					AppendText(new string[] { "       여기는 PYRAMID 의 입구" }, true);
 				else if (x == 53 && y == 8)
-					AppendText(DialogText, paragraph, strLen, "       여기는 PYRAMID 의 입구");
+					AppendText(new string[] { "       여기는 PYRAMID 의 입구" }, true);
 			}
 			else if (mParty.Map == 8)
 			{
 				if (x == 38 && y == 66)
 				{
-					strLen = AppendText(DialogText, paragraph, strLen, "      여기는 '[color=62e4f2]VALIANT PEOPLES[/color]'성\r\n");
-					strLen = AppendText(DialogText, paragraph, strLen, "    우리의 미덕은 굽히지 않는 용기\r\n");
-					AppendText(DialogText, paragraph, strLen, "   우리는 어떤 악에도 굽히지 않는다");
+					AppendText(new string[] { "      여기는 '[color=62e4f2]VALIANT PEOPLES[/color]'성",
+					"    우리의 미덕은 굽히지 않는 용기",
+					"   우리는 어떤 악에도 굽히지 않는다" }, true);
 				}
 				else
-					AppendText(DialogText, paragraph, strLen, "     여기는 EVIL SEAL 의 입구");
+					AppendText(new string[] { "     여기는 EVIL SEAL 의 입구" }, true);
 			}
 			else if (mParty.Map == 9)
 			{
 				if (x == 23 && y == 25)
-					AppendText(DialogText, paragraph, strLen, "       여기는 국왕의 보물 창고");
+					AppendText(new string[] { "       여기는 국왕의 보물 창고" }, true);
 				else
 				{
-					strLen = AppendText(DialogText, paragraph, strLen, "         여기는 '[color=62e4f2]GAIA TERRAS[/color]'성\r\n");
-					AppendText(DialogText, paragraph, strLen, "          여러분을 환영합니다");
+					AppendText(new string[] { "         여기는 '[color=62e4f2]GAIA TERRAS[/color]'성",
+						"          여러분을 환영합니다" }, true);
 				}
 			}
 			else if (mParty.Map == 12)
 			{
 				if (x == 23 && y == 67)
-					AppendText(DialogText, paragraph, strLen, "               X 는 7");
+					AppendText(new string[] { "               X 는 7" }, true);
 				else if (x == 26 && y == 67)
-					AppendText(DialogText, paragraph, strLen, "               Y 는 9");
+					AppendText(new string[] { "               Y 는 9" }, true);
 				else if (y == 55)
 				{
-					var j = (x - 6) / 7 + 12;
-					AppendText(DialogText, paragraph, strLen, $"           문의 번호는 '[color=62e4f2]{j}[/color]'");
+					var j = ((x + 1) - 6) / 7 + 12;
+					AppendText(new string[] { $"           문의 번호는 '[color=62e4f2]{j}[/color]'" }, true);
 				}
 				else if (x == 25 && y == 41)
-					AppendText(DialogText, paragraph, strLen, "            Z 는 2 * Y + X");
+					AppendText(new string[] { "            Z 는 2 * Y + X" }, true);
 				else if (x == 25 && y == 32)
 				{
-					strLen = AppendText(DialogText, paragraph, strLen, "        패스코드 x 패스코드 는 Z 라면\r\n\r\n");
-					AppendText(DialogText, paragraph, strLen, "            패스코드는 무엇인가 ?");
+					AppendText(new string[] { "        패스코드 x 패스코드 는 Z 라면",
+						"",
+						"            패스코드는 무엇인가 ?" }, true);
 				}
 				else if (y == 28)
 				{
-					var j = (x - 3) / 5 + 2;
-					AppendText(DialogText, paragraph, strLen, $"           패스코드는 '[color=62e4f2]{j}[/color]'");
+					var j = ((x + 1) - 3) / 5 + 2;
+					AppendText(new string[] { $"           패스코드는 '[color=62e4f2]{j}[/color]'" }, true);
 				}
 			}
 			else if (mParty.Map == 15)
 			{
 				if (x == 25 && y == 62)
-					AppendText(DialogText, paragraph, strLen, "\r\n            길의 마지막");
+					AppendText(new string[] { "", "            길의 마지막" }, true);
 				else if (x == 21 && y == 14)
-					AppendText(DialogText, paragraph, strLen, "\r\n     (12,15) 로 공간이동 하시오");
+					AppendText(new string[] { "", "     (12,15) 로 공간이동 하시오" }, true);
 				else if (x == 10 && y == 13)
-					AppendText(DialogText, paragraph, strLen, "\r\n     (13,7) 로 공간이동 하시오");
-				else if (x == 26 && y == 13)
-					AppendText(DialogText, paragraph, strLen, "\r\n   황금의 갑옷은 (45,19) 에 숨겨져있음");
+					AppendText(new string[] { "", "     (13,7) 로 공간이동 하시오" }, true);
+                else if (x == 26 && y == 13)
+					AppendText(new string[] { "", "   황금의 갑옷은 (45,19) 에 숨겨져있음" }, true);
 
-			}
-			else if (mParty.Map == 17)
-			{
-				if (x == 67 && y == 46)
-					AppendText(DialogText, paragraph, strLen, "\r\n    하! 하! 하!  너는 우리에게 속았다");
-				else if (x == 57 && y == 52)
-				{
-					strLen = AppendText(DialogText, paragraph, strLen, "\r\n      [color=90ee90]이 게임을 만든 사람[/color]\r\n");
-					strLen = AppendText(DialogText, paragraph, strLen, "  : 동아 대학교 전기 공학과");
-					AppendText(DialogText, paragraph, strLen, "        92 학번  안 영기");
-				}
-				else if (x == 50 && y == 29)
-				{
-					strLen = AppendText(DialogText, paragraph, strLen, "\r\n       오른쪽 : Hidra 의 보물창고\r\n");
-					AppendText(DialogText, paragraph, strLen, "         위쪽이 진짜 보물창고임");
-				}
-			}
-			else if (mParty.Map == 19)
-			{
-				strLen = AppendText(DialogText, paragraph, strLen, "       이 길을 통과하고자하는 사람은\r\n");
-				AppendText(DialogText, paragraph, strLen, "     양측의 늪속에 있는 레버를 당기시오");
-			}
-			else if (mParty.Map == 23)
-			{
-				strLen = AppendText(DialogText, paragraph, strLen, "      (25,27)에 있는 레버를 움직이면");
-				strLen = AppendText(DialogText, paragraph, strLen, "          성을 볼수 있을 것이오.\r\n\r\n");
-				AppendText(DialogText, paragraph, strLen, "             [color=90ee90]제작자 안 영기 씀[/color]");
-				mMapLayer[24 + mMapWidth * 26] = 52;
-			}
-		}
+            }
+            else if (mParty.Map == 17)
+            {
+                if (x == 67 && y == 46)
+					AppendText(new string[] { "", "    하! 하! 하!  너는 우리에게 속았다" }, true);
+                else if (x == 57 && y == 52)
+                {
+					AppendText(new string[] { "", "      [color=90ee90]이 게임을 만든 사람[/color]",
+						"  : 동아 대학교 전기 공학과",
+						"        92 학번  안 영기" }, true);
+                }
+                else if (x == 50 && y == 29)
+                {
+					AppendText(new string[] { "", "       오른쪽 : Hidra 의 보물창고",
+						"         위쪽이 진짜 보물창고임" }, true);
+                }
+            }
+            else if (mParty.Map == 19)
+            {
+				AppendText(new string[] { "       이 길을 통과하고자하는 사람은",
+					"     양측의 늪속에 있는 레버를 당기시오" }, true);
+            }
+            else if (mParty.Map == 23)
+            {
+				AppendText(new string[] { "      (25,27)에 있는 레버를 움직이면",
+				"          성을 볼수 있을 것이오.",
+				"",
+				"             [color=90ee90]제작자 안 영기 씀[/color]" }, true);
+                mMapLayer[24 + mMapWidth * 26] = 52;
+            }
+        }
 
 		private enum PositionType {
 			Town,
@@ -922,6 +1120,14 @@ namespace Lore
 			Den,
 			Keep
 		}
+
+		private enum MenuMode
+        {
+			None,
+			Game,
+			Battle,
+			ViewCharacter,
+        }
 	}
 
 }

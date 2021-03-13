@@ -7,20 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
-    Background="#3f1060" Width="1920" Height="1080">
+    Background="#3f1060">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="200" />
-            <RowDefinition Height="450" />
-            <RowDefinition Height="430" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="5*" />
+            <RowDefinition Height="4*" />
         </Grid.RowDefinitions>
 
         <TextBlock Text="또다른 지식의 성전  제 1 부" Foreground="#FFE57EE7" FontSize="60" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0">
         </TextBlock>
 
-        <canvas:CanvasAnimatedControl x:Name="prologControl" ClearColor="#3f383f" Grid.Row="1" Width="1400" CreateResources="prologControl_CreateResources" Update="prologControl_Update" Draw="prologControl_Draw" Visibility="Visible"/>
-        <Grid x:Name="mainmenuPanel" Grid.Row="1" Width="1400" Background="#3f383f" Visibility="Collapsed">
+        <canvas:CanvasAnimatedControl x:Name="prologControl" ClearColor="#3f383f" Grid.Row="1" CreateResources="prologControl_CreateResources" Update="prologControl_Update" Draw="prologControl_Draw" Visibility="Visible" Margin="200 0 200 0"/>
+        <Grid x:Name="mainmenuPanel" Grid.Row="1" Background="#3f383f" Visibility="Collapsed" Margin="200 0 200 0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="105" />
                 <RowDefinition Height="80" />

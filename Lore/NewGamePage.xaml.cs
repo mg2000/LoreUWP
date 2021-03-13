@@ -480,8 +480,10 @@ namespace Lore
 
 				if (mFocusItem == FocusItem.Name)
 				{
-					if (args.VirtualKey == VirtualKey.Enter)
+					if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadMenu)
 					{
+						args.Handled = true;
+
 						if (UserNameText.Text == "")
 							await new MessageDialog("이름을 입력해 주십시오.", "이름 미입력").ShowAsync();
 						else
@@ -499,21 +501,21 @@ namespace Lore
 				}
 				else if (mFocusItem == FocusItem.Gender)
 				{
-					if (args.VirtualKey == VirtualKey.Left)
+					if (args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.GamepadLeftThumbstickLeft || args.VirtualKey == VirtualKey.GamepadDPadLeft)
 					{
 						UserGenderMale.Foreground = new SolidColorBrush(Colors.LightGreen);
 						UserGenderFemale.Foreground = new SolidColorBrush(Colors.Black);
 
 						mFocusGender = "male";
 					}
-					else if (args.VirtualKey == VirtualKey.Right)
+					else if (args.VirtualKey == VirtualKey.Right || args.VirtualKey == VirtualKey.GamepadLeftThumbstickRight || args.VirtualKey == VirtualKey.GamepadDPadRight)
 					{
 						UserGenderMale.Foreground = new SolidColorBrush(Colors.Black);
 						UserGenderFemale.Foreground = new SolidColorBrush(Colors.LightGreen);
 
 						mFocusGender = "female";
 					}
-					else if (args.VirtualKey == VirtualKey.Enter)
+					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
 					{
 						mPlayerList[0].Gender = mFocusGender;
 						var genderKor = mPlayerList[0].Gender == "male" ? "남성" : "여성";
@@ -533,7 +535,7 @@ namespace Lore
 				}
 				else if (mFocusItem == FocusItem.Question)
 				{
-					if (args.VirtualKey == VirtualKey.Up)
+					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp)
 					{
 						if (mAnswerID == 0)
 						{
@@ -562,7 +564,7 @@ namespace Lore
 						}
 
 					}
-					else if (args.VirtualKey == VirtualKey.Down)
+					else if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadDPadDown)
 					{
 						if (mAnswerID == 0)
 						{
@@ -590,7 +592,7 @@ namespace Lore
 							mAnswerID = 0;
 						}
 					}
-					else if (args.VirtualKey == VirtualKey.Enter)
+					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
 					{
 						mQuestionID++;
 						if (mQuestionID < mQuestionList.Length)
@@ -774,7 +776,7 @@ namespace Lore
 							LuckText.Text = mTransdata[2].ToString();
 					}
 
-					if (args.VirtualKey == VirtualKey.Left)
+					if (args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.GamepadLeftThumbstickLeft || args.VirtualKey == VirtualKey.GamepadDPadLeft)
 					{
 						if (mTransdata[mAssignID] > 0)
 						{
@@ -784,7 +786,7 @@ namespace Lore
 							UpdateStat();
 						}
 					}
-					else if (args.VirtualKey == VirtualKey.Right)
+					else if (args.VirtualKey == VirtualKey.Right || args.VirtualKey == VirtualKey.GamepadLeftThumbstickRight || args.VirtualKey == VirtualKey.GamepadDPadRight)
 					{
 						if (mTransdata[mAssignID] < 20 && mRemainPoint > 0)
 						{
@@ -794,7 +796,7 @@ namespace Lore
 							UpdateStat();
 						}
 					}
-					else if (args.VirtualKey == VirtualKey.Down)
+					else if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadDPadDown)
 					{
 						if (mAssignID == 2)
 							mAssignID = 0;
@@ -803,7 +805,7 @@ namespace Lore
 
 						UpdateStatFocus();
 					}
-					else if (args.VirtualKey == VirtualKey.Up)
+					else if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp)
 					{
 						if (mAssignID == 0)
 							mAssignID = 2;
@@ -812,7 +814,7 @@ namespace Lore
 
 						UpdateStatFocus();
 					}
-					else if (args.VirtualKey == VirtualKey.Enter)
+					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
 					{
 						if (mRemainPoint > 0)
 						{
@@ -905,7 +907,7 @@ namespace Lore
 				}
 				else if (mFocusItem == FocusItem.SelectClass)
 				{
-					if (args.VirtualKey == VirtualKey.Up)
+					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp)
 					{
 						for (var i = mClassFocusID - 1 < 0 ? 7 : mClassFocusID - 1; i != mClassFocusID; i = i - 1 < 0 ? 7 : i - 1)
 						{
@@ -917,7 +919,7 @@ namespace Lore
 							}
 						}
 					}
-					else if (args.VirtualKey == VirtualKey.Down)
+					else if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadDPadDown)
 					{
 						for (var i = (mClassFocusID + 1) % 8; i != mClassFocusID; i = (i + 1) % 8)
 						{
@@ -930,7 +932,7 @@ namespace Lore
 						}
 
 					}
-					else if (args.VirtualKey == VirtualKey.Enter)
+					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
 					{
 						mPlayerList[0].Class = mClassFocusID + 1;
 
@@ -938,7 +940,7 @@ namespace Lore
 
 
 						UserClassFinalText.Text = $"당신의 계급은 {className} 입니다";
-						UserClassFinalText.Visibility = Visibility.Visible;
+						UserClassFinalText.Foreground = new SolidColorBrush(Colors.LightGreen);
 
 						SelectClassPanel.Visibility = Visibility.Collapsed;
 						CompleteCreatePanel.Visibility = Visibility.Visible;
@@ -960,7 +962,7 @@ namespace Lore
 				}
 				else if (mFocusItem == FocusItem.SelectFriend)
 				{
-					if (args.VirtualKey == VirtualKey.Up)
+					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp)
 					{
 						if (mFriendID == 0)
 							mFriendID = mFriendControlList.Count - 1;
@@ -969,13 +971,13 @@ namespace Lore
 
 						UpdateFriendInfo();
 					}
-					else if (args.VirtualKey == VirtualKey.Down)
+					else if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadDPadDown)
 					{
 						mFriendID = (mFriendID + 1) % mFriendControlList.Count;
 
 						UpdateFriendInfo();
 					}
-					else if (args.VirtualKey == VirtualKey.Enter)
+					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
 					{
 						if (mTransdata[mFriendID] == 0)
 							mTransdata[mFriendID] = 1;
@@ -1016,7 +1018,7 @@ namespace Lore
 				}
 				else if (mFocusItem == FocusItem.Confirm)
 				{
-					if (args.VirtualKey == VirtualKey.Enter)
+					if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
 					{
 						for (var i = 0; i < mTransdata.Length; i++)
 						{
@@ -1120,7 +1122,7 @@ namespace Lore
 						Window.Current.CoreWindow.KeyUp -= newGamePageKeyEvent;
 						Frame.Navigate(typeof(GamePage));
 					}
-					else if (args.VirtualKey == VirtualKey.Escape)
+					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
 					{
 						Window.Current.CoreWindow.KeyUp -= newGamePageKeyEvent;
 						Frame.Navigate(typeof(MainPage));
