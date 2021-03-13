@@ -65,6 +65,8 @@ namespace Lore
 		private MenuMode mMenuMode = MenuMode.None;
 		private int mMenuCount = 0;
 		private int mMenuFocusID = 0;
+		private int mMagicPlayerID = -1;
+		private int mMagicWhomPlayerID = -1;
 
 		private Random mRand = new Random();
 
@@ -327,10 +329,29 @@ namespace Lore
 
 								mMenuMode = MenuMode.None;
 							}
-							else
+							else if (mMenuFocusID == 1)
 							{
 								AppendText(new string[] { "능력을 보고싶은 인물을 선택하시오" });
 								ShowCharacterMenu(MenuMode.ViewCharacter);
+							}
+							else if (mMenuFocusID == 2)
+                            {
+								mMenuMode = MenuMode.None;
+
+								AppendText(new string[] { "[color=ffffff]이름[/color]\t\t[color=cd5c5c]중독\t\t의식불명\t죽음[/color]" });
+								mPlayerList.ForEach(delegate (Lore player)
+								{
+									string space;
+									if (player.Name.Length >= 4)
+										space = "\t";
+									else
+										space = "\t\t";
+									AppendText(new string[] { $"{player.Name}{space}{player.Poison}\t\t{player.Unconscious}\t\t{player.Dead}" }, true);
+								});
+							}
+							else if (mMenuFocusID == 3)
+                            {
+								ShowCharacterMenu(MenuMode.CastSpell);
 							}
                         }
 						else if (mMenuMode == MenuMode.ViewCharacter)
@@ -356,6 +377,103 @@ namespace Lore
 								$"[color=00ff00]사용 무기 - {Common.GetWeaponStr(mPlayerList[mMenuFocusID].Weapon)}[/color]\t{shieldStr}\t{armorStr}"
 							});
 						}
+						else if (mMenuMode == MenuMode.CastSpell)
+                        {
+							mMenuMode = MenuMode.None;
+
+							if (IsAvailableMember(mPlayerList[mMenuFocusID])) {
+								mMagicPlayerID = mMenuFocusID;
+								AppendText(new string[] { "사용할 마법의 종류 ===>" });
+								ShowMenu(MenuMode.SpellCategory, new string[]
+								{
+									"공격 마법",
+									"치료 마법",
+									"변화 마법"
+								});
+							}
+							else
+                            {
+								AppendText(new string[] { $"{GetGenderData(mPlayerList[mMenuFocusID])}는 마법을 사용할수있는 상태가 아닙니다" });
+							}
+						}
+						else if (mMenuMode == MenuMode.SpellCategory)
+                        {
+							mMenuMode = MenuMode.None;
+
+							if (mMenuFocusID == 0)
+							{
+								AppendText(new string[] { "전투 모드가 아닐때는 공격 마법을 사용할 수 없습니다." });
+								ContinueText.Visibility = Visibility.Visible;
+							}
+							else if (mMenuFocusID == 1)
+                            {
+								AppendText(new string[] { "누구에게" });
+								var playerList = new string[mPlayerList.Count + 1];
+
+								for (var i = 0; i < mPlayerList.Count; i++)
+									playerList[i] = mPlayerList[i].Name;
+
+								playerList[playerList.Length - 1] = "모든 사람들에게";
+
+								ShowMenu(MenuMode.ChooseCureSpell, playerList);
+							}
+						}
+						else if (mMenuMode == MenuMode.ChooseCureSpell)
+                        {
+							mMenuMode = MenuMode.None;
+
+							mMagicWhomPlayerID = mMenuFocusID;
+
+							AppendText(new string[] { "선택" });
+							if (mMenuFocusID < mPlayerList.Count)
+                            {
+								var availableCount = mPlayerList[mMagicPlayerID].Level[1] / 2 + 1;
+								if (availableCount > 7)
+									availableCount = 7;
+
+								var totalMagicCount = 25 - 19 + 1;
+								if (availableCount < totalMagicCount)
+									totalMagicCount = availableCount;
+
+								var cureMagicMenu = new string[totalMagicCount];
+								for (var i = 19; i < 19 + availableCount; i++)
+									cureMagicMenu[i - 19] = Common.GetMagicStr(i);
+
+								ShowMenu(MenuMode.ApplyCureMagic, cureMagicMenu);
+                            }
+							else
+                            {
+								var availableCount = mPlayerList[mMagicPlayerID].Level[1] / 2 - 3;
+								if (availableCount < 0)
+                                {
+									AppendText(new string[] { $"{mPlayerList[mMagicPlayerID].Name}는 강한 치료 마법은 아직 불가능 합니다." });
+									ContinueText.Visibility = Visibility.Visible;
+								}
+								else
+                                {
+									var totalMagicCount = 32 - 26 + 1;
+									if (availableCount < totalMagicCount)
+										totalMagicCount = availableCount;
+
+									var cureMagicMenu = new string[totalMagicCount];
+									for (var i = 26; i < 26 + availableCount; i++)
+										cureMagicMenu[i - 26] = Common.GetMagicStr(i);
+
+									ShowMenu(MenuMode.ApplyCureAllMagic, cureMagicMenu);
+								}
+							}
+						}
+						else if (mMenuMode == MenuMode.ApplyCureMagic)
+                        {
+							mMenuMode = MenuMode.None;
+
+							if (mMenuFocusID == 0)
+								HealOne();
+						}
+						else if (mMenuMode == MenuMode.ApplyCureAllMagic)
+						{
+							mMenuMode = MenuMode.None;
+						}
 					}
 				}
 			};
@@ -363,6 +481,59 @@ namespace Lore
 			Window.Current.CoreWindow.KeyDown += gamePageKeyDownEvent;
 			Window.Current.CoreWindow.KeyUp += gamePageKeyUpEvent;
 		}
+
+		private void HealOne()
+        {
+			if (mPlayerList[mMagicWhomPlayerID].Dead > 0 || mPlayerList[mMagicWhomPlayerID].Unconscious > 0 || mPlayerList[mMagicWhomPlayerID].Poison > 0)
+			{
+				if (mParty.Etc[5] == 0)
+					AppendText(new string[] { $"{mPlayerList[mMagicPlayerID].Name}(은)는 치료될 상태가 아닙니다." });
+			}
+			else if (mPlayerList[mMagicWhomPlayerID].HP >= mPlayerList[mMagicWhomPlayerID].Endurance * mPlayerList[mMagicWhomPlayerID].Level[0])
+			{
+				if (mParty.Etc[5] == 0)
+					AppendText(new string[] { $"{mPlayerList[mMagicPlayerID].Name}(은)는 치료될 상태가 아닙니다." });
+			}
+			else
+			{
+				var needSP = 2 * mPlayerList[mMagicPlayerID].Level[1];
+				if (mPlayerList[mMagicPlayerID].SP < needSP)
+				{
+					if (mParty.Etc[5] == 0)
+						ShowNotEnoughSP();
+				}
+				else
+				{
+					mPlayerList[mMagicPlayerID].SP -= needSP;
+					mPlayerList[mMagicWhomPlayerID].HP += needSP * 3 / 2;
+					if (mPlayerList[mMagicWhomPlayerID].HP > mPlayerList[mMagicWhomPlayerID].Level[0] * mPlayerList[mMagicWhomPlayerID].Endurance)
+						mPlayerList[mMagicWhomPlayerID].HP = mPlayerList[mMagicWhomPlayerID].Level[0] * mPlayerList[mMagicWhomPlayerID].Endurance;
+
+					AppendText(new string[] { $"[color=ffffff]{mPlayerList[mMagicWhomPlayerID].Name}(은)는 치료되어 졌습니다.[/color]" });
+				}
+			}
+		}
+
+		private void ShowNotEnoughSP()
+        {
+			AppendText(new string[] { "그러나, 마법 지수가 충분하지 않습니다." });
+			ContinueText.Visibility = Visibility.Visible;
+		}
+		private bool IsAvailableMember(Lore player)
+        {
+			if (player.Unconscious == 0 && player.Dead == 0 && player.HP >= 0)
+				return true;
+			else
+				return false;
+        }
+
+		private string GetGenderData(Lore player)
+        {
+			if (player.Gender == "male")
+				return "그";
+			else
+				return "그녀";
+        }
 
 		private void ShowCharacterMenu(MenuMode menuMode)
         {
@@ -1127,7 +1298,13 @@ namespace Lore
 			Game,
 			Battle,
 			ViewCharacter,
-        }
+			CastSpell,
+			SpellCategory,
+			CureWhom,
+			ChooseCureSpell,
+			ApplyCureMagic,
+			ApplyCureAllMagic,
+		}
 	}
 
 }

@@ -42,7 +42,6 @@ namespace Lore
 		private float mVelocity = 0;
 		private const float mTargetSpeed = 1;
 		private float mTargetVelocity = mTargetSpeed;
-		private bool mInManipulation;
 
 		private CanvasLinearGradientBrush mTextOpacityBrush;
 		private CanvasLinearGradientBrush mBlurOpacityBrush;
@@ -77,9 +76,9 @@ namespace Lore
 		private async void SyncSaveData()
         {
 			var users = await User.FindAllAsync();
-			//var gameSaveTask = await GameSaveProvider.GetForUserAsync(users[0], "00000000-0000-0000-0000-000063336555");
+			var gameSaveTask = await GameSaveProvider.GetForUserAsync(users[0], "00000000-0000-0000-0000-000063336555");
 
-			//Debug.WriteLine($"클라우드 동기화 연결 결과: {gameSaveTask.Status}");
+			Debug.WriteLine($"클라우드 동기화 연결 결과: {gameSaveTask.Status}");
 
 			InitializeKeyEvent();
 		}
@@ -87,7 +86,7 @@ namespace Lore
 		private void InitializeKeyEvent()
         {
 			TypedEventHandler<CoreWindow, KeyEventArgs> mainPageKeyUpEvent = null;
-			mainPageKeyUpEvent = async (sender, args) =>
+			mainPageKeyUpEvent = (sender, args) =>
 			{
 				Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
 
@@ -201,15 +200,9 @@ namespace Lore
 			//if (mOffset >= 400)
 			//    return;
 
-			if (mInManipulation)
-			{
-			}
-			else
-			{
-				mVelocity = mVelocity * 0.90f + mTargetVelocity * 0.10f;
+			mVelocity = mVelocity * 0.90f + mTargetVelocity * 0.10f;
 
-				mOffset = mOffset + mVelocity;
-			}
+			mOffset = mOffset + mVelocity;
 
 			mOffset = mOffset % totalHeight;
 			while (mOffset < 0)
