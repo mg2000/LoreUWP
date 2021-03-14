@@ -146,6 +146,7 @@
     <Content Include="Assets\lore_sprite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Assets\FOEDATA.DAT" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\lore_tile.png" />
     <Content Include="Properties\Default.rd.xml" />

@@ -36,6 +36,8 @@
                         <TextBlock x:Name="GameMenuText5" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴6</TextBlock>
                         <TextBlock x:Name="GameMenuText6" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴7</TextBlock>
                         <TextBlock x:Name="GameMenuText7" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴8</TextBlock>
+                        <TextBlock x:Name="GameMenuText8" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴9</TextBlock>
+                        <TextBlock x:Name="GameMenuText9" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴10</TextBlock>
                 </StackPanel>   
 
                     <TextBlock Grid.Row="2" x:Name="ContinueText" FontSize="25" Margin="30,0,30,30" Foreground="Yellow" Visibility="Collapsed">아무키나 누르십시오 ...</TextBlock>
