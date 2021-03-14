@@ -61,13 +61,10 @@ namespace Lore
 			set;
 		}
 
-		private int[] mAccuracy = new int[3];
 		public int[] Accuracy
 		{
-			get
-			{
-				return mAccuracy;
-			}
+			get;
+			set;
 		}
 
 		public int Luck
@@ -106,11 +103,9 @@ namespace Lore
 			set;
 		}
 
-		private int[] mLevel = new int[3];
 		public int[] Level {
-			get {
-				return mLevel;
-			}
+			get;
+			set;
 		}
 
 		public int AC {

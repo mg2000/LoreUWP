@@ -133,6 +133,7 @@
       <DependentUpon>NewGamePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RGB.cs" />
     <Compile Include="SaveData.cs" />
     <Compile Include="SpriteSheet.cs" />
   </ItemGroup>
@@ -145,8 +146,8 @@
     <Content Include="Assets\lore_sprite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\lore_tile.bmp" />
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\lore_tile.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

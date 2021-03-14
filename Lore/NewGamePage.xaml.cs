@@ -144,10 +144,10 @@ namespace Lore
 				Concentration = 5,
 				Endurance = 17,
 				Resistance = 11,
+				Accuracy = new int[3] {15, 0, 0},
 				Agility = 15,
 				Luck = 10
 			};
-			friend.Accuracy[0] = 15;
 			mFriendList.Add(friend);
 			FriendHercules.Text = "→ " + friend.Name;
 			mFriendControlList.Add(FriendHercules);
@@ -162,10 +162,10 @@ namespace Lore
 				Concentration = 7,
 				Endurance = 14,
 				Resistance = 14,
+				Accuracy = new int[3] { 17, 0, 0 },
 				Agility = 16,
 				Luck = 7
 			};
-			friend.Accuracy[0] = 17;
 			mFriendList.Add(friend);
 			FriendTitan.Text = friend.Name;
 			mFriendControlList.Add(FriendTitan);
@@ -180,10 +180,10 @@ namespace Lore
 				Concentration = 14,
 				Endurance = 5,
 				Resistance = 5,
+				Accuracy = new int[3] { 18, 0, 0 },
 				Agility = 7,
 				Luck = 15
 			};
-			friend.Accuracy[0] = 18;
 			mFriendList.Add(friend);
 			FriendMerlin.Text = friend.Name;
 			mFriendControlList.Add(FriendMerlin);
@@ -198,10 +198,10 @@ namespace Lore
 				Concentration = 5,
 				Endurance = 7,
 				Resistance = 7,
+				Accuracy = new int[3] { 15, 0, 0 },
 				Agility = 11,
 				Luck = 14
 			};
-			friend.Accuracy[0] = 15;
 			mFriendList.Add(friend);
 			FriendBetelgeuse.Text = friend.Name;
 			mFriendControlList.Add(FriendBetelgeuse);
@@ -216,10 +216,10 @@ namespace Lore
 				Concentration = 7,
 				Endurance = 11,
 				Resistance = 11,
+				Accuracy = new int[3] { 20, 0, 0 },
 				Agility = 11,
 				Luck = 9
 			};
-			friend.Accuracy[0] = 20;
 			mFriendList.Add(friend);
 			FriendGeniusKie.Text = friend.Name;
 			mFriendControlList.Add(FriendGeniusKie);
@@ -234,10 +234,10 @@ namespace Lore
 				Concentration = 5,
 				Endurance = 11,
 				Resistance = 14,
+				Accuracy = new int[3] { 15, 0, 0 },
 				Agility = 14,
 				Luck = 11
 			};
-			friend.Accuracy[0] = 15;
 			mFriendList.Add(friend);
 			FriendBellatrix.Text = friend.Name;
 			mFriendControlList.Add(FriendBellatrix);
@@ -252,10 +252,10 @@ namespace Lore
 				Concentration = 5,
 				Endurance = 17,
 				Resistance = 7,
+				Accuracy = new int[3] { 13, 0, 0 },
 				Agility = 15,
 				Luck = 11
 			};
-			friend.Accuracy[0] = 13;
 			mFriendList.Add(friend);
 			FriendRegulus.Text = friend.Name;
 			mFriendControlList.Add(FriendRegulus);
@@ -270,10 +270,10 @@ namespace Lore
 				Concentration = 5,
 				Endurance = 17,
 				Resistance = 11,
+				Accuracy = new int[3] { 14, 0, 0 },
 				Agility = 17,
 				Luck = 9
 			};
-			friend.Accuracy[0] = 14;
 			mFriendList.Add(friend);
 			FriendProcyon.Text = friend.Name;
 			mFriendControlList.Add(FriendProcyon);
@@ -288,10 +288,10 @@ namespace Lore
 				Concentration = 5,
 				Endurance = 11,
 				Resistance = 19,
+				Accuracy = new int[3] { 7, 0, 0 },
 				Agility = 18,
 				Luck = 15
 			};
-			friend.Accuracy[0] = 7;
 			mFriendList.Add(friend);
 			FriendArcturus.Text = friend.Name;
 			mFriendControlList.Add(FriendArcturus);
@@ -306,10 +306,10 @@ namespace Lore
 				Concentration = 7,
 				Endurance = 14,
 				Resistance = 17,
+				Accuracy = new int[3] { 9, 0, 0 },
 				Agility = 17,
 				Luck = 16
 			};
-			friend.Accuracy[0] = 9;
 			mFriendList.Add(friend);
 			FriendAlgol.Text = friend.Name;
 			mFriendControlList.Add(FriendAlgol);
@@ -823,7 +823,7 @@ namespace Lore
 						else
 						{
 							mPlayerList[0].Agility = mTransdata[0];
-							mPlayerList[0].Accuracy[0] = mTransdata[1];
+							mPlayerList[0].Accuracy = new int[3] { mTransdata[1], 0, 0 };
 							mPlayerList[0].Luck = mTransdata[2];
 
 							AddStatPanel.Visibility = Visibility.Collapsed;
@@ -1036,9 +1036,7 @@ namespace Lore
 							player.Poison = 0;
 							player.Unconscious = 0;
 							player.Dead = 0;
-
-							for (var i = 0; i < player.Level.Length; i++)
-								player.Level[i] = 1;
+							player.Level = new int[3] { 1, 1, 1 };
 
 							player.AC = 0;
 							if (player.Class == 1)
