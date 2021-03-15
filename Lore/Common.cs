@@ -73,7 +73,7 @@ namespace Lore
             }
         }
 
-        public static string GetDefenceStr(int shield)
+        public static string GetDefenseStr(int shield)
         {
             switch (shield)
             {
