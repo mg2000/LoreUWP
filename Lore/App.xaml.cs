@@ -33,9 +33,6 @@ namespace Lore
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
-
-
             Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
 
             switch (AnalyticsInfo.VersionInfo.DeviceFamily)
