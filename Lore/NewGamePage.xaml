@@ -330,7 +330,7 @@
                         <TextBlock Grid.Row="2" Foreground="IndianRed" FontSize="30" HorizontalAlignment="Center">
                             만약 이 일행이 마음에 들지 않는다면
                             <LineBreak/>
-                            좌측 상단의 Esc] 를 누르시오.
+                            좌측 상단의 B를 누르시오.
                         </TextBlock>
                     </Grid>
                 </Border>

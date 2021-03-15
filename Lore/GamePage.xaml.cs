@@ -82,6 +82,8 @@ namespace Lore
 		private bool mKeyDownShowMenu = false;
 
 		// 1 - 로어성에서 병사를 만났을때 발생하는 이벤트
+		// 2 - 로어성을 떠날때 스켈레톤을 만나는 이벤트
+		// 3 - 스켈레톤의 답을 거절했을때 이벤트
 		private int mSpecialEvent = 0;
 
 		private volatile bool mMoveEvent = false;
@@ -187,7 +189,9 @@ namespace Lore
 				if (mTalkMode > 0)
 				{
 					ContinueText.Visibility = Visibility.Collapsed;
-					TalkMode(mTalkX, mTalkY, args.VirtualKey);
+
+					if (mSpecialEvent == 0)
+						TalkMode(mTalkX, mTalkY, args.VirtualKey);
 				}
 				else if (mMenuMode == MenuMode.None && (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.Right ||
 				 args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickLeft || args.VirtualKey == VirtualKey.GamepadLeftThumbstickRight ||
@@ -284,6 +288,42 @@ namespace Lore
 								TalkMode(x, y);
 							}
 						}
+						else if (mPosition == PositionType.Ground)
+						{
+							if (mMapLayer[x + mMapWidth * y] == 0)
+							{
+								MovePlayer(x, y);
+								InvokeSpecialEvent();
+							}
+							else if (1 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 21)
+							{
+								// Don't Move
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 22)
+							{
+								ShowSign(x, y);
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 48)
+							{
+								if (EnterWater())
+									MovePlayer(x, y);
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 23 || mMapLayer[x + mMapWidth * y] == 49)
+							{
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 50)
+							{
+							}
+							else if (27 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 47)
+							{
+								// Move Move
+								MovePlayer(x, y);
+							}
+							else
+							{
+
+							}
+						}
 					}
 				}
 			};
@@ -367,7 +407,31 @@ namespace Lore
 
 				if (mMoveEvent)
 					return;
-				if (mKeyDownShowMenu)
+				else if (mSpecialEvent == 2) {
+					mMoveEvent = true;
+					for (var y = mParty.YAxis - 4; y < mParty.YAxis; y++)
+					{
+						mMapLayer[mParty.XAxis + mMapWidth * (y - 1)] = 44;
+						mMapLayer[mParty.XAxis + mMapWidth * y] = 48;
+						Task.Delay(500).Wait();
+					}
+					mMoveEvent = false;
+
+					TalkMode(mTalkX, mTalkY, args.VirtualKey);
+					mSpecialEvent = 0;
+				}
+				else if (mSpecialEvent == 3) {
+					mSpecialEvent = 0;
+					mParty.Etc[30] |= 1;
+
+					mParty.XAxis = 19;
+					mParty.YAxis = 11;
+					mParty.Map = 1;
+
+					await LoadMapData();
+					InitializeMap();
+				}
+				else if (mKeyDownShowMenu)
 					mKeyDownShowMenu = false;
 				else if (ContinueText.Visibility == Visibility.Visible)
 					mNextMode = true;
@@ -426,7 +490,7 @@ namespace Lore
 					}
 					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
 					{
-						if (mMenuMode != MenuMode.None)
+						if (mMenuMode != MenuMode.None && mSpecialEvent == 0)
 						{
 							AppendText(new string[] { "" });
 							HideMenu();
@@ -2106,6 +2170,41 @@ namespace Lore
 								mTrainingEnd = true;
 							}
 						}
+						else if (mMenuMode == MenuMode.ConfirmExitMap) {
+							mMenuMode = MenuMode.None;
+
+							if (mMenuFocusID == 0) {
+								if ((mParty.Etc[30] & 1) == 0) {
+									AppendText(new string[] {
+										" 당신이 로어 성을 떠나려는 순간 누군가가 당신을 불렀다."
+									});
+									
+									mTalkMode = 1;
+									mTalkX = mParty.XAxis;
+									mTalkY = mParty.YAxis;
+									mSpecialEvent = 2;
+									
+									ContinueText.Visibility = Visibility.Visible;
+									mNextMode = true;
+								}
+							}
+							else {
+								if (mParty.Map == 6)
+								{
+									AppendText(new string[] { "" });
+									mParty.YAxis--;
+								}
+							}
+						}
+						else if (mMenuMode == MenuMode.JoinSkeleton) {
+							mMenuMode = MenuMode.None;
+
+
+							if (mMenuFocusID == 1) {
+								ShowNoThanks();
+								mSpecialEvent = 3;
+							}
+						}
 					}
 				}
 			};
@@ -2283,6 +2382,8 @@ namespace Lore
 							mMoveEvent = false;
 						}
 					}
+					else
+						ShowExitMenu();
 				}
 			}
 
@@ -2474,6 +2575,12 @@ namespace Lore
 		private void ShowThankyou()
 		{
 			AppendText(new string[] { "매우 고맙습니다." }, true);
+			ContinueText.Visibility = Visibility.Visible;
+			mNextMode = true;
+		}
+
+		private void ShowNoThanks() {
+			AppendText(new string[] { "당신이 바란다면 ..." });
 			ContinueText.Visibility = Visibility.Visible;
 			mNextMode = true;
 		}
@@ -2777,7 +2884,7 @@ namespace Lore
 				}
 				else if (moveX == 17 && moveY == 32)
 				{
-					AppendText(new string[] { " 당신은 Skeleton 족의 한명이 우리와 함께 생활하려 한다는 것에 대해서 어떻게 생각하십니까 ?",
+					AppendText(new string[] { " 당신은 스켈레톤족의 한명이 우리와 함께 생활하려 한다는 것에 대해서 어떻게 생각하십니까 ?",
 					" 저는 그 말을 들었을때 너무 혐오스러웠습니다. 어서 빨리 그 살아있는 뼈다귀를 여기서 쫒아냈으면 좋겠습니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
@@ -3133,6 +3240,20 @@ namespace Lore
 						mTalkMode = 0;
 					}
 				}
+				else if ((mParty.Etc[30] & 1) == 0 && mTalkMode == 1) {
+					AppendText(new string[] { $" 나는 스켈레톤이라 불리는 종족의 사람이오.",
+						" 우리 종족의 사람들은 나를 제외하고는  모두 네크로맨서에게 굴복하여 그의 부하가 되었지만 나는 그렇지 않소." +
+						" 나는 네크로맨서 의 영향을 피해서 이곳 로어 성으로 왔지만 나의 혐오스런 생김새 때문에 이곳 사람들에게 배척되어서 지금은 어디로도 갈 수 없는 존재가 되었소." +
+						" 이제 나에게 남은 것은 네크로맨서 의 타도 밖에 없소.  그래서  당신들의 일행에 끼고 싶소."
+					});
+
+					ShowMenu(MenuMode.JoinSkeleton, new string[] {
+						"당신을 환영하오.",
+						"미안하지만 안되겠소."
+					});
+
+					mTalkMode = 0;
+				}
 			}
 		}
 
@@ -3221,134 +3342,125 @@ namespace Lore
 				if (mSpecialEvent == 1 && (index == 50 + mMapWidth * 71))
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				else
-					mMapTiles.Draw(sb, layer[index], mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				{
+					var mapIdx = 56;
+
+					if (mPosition == PositionType.Town)
+						mapIdx = 0;
+					else if (mPosition == PositionType.Ground)
+						mapIdx *= 2;
+
+					mMapTiles.Draw(sb, layer[index] + mapIdx, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				}
 			}
 		}
 
-		private async Task LoadFile() {
-			var storageFolder = ApplicationData.Current.LocalFolder;
-
-			var saveFile = await storageFolder.CreateFileAsync("loreSave.dat", CreationCollisionOption.OpenIfExists);
-			var saveData = JsonConvert.DeserializeObject<SaveData>(await FileIO.ReadTextAsync(saveFile));
-
-			mParty = saveData.Party;
-			mPlayerList = saveData.PlayerList;
-
-			if (saveData.Map.Data.Length == 0)
+		private async Task LoadMapData() {
+			var mapFileName = "";
+			switch (mParty.Map)
 			{
-				var mapFileName = "";
-				switch (mParty.Map)
-				{
-					case 1:
-						mapFileName = "GROUND1";
-						break;
-					case 2:
-						mapFileName = "GROUND2";
-						break;
-					case 3:
-						mapFileName = "WATER";
-						break;
-					case 4:
-						mapFileName = "SWAMP";
-						break;
-					case 5:
-						mapFileName = "LAVA";
-						break;
-					case 6:
-						mapFileName = "TOWN1";
-						break;
-					case 7:
-						mapFileName = "TOWN2";
-						break;
-					case 8:
-						mapFileName = "TOWN3";
-						break;
-					case 9:
-						mapFileName = "TOWN4";
-						break;
-					case 10:
-						mapFileName = "TOWN5";
-						break;
-					case 11:
-						mapFileName = "T_DEN1";
-						break;
-					case 12:
-						mapFileName = "T_DEN2";
-						break;
-					case 13:
-						mapFileName = "DEN4";
-						break;
-					case 14:
-						mapFileName = "DEN1";
-						break;
-					case 15:
-						mapFileName = "DEN2";
-						break;
-					case 16:
-						mapFileName = "DEN3";
-						break;
-					case 17:
-						mapFileName = "DEN4";
-						break;
-					case 18:
-						mapFileName = "DEN5";
-						break;
-					case 19:
-						mapFileName = "DEN6";
-						break;
-					case 20:
-						mapFileName = "DEN7";
-						break;
-					case 21:
-						mapFileName = "KEEP1";
-						break;
-					case 22:
-						mapFileName = "KEEP2";
-						break;
-					case 23:
-						mapFileName = "KEEP3";
-						break;
-					case 24:
-						mapFileName = "K_DEN1";
-						break;
-					case 25:
-						mapFileName = "K_DEN2";
-						break;
-					case 26:
-						mapFileName = "K_DEN2";
-						break;
-					case 27:
-						mapFileName = "PYRAMID1";
-						break;
-				}
-
-				var mapFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/{mapFileName}.MAP"));
-				var stream = (await mapFile.OpenReadAsync()).AsStreamForRead();
-				var reader = new BinaryReader(stream);
-
-				lock (mapLock)
-				{
-					mMapWidth = reader.ReadByte();
-					mMapHeight = reader.ReadByte();
-
-					mMapLayer = new byte[mMapWidth * mMapHeight];
-
-					for (var i = 0; i < mMapWidth * mMapHeight; i++)
-					{
-						mMapLayer[i] = reader.ReadByte();
-					}
-				}
-			}
-			else {
-				lock (mapLock)
-				{
-					mMapWidth = saveData.Map.Width;
-					mMapHeight = saveData.Map.Height;
-
-					mMapLayer = saveData.Map.Data;
-				}
+				case 1:
+					mapFileName = "GROUND1";
+					break;
+				case 2:
+					mapFileName = "GROUND2";
+					break;
+				case 3:
+					mapFileName = "WATER";
+					break;
+				case 4:
+					mapFileName = "SWAMP";
+					break;
+				case 5:
+					mapFileName = "LAVA";
+					break;
+				case 6:
+					mapFileName = "TOWN1";
+					break;
+				case 7:
+					mapFileName = "TOWN2";
+					break;
+				case 8:
+					mapFileName = "TOWN3";
+					break;
+				case 9:
+					mapFileName = "TOWN4";
+					break;
+				case 10:
+					mapFileName = "TOWN5";
+					break;
+				case 11:
+					mapFileName = "T_DEN1";
+					break;
+				case 12:
+					mapFileName = "T_DEN2";
+					break;
+				case 13:
+					mapFileName = "DEN4";
+					break;
+				case 14:
+					mapFileName = "DEN1";
+					break;
+				case 15:
+					mapFileName = "DEN2";
+					break;
+				case 16:
+					mapFileName = "DEN3";
+					break;
+				case 17:
+					mapFileName = "DEN4";
+					break;
+				case 18:
+					mapFileName = "DEN5";
+					break;
+				case 19:
+					mapFileName = "DEN6";
+					break;
+				case 20:
+					mapFileName = "DEN7";
+					break;
+				case 21:
+					mapFileName = "KEEP1";
+					break;
+				case 22:
+					mapFileName = "KEEP2";
+					break;
+				case 23:
+					mapFileName = "KEEP3";
+					break;
+				case 24:
+					mapFileName = "K_DEN1";
+					break;
+				case 25:
+					mapFileName = "K_DEN2";
+					break;
+				case 26:
+					mapFileName = "K_DEN2";
+					break;
+				case 27:
+					mapFileName = "PYRAMID1";
+					break;
 			}
 
+			var mapFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/{mapFileName}.MAP"));
+			var stream = (await mapFile.OpenReadAsync()).AsStreamForRead();
+			var reader = new BinaryReader(stream);
+
+			lock (mapLock)
+			{
+				mMapWidth = reader.ReadByte();
+				mMapHeight = reader.ReadByte();
+
+				mMapLayer = new byte[mMapWidth * mMapHeight];
+
+				for (var i = 0; i < mMapWidth * mMapHeight; i++)
+				{
+					mMapLayer[i] = reader.ReadByte();
+				}
+			}
+		}
+
+		private void InitializeMap() {
 			if (1 <= mParty.Map && mParty.Map <= 5)
 				mPosition = PositionType.Ground;
 			else if ((6 <= mParty.Map && mParty.Map <= 10) || mParty.Map == 24 || (26 <= mParty.Map && mParty.Map <= 27))
@@ -3366,6 +3478,35 @@ namespace Lore
 			if (mPosition != PositionType.Town || mParty.Map == 26)
 				mFace = mFace + 4;
 
+			switch (mParty.Etc[11])
+			{
+
+			}
+		}
+
+		private async Task LoadFile() {
+			var storageFolder = ApplicationData.Current.LocalFolder;
+
+			var saveFile = await storageFolder.CreateFileAsync("loreSave.dat", CreationCollisionOption.OpenIfExists);
+			var saveData = JsonConvert.DeserializeObject<SaveData>(await FileIO.ReadTextAsync(saveFile));
+
+			mParty = saveData.Party;
+			mPlayerList = saveData.PlayerList;
+
+			if (saveData.Map.Data.Length == 0)
+			{
+				await LoadMapData();
+			}
+			else {
+				lock (mapLock)
+				{
+					mMapWidth = saveData.Map.Width;
+					mMapHeight = saveData.Map.Height;
+
+					mMapLayer = saveData.Map.Data;
+				}
+			}
+
 			mEncounter = saveData.Encounter;
 			if (1 > mEncounter || mEncounter > 3)
 				mEncounter = 2;
@@ -3376,10 +3517,7 @@ namespace Lore
 
 			DisplayPlayerInfo();
 
-			switch (mParty.Etc[11])
-			{
-
-			}
+			InitializeMap();
 		}
 
 		private void DisplayPlayerInfo() {
@@ -3492,6 +3630,16 @@ namespace Lore
 
 		private void EncounterEnemy() {
 
+		}
+
+		private void ShowExitMenu() {
+			AppendText(new string[] { $"[color={RGB.LightCyan}]여기서 나가기를 원합니까 ?[/color]" });
+
+			ShowMenu(MenuMode.ConfirmExitMap, new string[] {
+			"예, 그렇습니다.",
+			"아니오, 원하지 않습니다."});
+
+			mKeyDownShowMenu = true;
 		}
 
 		private void ShowSign(int x, int y)
@@ -3681,7 +3829,9 @@ namespace Lore
 			BuyShield,
 			UseShieldCharacter,
 			BuyArmor,
-			UseArmorCharacter
+			UseArmorCharacter,
+			ConfirmExitMap,
+			JoinSkeleton
 		}
 
 		private enum CureMenuState
