@@ -3134,21 +3134,23 @@ namespace Lore
 				}
 				else if (moveX == 50 && moveY == 86)
 				{
-					if ((mParty.Etc[29] & (1 << 1)) == 0)
-					{
-						for (var i = 48; i < 53; i++)
-							mMapLayer[i + mMapWidth * 87] = 44;
+					//if ((mParty.Etc[29] & (1 << 1)) == 0)
+					//{
+					//	for (var i = 48; i < 53; i++)
+					//		mMapLayer[i + mMapWidth * 87] = 44;
 
-						AppendText(new string[] { $"난 당신을 믿소, {mPlayerList[0].Name}." });
+					//	AppendText(new string[] { $"난 당신을 믿소, {mPlayerList[0].Name}." });
 
-						ContinueText.Visibility = Visibility.Visible;
-						mParty.Etc[29] |= 1 << 1;
-					}
-					else
-					{
-						AppendText(new string[] { $"힘내시오, {mPlayerList[0].Name}." });
-						ContinueText.Visibility = Visibility.Visible;
-					}
+					//	ContinueText.Visibility = Visibility.Visible;
+					//	mParty.Etc[29] |= 1 << 1;
+					//}
+					//else
+					//{
+					//	AppendText(new string[] { $"힘내시오, {mPlayerList[0].Name}." });
+					//	ContinueText.Visibility = Visibility.Visible;
+					//}
+
+					AppendText(new string[] { $"이번 버전에서는 밖에 나갈 수 없소" });
 				}
 				else if (47 <= moveX && moveX <= 53 && 30 <= moveY && moveY <= 36)
 				{
