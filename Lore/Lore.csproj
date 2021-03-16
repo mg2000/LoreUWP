@@ -126,6 +126,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common.cs" />
+    <Compile Include="EnemyData.cs" />
     <Compile Include="GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
@@ -152,7 +153,6 @@
     <Content Include="Assets\lore_sprite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\FOEDATA.DAT" />
     <Content Include="Assets\GROUND1.MAP" />
     <Content Include="Assets\GROUND2.MAP" />
     <Content Include="Assets\KEEP1.MAP" />
@@ -161,6 +161,7 @@
     <Content Include="Assets\K_DEN1.MAP" />
     <Content Include="Assets\K_DEN2.MAP" />
     <Content Include="Assets\LAVA.MAP" />
+    <Content Include="Assets\enemyData.dat" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\lore_tile.png" />
     <Content Include="Properties\Default.rd.xml" />

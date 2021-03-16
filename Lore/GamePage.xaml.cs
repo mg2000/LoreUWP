@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -50,7 +51,7 @@ namespace Lore
 		private int mMaxEnemy = 0;
 
 		private int mTalkMode = 0;
-		private bool mNextMode = false;
+		private bool mTriggeredDownEvent = false;
 		private int mTalkX = 0;
 		private int mTalkY = 0;
 
@@ -79,16 +80,20 @@ namespace Lore
 
 		private bool mTrainingEnd = false;
 
+		// KeyDown에서 이벤트 처리가 이루어졌으면, KeyUp에서는 이벤트를 처리하지 않도록 체크
 		private bool mKeyDownShowMenu = false;
 
 		// 1 - 로어성에서 병사를 만났을때 발생하는 이벤트
 		// 2 - 로어성을 떠날때 스켈레톤을 만나는 이벤트
 		// 3 - 스켈레톤의 답을 거절했을때 이벤트
+		// 4 - 게임 세계 도전 여부 Y/N
 		private int mSpecialEvent = 0;
 
 		private volatile bool mMoveEvent = false;
 
 		private Random mRand = new Random();
+
+		private List<EnemyData> mEnemyDataList = null;
 
 		public GamePage()
 		{
@@ -167,33 +172,22 @@ namespace Lore
 					return;
 				else if (ContinueText.Visibility == Visibility.Visible)
 				{
-					if (mNextMode)
-					{
-						ContinueText.Visibility = Visibility.Collapsed;
+					//if (mNextMode)
+					//{
+					//	ContinueText.Visibility = Visibility.Collapsed;
 
-						DialogText.TextHighlighters.Clear();
-						DialogText.Blocks.Clear();
+					//	DialogText.TextHighlighters.Clear();
+					//	DialogText.Blocks.Clear();
 
-						mNextMode = false;
+					//	mNextMode = false;
 
-						if (mSpecialEvent == 1)
-						{
-							mParty.Etc[49] |= 1 << 4;
-							mSpecialEvent = 0;
-						}
-					}
-					else
+					//}
+					//else
 						return;
 				}
 
-				if (mTalkMode > 0)
-				{
-					ContinueText.Visibility = Visibility.Collapsed;
-
-					if (mSpecialEvent == 0)
-						TalkMode(mTalkX, mTalkY, args.VirtualKey);
-				}
-				else if (mMenuMode == MenuMode.None && (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.Right ||
+				
+				if (mMenuMode == MenuMode.None && (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.Right ||
 				 args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickLeft || args.VirtualKey == VirtualKey.GamepadLeftThumbstickRight ||
 				 args.VirtualKey == VirtualKey.GamepadDPadUp || args.VirtualKey == VirtualKey.GamepadDPadDown || args.VirtualKey == VirtualKey.GamepadDPadLeft || args.VirtualKey == VirtualKey.GamepadDPadRight))
 				{
@@ -250,6 +244,7 @@ namespace Lore
 							{
 								MovePlayer(x, y);
 								InvokeSpecialEvent();
+								mTriggeredDownEvent = true;
 							}
 							else if (1 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 21)
 							{
@@ -267,6 +262,7 @@ namespace Lore
 							{
 								if (EnterWater())
 									MovePlayer(x, y);
+								mTriggeredDownEvent = true;
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 25)
 							{
@@ -286,6 +282,7 @@ namespace Lore
 							else
 							{
 								TalkMode(x, y);
+								mTriggeredDownEvent = true;
 							}
 						}
 						else if (mPosition == PositionType.Ground)
@@ -294,6 +291,7 @@ namespace Lore
 							{
 								MovePlayer(x, y);
 								InvokeSpecialEvent();
+								mTriggeredDownEvent = true;
 							}
 							else if (1 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 21)
 							{
@@ -302,11 +300,13 @@ namespace Lore
 							else if (mMapLayer[x + mMapWidth * y] == 22)
 							{
 								ShowSign(x, y);
+								mTriggeredDownEvent = true;
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 48)
 							{
 								if (EnterWater())
 									MovePlayer(x, y);
+								mTriggeredDownEvent = true;
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 23 || mMapLayer[x + mMapWidth * y] == 49)
 							{
@@ -328,7 +328,8 @@ namespace Lore
 				}
 			};
 
-			gamePageKeyUpEvent = async (sender, args) => {
+			gamePageKeyUpEvent = async (sender, args) =>
+			{
 				int GetWeaponPrice(int weapon)
 				{
 					switch (weapon)
@@ -356,8 +357,10 @@ namespace Lore
 					}
 				}
 
-				int GetShieldPrice(int shield) {
-					switch (shield) {
+				int GetShieldPrice(int shield)
+				{
+					switch (shield)
+					{
 						case 1:
 							return 1000;
 						case 2:
@@ -407,7 +410,13 @@ namespace Lore
 
 				if (mMoveEvent)
 					return;
-				else if (mSpecialEvent == 2) {
+				else if (mTriggeredDownEvent)
+				{
+					mTriggeredDownEvent = false;
+					return;
+				}
+				else if (mSpecialEvent == 2)
+				{
 					mMoveEvent = true;
 					for (var y = mParty.YAxis - 4; y < mParty.YAxis; y++)
 					{
@@ -420,7 +429,8 @@ namespace Lore
 					TalkMode(mTalkX, mTalkY, args.VirtualKey);
 					mSpecialEvent = 0;
 				}
-				else if (mSpecialEvent == 3) {
+				else if (mSpecialEvent == 3)
+				{
 					mSpecialEvent = 0;
 					mParty.Etc[30] |= 1;
 
@@ -431,10 +441,23 @@ namespace Lore
 					await LoadMapData();
 					InitializeMap();
 				}
-				else if (mKeyDownShowMenu)
-					mKeyDownShowMenu = false;
-				else if (ContinueText.Visibility == Visibility.Visible)
-					mNextMode = true;
+				else if (mSpecialEvent == 4) {
+					TalkMode(mTalkX, mTalkY, args.VirtualKey);
+				}
+				else if (ContinueText.Visibility == Visibility.Visible) {
+					ContinueText.Visibility = Visibility.Collapsed;
+
+					if (mSpecialEvent == 1)
+					{
+						mParty.Etc[49] |= 1 << 4;
+						mSpecialEvent = 0;
+					}
+					else if (mTalkMode > 0)
+					{
+						if (mSpecialEvent == 0)
+							TalkMode(mTalkX, mTalkY, args.VirtualKey);
+					}
+				}
 				else if (mWeaponShopEnd)
 				{
 					mWeaponShopEnd = false;
@@ -619,7 +642,6 @@ namespace Lore
 							{
 								AppendText(new string[] { "전투 모드가 아닐때는 공격 마법을 사용할 수 없습니다." });
 								ContinueText.Visibility = Visibility.Visible;
-								mNextMode = true;
 							}
 							else if (mMenuFocusID == 1)
 							{
@@ -689,7 +711,6 @@ namespace Lore
 								{
 									AppendText(new string[] { $"{mMagicPlayer.Name}는 강한 치료 마법은 아직 불가능 합니다." });
 									ContinueText.Visibility = Visibility.Visible;
-									mNextMode = true;
 								}
 								else
 								{
@@ -745,7 +766,6 @@ namespace Lore
 
 							UpdatePlayersStat();
 							ContinueText.Visibility = Visibility.Visible;
-							mNextMode = true;
 						}
 						else if (mMenuMode == MenuMode.ApplyCureAllMagic)
 						{
@@ -788,7 +808,6 @@ namespace Lore
 
 							UpdatePlayersStat();
 							ContinueText.Visibility = Visibility.Visible;
-							mNextMode = true;
 						}
 						else if (mMenuMode == MenuMode.ApplyPhenominaMagic)
 						{
@@ -1245,7 +1264,6 @@ namespace Lore
 
 										mMagicPlayer.ESP -= 5;
 										ContinueText.Visibility = Visibility.Visible;
-										mNextMode = true;
 									}
 								}
 							}
@@ -1697,7 +1715,6 @@ namespace Lore
 								if (mCurePlayer.Dead > 0 || mCurePlayer.Unconscious > 0 || mCurePlayer.Poison > 0 || mCurePlayer.HP >= mCurePlayer.Endurance * mCurePlayer.Level[0])
 								{
 									ContinueText.Visibility = Visibility;
-									mNextMode = true;
 									
 									mCureMenuState = CureMenuState.NotCure;
 								}
@@ -1721,7 +1738,6 @@ namespace Lore
 										DisplayHP();
 
 										ContinueText.Visibility = Visibility;
-										mNextMode = true;
 
 										mCureMenuState = CureMenuState.CureEnd;
 									}
@@ -1739,7 +1755,6 @@ namespace Lore
 								if (mCurePlayer.Dead > 0 || mCurePlayer.Unconscious > 0 || mCurePlayer.Poison == 0)
 								{
 									ContinueText.Visibility = Visibility;
-									mNextMode = true;
 
 									mCureMenuState = CureMenuState.NotCure;
 								}
@@ -1776,7 +1791,6 @@ namespace Lore
 								if (mCurePlayer.Dead > 0 || mCurePlayer.Unconscious == 0)
 								{
 									ContinueText.Visibility = Visibility;
-									mNextMode = true;
 
 									mCureMenuState = CureMenuState.NotCure;
 								}
@@ -1813,7 +1827,6 @@ namespace Lore
 								if (mCurePlayer.Dead == 0)
 								{
 									ContinueText.Visibility = Visibility;
-									mNextMode = true;
 
 									mCureMenuState = CureMenuState.NotCure;
 								}
@@ -1839,7 +1852,6 @@ namespace Lore
 										DisplayCondition();
 
 										ContinueText.Visibility = Visibility;
-										mNextMode = true;
 
 										mCureMenuState = CureMenuState.CureEnd;
 									}
@@ -1976,7 +1988,6 @@ namespace Lore
 									"더 이상 저희들은 가르칠 필요가 없습니다." });
 
 									ContinueText.Visibility = Visibility.Visible;
-									mNextMode = true;
 
 									mTrainingEnd = true;
 								}
@@ -1985,7 +1996,6 @@ namespace Lore
 									AppendText(new string[] { $"당신은 금 {payment - mParty.Gold}개가 더 필요합니다." });
 
 									ContinueText.Visibility = Visibility.Visible;
-									mNextMode = true;
 
 									mTrainingEnd = true;
 								}
@@ -2128,7 +2138,6 @@ namespace Lore
 									}
 
 									ContinueText.Visibility = Visibility.Visible;
-									mNextMode = true;
 
 									mTrainingEnd = true;
 								}
@@ -2165,7 +2174,6 @@ namespace Lore
 								});
 
 								ContinueText.Visibility = Visibility.Visible;
-								mNextMode = true;
 
 								mTrainingEnd = true;
 							}
@@ -2185,7 +2193,6 @@ namespace Lore
 									mSpecialEvent = 2;
 									
 									ContinueText.Visibility = Visibility.Visible;
-									mNextMode = true;
 								}
 							}
 							else {
@@ -2319,7 +2326,6 @@ namespace Lore
 
 			UpdatePlayersStat();
 			ContinueText.Visibility = Visibility.Visible;
-			mNextMode = true;
 		}
 
 		private void InvokeSpecialEvent() {
@@ -2555,34 +2561,29 @@ namespace Lore
 		{
 			AppendText(new string[] { "그러나, 마법 지수가 충분하지 않습니다." }, true);
 			ContinueText.Visibility = Visibility.Visible;
-			mNextMode = true;
 		}
 
 		private void ShowNotEnoughESP()
 		{
 			AppendText(new string[] { "ESP 지수가 충분하지 않습니다." }, true);
 			ContinueText.Visibility = Visibility.Visible;
-			mNextMode = true;
 		}
 
 		private void ShowNotEnoughMoney()
 		{
 			AppendText(new string[] { "당신은 충분한 돈이 없습니다." }, true);
 			ContinueText.Visibility = Visibility.Visible;
-			mNextMode = true;
 		}
 
 		private void ShowThankyou()
 		{
 			AppendText(new string[] { "매우 고맙습니다." }, true);
 			ContinueText.Visibility = Visibility.Visible;
-			mNextMode = true;
 		}
 
 		private void ShowNoThanks() {
 			AppendText(new string[] { "당신이 바란다면 ..." });
 			ContinueText.Visibility = Visibility.Visible;
-			mNextMode = true;
 		}
 
 		private bool IsAvailableMember(Lore player)
@@ -3096,6 +3097,8 @@ namespace Lore
 							mTalkMode = 1;
 							mTalkX = moveX;
 							mTalkY = moveY;
+
+							mSpecialEvent = 4;
 						}
 					}
 					else if (mTalkMode == 1 && (key == VirtualKey.Y || key == VirtualKey.GamepadA))
@@ -3120,6 +3123,7 @@ namespace Lore
 						mParty.Etc[29] = mParty.Etc[29] | 1;
 
 						mTalkMode = 0;
+						mSpecialEvent = 0;
 					}
 					else if (mTalkMode == 1 && (key == VirtualKey.N || key == VirtualKey.GamepadB))
 					{
@@ -3130,27 +3134,26 @@ namespace Lore
 
 						ContinueText.Visibility = Visibility.Visible;
 						mTalkMode = 0;
+						mSpecialEvent = 0;
 					}
 				}
 				else if (moveX == 50 && moveY == 86)
 				{
-					//if ((mParty.Etc[29] & (1 << 1)) == 0)
-					//{
-					//	for (var i = 48; i < 53; i++)
-					//		mMapLayer[i + mMapWidth * 87] = 44;
+					if ((mParty.Etc[29] & (1 << 1)) == 0)
+					{
+						for (var i = 48; i < 53; i++)
+							mMapLayer[i + mMapWidth * 87] = 44;
 
-					//	AppendText(new string[] { $"난 당신을 믿소, {mPlayerList[0].Name}." });
+						AppendText(new string[] { $"난 당신을 믿소, {mPlayerList[0].Name}." });
 
-					//	ContinueText.Visibility = Visibility.Visible;
-					//	mParty.Etc[29] |= 1 << 1;
-					//}
-					//else
-					//{
-					//	AppendText(new string[] { $"힘내시오, {mPlayerList[0].Name}." });
-					//	ContinueText.Visibility = Visibility.Visible;
-					//}
-
-					AppendText(new string[] { $"이번 버전에서는 밖에 나갈 수 없소" });
+						ContinueText.Visibility = Visibility.Visible;
+						mParty.Etc[29] |= 1 << 1;
+					}
+					else
+					{
+						AppendText(new string[] { $"힘내시오, {mPlayerList[0].Name}." });
+						ContinueText.Visibility = Visibility.Visible;
+					}
 				}
 				else if (47 <= moveX && moveX <= 53 && 30 <= moveY && moveY <= 36)
 				{
@@ -3273,6 +3276,7 @@ namespace Lore
 		{
 			try
 			{
+				await LoadEnemyData();
 				await LoadFile();
 
 				mMapTiles = await SpriteSheet.LoadAsync(device, new Uri("ms-appx:///Assets/lore_tile.png"), new Vector2(64, 64), Vector2.Zero);
@@ -3484,6 +3488,66 @@ namespace Lore
 			{
 
 			}
+		}
+
+		private async Task LoadEnemyData() {
+			//var mapFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/FOEDATA.DAT"));
+			//var stream = (await mapFile.OpenReadAsync()).AsStreamForRead();
+			//var reader = new BinaryReader(stream);
+
+			var storageFolder = ApplicationData.Current.LocalFolder;
+			var enemyFileFile = await storageFolder.CreateFileAsync("enemyData.dat", CreationCollisionOption.OpenIfExists);
+			mEnemyDataList = JsonConvert.DeserializeObject<List<EnemyData>>(await FileIO.ReadTextAsync(enemyFileFile));
+
+
+			//var enemyList = new List<EnemyData>();
+
+			//for (int i = 0; i < 75; i++)
+			//{
+			//	var strLen = reader.ReadByte();
+
+			//	var buffer = reader.ReadBytes(16);
+
+			//	//int strLen = 0;
+			//	//while (strLen < buffer.Length && buffer[strLen] != 0)
+			//	//	strLen++;
+
+			//	var name = Encoding.UTF8.GetString(buffer, 0, strLen);
+			//	Debug.WriteLine($"name : {name}");
+
+			//	enemyList.Add(new EnemyData()
+			//	{
+			//		Name = name,
+			//		Strength = reader.ReadByte(),
+			//		Mentality = reader.ReadByte(),
+			//		Endurance = reader.ReadByte(),
+			//		Resistance = reader.ReadByte(),
+			//		Agility = reader.ReadByte(),
+			//		Accuracy = new int[] { reader.ReadByte(), reader.ReadByte() },
+			//		AC = reader.ReadByte(),
+			//		Special = reader.ReadByte(),
+			//		CastLevel = reader.ReadByte(),
+			//		SpecialCastLevel = reader.ReadByte(),
+			//		Level = reader.ReadByte()
+			//	});
+
+			//	//Debug.WriteLine($"Strengh: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"Mentality: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"Endurance: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"Resistance: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"Agility: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"Accuracy0: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"Accuracy1: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"AC: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"Special: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"CastLevel: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"SpecialCastLevel: {reader.ReadByte()}");
+			//	//Debug.WriteLine($"Level: {reader.ReadByte()}");
+			//}
+
+			//var saveJSON = JsonConvert.SerializeObject(enemyList);
+
+			//await FileIO.WriteTextAsync(saveFile, saveJSON);
 		}
 
 		private async Task LoadFile() {
