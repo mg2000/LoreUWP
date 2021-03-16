@@ -33,13 +33,13 @@ namespace Lore
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
+            //Windows.UI.ViewManagement.ApplicationViewScaling.TrySetDisableLayoutScaling(true);
 
             switch (AnalyticsInfo.VersionInfo.DeviceFamily)
             {
                 case "Windows.Xbox":
                 case "Windows.Desktop":
-                    this.RequiresPointerMode = Windows.UI.Xaml.ApplicationRequiresPointerMode.WhenRequested;
+                    this.RequiresPointerMode = ApplicationRequiresPointerMode.WhenRequested;
                     break;
             }
         }
@@ -54,7 +54,7 @@ namespace Lore
             switch (AnalyticsInfo.VersionInfo.DeviceFamily)
             {
                 case "Windows.Xbox":
-                    Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().SetDesiredBoundsMode(Windows.UI.ViewManagement.ApplicationViewBoundsMode.UseCoreWindow);
+                    ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseCoreWindow);
                     break;
             }
 

@@ -62,6 +62,7 @@ namespace Lore
 		private List<TextBlock> mPlayerACList = new List<TextBlock>();
 		private List<TextBlock> mPlayerLevelList = new List<TextBlock>();
 		private List<TextBlock> mPlayerConditionList = new List<TextBlock>();
+		private List<TextBlock> mEnemyTextList = new List<TextBlock>();
 		
 		private List<TextBlock> mMenuList = new List<TextBlock>();
 		private MenuMode mMenuMode = MenuMode.None;
@@ -94,6 +95,7 @@ namespace Lore
 		private Random mRand = new Random();
 
 		private List<EnemyData> mEnemyDataList = null;
+		private List<BattleEnemyData> mEncounterEnemyList = new List<BattleEnemyData>();
 
 		public GamePage()
 		{
@@ -161,6 +163,16 @@ namespace Lore
 			mMenuList.Add(GameMenuText8);
 			mMenuList.Add(GameMenuText9);
 
+			mEnemyTextList.Add(EnemyText0);
+			mEnemyTextList.Add(EnemyText1);
+			mEnemyTextList.Add(EnemyText2);
+			mEnemyTextList.Add(EnemyText3);
+			mEnemyTextList.Add(EnemyText4);
+			mEnemyTextList.Add(EnemyText5);
+			mEnemyTextList.Add(EnemyText6);
+			mEnemyTextList.Add(EnemyText7);
+
+
 			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
 			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
 			gamePageKeyDownEvent = async (sender, args) =>
@@ -168,7 +180,7 @@ namespace Lore
 
 				Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
 
-				if (mMoveEvent)
+				if (mMoveEvent || mSpecialEvent > 0)
 					return;
 				else if (ContinueText.Visibility == Visibility.Visible)
 				{
@@ -195,6 +207,48 @@ namespace Lore
 					{
 						mParty.XAxis = moveX;
 						mParty.YAxis = moveY;
+
+						bool needUpdateStat = false;
+						mPlayerList.ForEach(delegate (Lore player)
+						{
+							if (player.Poison > 0)
+								player.Poison++;
+
+							if (player.Poison > 10)
+							{
+								player.Poison = 1;
+								if (0 < player.Dead && player.Dead < 100)
+									player.Dead++;
+								else if (player.Unconscious > 0)
+								{
+									player.Unconscious++;
+									if (player.Unconscious > player.Endurance * player.Level[0])
+										player.Dead++;
+								}
+								else
+								{
+									player.HP--;
+									if (player.HP <= 0)
+										player.Unconscious = 1;
+								}
+
+								needUpdateStat = true;
+							}
+
+							if (needUpdateStat)
+                            {
+								DisplayHP();
+								DisplayCondition();
+                            }
+
+							DetectGameOver();
+
+							if (mParty.Etc[4] > 0)
+								mParty.Etc[4]--;
+
+							if (mRand.Next(mEncounter * 20) == 0)
+								EncounterEnemy();
+						});
 					}
 
 					var x = mParty.XAxis;
@@ -408,6 +462,22 @@ namespace Lore
 					});
 				}
 
+				async Task RefreshGame()
+				{
+					AppendText(new string[] { "" });
+					await LoadMapData();
+					InitializeMap();
+				}
+
+				async Task ExitCastleLore()
+                {
+					mParty.XAxis = 19;
+					mParty.YAxis = 11;
+					mParty.Map = 1;
+
+					await RefreshGame();
+				}
+
 				if (mMoveEvent)
 					return;
 				else if (mTriggeredDownEvent)
@@ -415,31 +485,12 @@ namespace Lore
 					mTriggeredDownEvent = false;
 					return;
 				}
-				else if (mSpecialEvent == 2)
-				{
-					mMoveEvent = true;
-					for (var y = mParty.YAxis - 4; y < mParty.YAxis; y++)
-					{
-						mMapLayer[mParty.XAxis + mMapWidth * (y - 1)] = 44;
-						mMapLayer[mParty.XAxis + mMapWidth * y] = 48;
-						Task.Delay(500).Wait();
-					}
-					mMoveEvent = false;
-
-					TalkMode(mTalkX, mTalkY, args.VirtualKey);
-					mSpecialEvent = 0;
-				}
 				else if (mSpecialEvent == 3)
 				{
 					mSpecialEvent = 0;
 					mParty.Etc[30] |= 1;
 
-					mParty.XAxis = 19;
-					mParty.YAxis = 11;
-					mParty.Map = 1;
-
-					await LoadMapData();
-					InitializeMap();
+					await ExitCastleLore();
 				}
 				else if (mSpecialEvent == 4) {
 					TalkMode(mTalkX, mTalkY, args.VirtualKey);
@@ -450,6 +501,20 @@ namespace Lore
 					if (mSpecialEvent == 1)
 					{
 						mParty.Etc[49] |= 1 << 4;
+						mSpecialEvent = 0;
+					}
+					else if (mSpecialEvent == 2)
+					{
+						mMoveEvent = true;
+						for (var y = mParty.YAxis - 4; y < mParty.YAxis; y++)
+						{
+							mMapLayer[mParty.XAxis + mMapWidth * (y - 1)] = 44;
+							mMapLayer[mParty.XAxis + mMapWidth * y] = 48;
+							Task.Delay(500).Wait();
+						}
+						mMoveEvent = false;
+
+						TalkMode(mTalkX, mTalkY, args.VirtualKey);
 						mSpecialEvent = 0;
 					}
 					else if (mTalkMode > 0)
@@ -2182,18 +2247,21 @@ namespace Lore
 							mMenuMode = MenuMode.None;
 
 							if (mMenuFocusID == 0) {
-								if ((mParty.Etc[30] & 1) == 0) {
+								if ((mParty.Etc[30] & 1) == 0)
+								{
 									AppendText(new string[] {
 										" 당신이 로어 성을 떠나려는 순간 누군가가 당신을 불렀다."
 									});
-									
+
 									mTalkMode = 1;
 									mTalkX = mParty.XAxis;
 									mTalkY = mParty.YAxis;
 									mSpecialEvent = 2;
-									
+
 									ContinueText.Visibility = Visibility.Visible;
 								}
+								else
+									ExitCastleLore();
 							}
 							else {
 								if (mParty.Map == 6)
@@ -2206,8 +2274,12 @@ namespace Lore
 						else if (mMenuMode == MenuMode.JoinSkeleton) {
 							mMenuMode = MenuMode.None;
 
-
-							if (mMenuFocusID == 1) {
+							if (mMenuFocusID == 0)
+                            {
+								JoinMember(18);
+								ExitCastleLore();
+							}
+							else if (mMenuFocusID == 1) {
 								ShowNoThanks();
 								mSpecialEvent = 3;
 							}
@@ -3495,8 +3567,7 @@ namespace Lore
 			//var stream = (await mapFile.OpenReadAsync()).AsStreamForRead();
 			//var reader = new BinaryReader(stream);
 
-			var storageFolder = ApplicationData.Current.LocalFolder;
-			var enemyFileFile = await storageFolder.CreateFileAsync("enemyData.dat", CreationCollisionOption.OpenIfExists);
+			var enemyFileFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/enemyData.dat"));
 			mEnemyDataList = JsonConvert.DeserializeObject<List<EnemyData>>(await FileIO.ReadTextAsync(enemyFileFile));
 
 
@@ -3694,9 +3765,254 @@ namespace Lore
 				return false;
 		}
 
-		private void EncounterEnemy() {
+		private void JoinMember(int id)
+        {
+			var enemy = mEnemyDataList[id];
 
+			var player = new Lore() {
+				Name = enemy.Name,
+				Gender = "male",
+				Class = 0,
+				Strength = enemy.Strength,
+				Mentality = enemy.Mentality,
+				Concentration = 0,
+				Endurance = enemy.Endurance,
+				Resistance = enemy.Resistance / 2,
+				Agility = enemy.Agility,
+				Accuracy = new int[] { enemy.Accuracy[0], enemy.Accuracy[1], 0 },
+				Luck = 10,
+				Poison = 0,
+				Unconscious = 0,
+				Dead = 0,
+				Level = new int[] { enemy.Level, enemy.CastLevel * 3 > 0 ? enemy.CastLevel * 3 : 1, 1 },
+				ESP = 0,
+				AC = enemy.AC,
+				Armor = 6,
+				
+			};
+
+			player.HP = player.Endurance * player.Level[0];
+			player.SP = player.Mentality * player.Level[1];
+			player.WeaPower = player.Level[0] * 2 + 10;
+			player.ShiPower = 0;
+			player.ArmPower = player.AC;
+
+			switch (player.Level[0])
+            {
+				case 1:
+					player.Experience = 0;
+					break;
+				case 2:
+					player.Experience = 1500;
+					break;
+				case 3:
+					player.Experience = 6000;
+					break;
+				case 4:
+					player.Experience = 20000;
+					break;
+				case 5:
+					player.Experience = 50000;
+					break;
+				case 6:
+					player.Experience = 150000;
+					break;
+				case 7:
+					player.Experience = 250000;
+					break;
+				case 8:
+					player.Experience = 500000;
+					break;
+				case 9:
+					player.Experience = 800000;
+					break;
+				case 10:
+					player.Experience = 1050000;
+					break;
+				case 11:
+					player.Experience = 1320000;
+					break;
+				case 12:
+					player.Experience = 1620000;
+					break;
+				case 13:
+					player.Experience = 1950000;
+					break;
+				case 14:
+					player.Experience = 2310000;
+					break;
+				case 15:
+					player.Experience = 2700000;
+					break;
+				case 16:
+					player.Experience = 3120000;
+					break;
+				case 17:
+					player.Experience = 3570000;
+					break;
+				case 18:
+					player.Experience = 4050000;
+					break;
+				case 19:
+					player.Experience = 4560000;
+					break;
+				case 20:
+				case 21:
+				case 22:
+				case 23:
+				case 24:
+				case 25:
+				case 26:
+				case 27:
+				case 28:
+				case 29:
+				case 30:
+					player.Experience = 5100000;
+					break;
+			}
+
+			if (mPlayerList.Count >= 6)
+				mPlayerList[5] = player;
+			else
+				mPlayerList.Add(player);
+
+			DisplayPlayerInfo();
 		}
+
+		private void EncounterEnemy() {
+			if (mPosition == PositionType.Town || mParty.Map > 20)
+				return;
+
+			var enemyNumber = mRand.Next(mMaxEnemy) + 1;
+			if (enemyNumber > mMaxEnemy)
+				enemyNumber = mMaxEnemy;
+
+			int range;
+			int init;
+			switch (mParty.Map)
+            {
+				case 1:
+					range = 10;
+					init = 0;
+					break;
+				case 2:
+					range = 13;
+					init = 7;
+					break;
+				case 3:
+					range = 15;
+					init = 15;
+					break;
+				case 4:
+					range = 17;
+					init = 23;
+					break;
+				case 5:
+					range = 17;
+					init = 32;
+					break;
+				case 11:
+					range = 10;
+					init = 5;
+					break;
+				case 12:
+					range = 5;
+					init = 16;
+					break;
+				case 14:
+					range = 8;
+					init = 4;
+					break;
+				case 15:
+					range = 8;
+					init = 17;
+					break;
+				case 16:
+					range = 5;
+					init = 27;
+					break;
+				case 17:
+					range = 6;
+					init = 22;
+					break;
+				case 18:
+					range = 3;
+					init = 29;
+					break;
+				case 19:
+					range = 4;
+					init = 37;
+					break;
+				case 20:
+					range = 5;
+					init = 40;
+					break;
+				default:
+					range = 0;
+					init = 0;
+					break;
+            }
+
+			mEncounterEnemyList.Clear();
+			for (var i = 0; i < enemyNumber; i++)
+			{
+				var enemyID = mRand.Next(range) + init;
+				if (enemyID == 0)
+					break;
+
+				mEncounterEnemyList.Add(new BattleEnemyData
+				{
+					ENumber = enemyID,
+					Stats = mEnemyDataList[enemyID],
+					HP = mEnemyDataList[enemyID].Endurance * mEnemyDataList[enemyID].Level,
+					Posion = false,
+					Unconscious = false,
+					Dead = false
+				});
+			}
+
+			DisplayEnemy();
+
+			canvas.Visibility = Visibility.Collapsed;
+			BattlePanel.Visibility = Visibility.Visible;
+		}
+
+		private void DisplayEnemy()
+        {
+			for (var i = 0; i < mEnemyTextList.Count; i++)
+			{
+				if (i < mEncounterEnemyList.Count)
+				{
+					mEnemyTextList[i].Text = mEncounterEnemyList[i].Stats.Name;
+					if (mEncounterEnemyList[i].Dead)
+						mEnemyTextList[i].Foreground = new SolidColorBrush(Colors.Black);
+					else if (mEncounterEnemyList[i].HP == 0 || mEncounterEnemyList[i].Unconscious)
+						mEnemyTextList[i].Foreground = new SolidColorBrush(Colors.DarkGray);
+					else if (1 <= mEncounterEnemyList[i].HP && mEncounterEnemyList[i].HP <= 19)
+						mEnemyTextList[i].Foreground = new SolidColorBrush(Color.FromArgb(0xff, 0xfb, 0x63, 0x63));
+					else if (20 <= mEncounterEnemyList[i].HP && mEncounterEnemyList[i].HP <= 49)
+						mEnemyTextList[i].Foreground = new SolidColorBrush(Colors.Red);
+					else if (50 <= mEncounterEnemyList[i].HP && mEncounterEnemyList[i].HP <= 99)
+						mEnemyTextList[i].Foreground = new SolidColorBrush(Colors.Brown);
+					else if (100 <= mEncounterEnemyList[i].HP && mEncounterEnemyList[i].HP <= 199)
+						mEnemyTextList[i].Foreground = new SolidColorBrush(Colors.Yellow);
+					else if (200 <= mEncounterEnemyList[i].HP && mEncounterEnemyList[i].HP <= 299)
+						mEnemyTextList[i].Foreground = new SolidColorBrush(Colors.Green);
+					else
+						mEnemyTextList[i].Foreground = new SolidColorBrush(Colors.LightGreen);
+
+
+				}
+				else
+					mEnemyTextList[i].Visibility = Visibility.Collapsed;
+			}
+		}
+
+		private void DetectGameOver()
+        {
+
+        }
+
 
 		private void ShowExitMenu() {
 			AppendText(new string[] { $"[color={RGB.LightCyan}]여기서 나가기를 원합니까 ?[/color]" });

@@ -8,7 +8,7 @@
     xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
     Background="#0000a5">
-
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="636"/>
@@ -20,28 +20,38 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <canvas:CanvasAnimatedControl Grid.Column="0" x:Name="canvas" ClearColor="Black" Canvas.Left="0" Canvas.Top="0" Width="576" Height="576" CreateResources="canvas_CreateResources" Draw="canvas_Draw"/>
-                <Grid Grid.Column="1" Background="#525252" Height="576" Margin="0, 0, 30, 0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <StackPanel Grid.Row="0">
-                        <RichTextBlock x:Name="DialogText" FontSize="25" Margin="30, 30, 30, 30" IsTextSelectionEnabled="False"></RichTextBlock>
-                        <TextBlock x:Name="GameMenuText0" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴1</TextBlock>
-                        <TextBlock x:Name="GameMenuText1" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴2</TextBlock>
-                        <TextBlock x:Name="GameMenuText2" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴3</TextBlock>
-                        <TextBlock x:Name="GameMenuText3" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴4</TextBlock>
-                        <TextBlock x:Name="GameMenuText4" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴5</TextBlock>
-                        <TextBlock x:Name="GameMenuText5" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴6</TextBlock>
-                        <TextBlock x:Name="GameMenuText6" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴7</TextBlock>
-                        <TextBlock x:Name="GameMenuText7" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴8</TextBlock>
-                        <TextBlock x:Name="GameMenuText8" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴9</TextBlock>
-                        <TextBlock x:Name="GameMenuText9" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴10</TextBlock>
-                </StackPanel>   
+            <StackPanel Grid.Column="0" x:Name="BattlePanel" Width="576" Height="576" Background="Black" Visibility="Collapsed">
+                <TextBlock x:Name="EnemyText0" Foreground="LightGray" FontSize="25" Margin="60, 50, 30, 0">적1</TextBlock>
+                <TextBlock x:Name="EnemyText1" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적2</TextBlock>
+                <TextBlock x:Name="EnemyText2" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적3</TextBlock>
+                <TextBlock x:Name="EnemyText3" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적4</TextBlock>
+                <TextBlock x:Name="EnemyText4" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적5</TextBlock>
+                <TextBlock x:Name="EnemyText5" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적6</TextBlock>
+                <TextBlock x:Name="EnemyText6" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적7</TextBlock>
+                <TextBlock x:Name="EnemyText7" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적8</TextBlock>
+            </StackPanel>
+            <Grid Grid.Column="1" Background="#525252" Height="576" Margin="0, 0, 30, 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0">
+                    <RichTextBlock x:Name="DialogText" FontSize="25" Margin="30, 30, 30, 30" IsTextSelectionEnabled="False"></RichTextBlock>
+                    <TextBlock x:Name="GameMenuText0" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴1</TextBlock>
+                    <TextBlock x:Name="GameMenuText1" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴2</TextBlock>
+                    <TextBlock x:Name="GameMenuText2" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴3</TextBlock>
+                    <TextBlock x:Name="GameMenuText3" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴4</TextBlock>
+                    <TextBlock x:Name="GameMenuText4" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴5</TextBlock>
+                    <TextBlock x:Name="GameMenuText5" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴6</TextBlock>
+                    <TextBlock x:Name="GameMenuText6" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴7</TextBlock>
+                    <TextBlock x:Name="GameMenuText7" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴8</TextBlock>
+                    <TextBlock x:Name="GameMenuText8" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴9</TextBlock>
+                    <TextBlock x:Name="GameMenuText9" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴10</TextBlock>
+                </StackPanel>
 
-                    <TextBlock Grid.Row="2" x:Name="ContinueText" FontSize="25" Margin="30,0,30,30" Foreground="Yellow" Visibility="Collapsed">아무키나 누르십시오 ...</TextBlock>
-                </Grid>
+                <TextBlock Grid.Row="2" x:Name="ContinueText" FontSize="25" Margin="30,0,30,30" Foreground="Yellow" Visibility="Collapsed">아무키나 누르십시오 ...</TextBlock>
+            </Grid>
         </Grid>
         <Grid Grid.Row="1" Margin="30, 30, 30, 30" Padding="30,30,30,30" Background="#525252">
             <Grid.RowDefinitions>

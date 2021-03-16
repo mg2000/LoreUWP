@@ -125,6 +125,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BattleEnemyData.cs" />
     <Compile Include="Common.cs" />
     <Compile Include="EnemyData.cs" />
     <Compile Include="GamePage.xaml.cs">
