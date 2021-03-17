@@ -33,5 +33,7 @@ namespace Lore
         public const string Red = "ff0000";
         public const string LightRed = "fb6363";
         public const string LightCyan = "62e4f2";
+        public const string Yellow = "ffff00";
+        public const string LightGray = "d3d3d3";
     }
 }

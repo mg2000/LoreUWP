@@ -148,5 +148,37 @@ namespace Lore
 			get;
 			set;
 		}
+
+		public bool IsAvailable {
+			get
+			{
+				if (Unconscious == 0 && Dead == 0 && HP >= 0)
+					return true;
+				else
+					return false;
+			}
+		}
+
+		public string GenderName
+		{
+			get
+			{
+				if (Gender == "male")
+					return "남성";
+				else
+					return "여성";
+			}
+		}
+
+		public string GenderPronoun
+		{
+			get
+			{
+				if (Gender == "male")
+					return "그";
+				else
+					return "그녀";
+			}
+		}
 	}
 }

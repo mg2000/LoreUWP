@@ -1,1 +1,1277 @@
-[{"Name":"Orc","Strength":8,"Mentality":0,"Endurance":8,"Resistance":0,"Agility":8,"Accuracy":[8,0],"AC":1,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":1},{"Name":"Troll","Strength":9,"Mentality":0,"Endurance":6,"Resistance":0,"Agility":9,"Accuracy":[9,0],"AC":1,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":1},{"Name":"Serpent","Strength":7,"Mentality":3,"Endurance":7,"Resistance":0,"Agility":11,"Accuracy":[11,6],"AC":1,"Special":1,"CastLevel":1,"SpecialCastLevel":0,"Level":1},{"Name":"Earth Worm","Strength":3,"Mentality":5,"Endurance":5,"Resistance":0,"Agility":6,"Accuracy":[11,7],"AC":1,"Special":0,"CastLevel":1,"SpecialCastLevel":0,"Level":1},{"Name":"Dwarf","Strength":10,"Mentality":0,"Endurance":10,"Resistance":0,"Agility":10,"Accuracy":[10,0],"AC":2,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":2},{"Name":"Giant","Strength":15,"Mentality":0,"Endurance":13,"Resistance":0,"Agility":8,"Accuracy":[8,0],"AC":2,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":2},{"Name":"Phantom","Strength":0,"Mentality":12,"Endurance":12,"Resistance":0,"Agility":0,"Accuracy":[0,13],"AC":0,"Special":0,"CastLevel":2,"SpecialCastLevel":0,"Level":2},{"Name":"Wolf","Strength":7,"Mentality":0,"Endurance":11,"Resistance":0,"Agility":15,"Accuracy":[15,0],"AC":1,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":2},{"Name":"Imp","Strength":8,"Mentality":8,"Endurance":10,"Resistance":20,"Agility":18,"Accuracy":[18,10],"AC":2,"Special":0,"CastLevel":2,"SpecialCastLevel":0,"Level":3},{"Name":"Goblin","Strength":11,"Mentality":0,"Endurance":13,"Resistance":0,"Agility":13,"Accuracy":[13,0],"AC":3,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":3},{"Name":"Python","Strength":9,"Mentality":5,"Endurance":10,"Resistance":0,"Agility":13,"Accuracy":[13,6],"AC":1,"Special":1,"CastLevel":1,"SpecialCastLevel":0,"Level":3},{"Name":"Insects","Strength":6,"Mentality":4,"Endurance":8,"Resistance":0,"Agility":14,"Accuracy":[14,15],"AC":2,"Special":1,"CastLevel":1,"SpecialCastLevel":0,"Level":3},{"Name":"Giant Spider","Strength":10,"Mentality":0,"Endurance":9,"Resistance":0,"Agility":20,"Accuracy":[13,0],"AC":2,"Special":1,"CastLevel":0,"SpecialCastLevel":0,"Level":4},{"Name":"Gremlin","Strength":10,"Mentality":0,"Endurance":10,"Resistance":0,"Agility":20,"Accuracy":[20,0],"AC":2,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":4},{"Name":"Buzz Bug","Strength":13,"Mentality":0,"Endurance":11,"Resistance":0,"Agility":15,"Accuracy":[15,0],"AC":1,"Special":1,"CastLevel":0,"SpecialCastLevel":0,"Level":4},{"Name":"Salamander","Strength":12,"Mentality":2,"Endurance":13,"Resistance":0,"Agility":12,"Accuracy":[12,10],"AC":3,"Special":1,"CastLevel":1,"SpecialCastLevel":0,"Level":4},{"Name":"Blood Bat","Strength":11,"Mentality":0,"Endurance":10,"Resistance":0,"Agility":5,"Accuracy":[15,0],"AC":1,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":5},{"Name":"Giant Rat","Strength":13,"Mentality":0,"Endurance":18,"Resistance":0,"Agility":10,"Accuracy":[10,0],"AC":2,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":5},{"Name":"Skeleton","Strength":10,"Mentality":0,"Endurance":19,"Resistance":0,"Agility":12,"Accuracy":[12,0],"AC":3,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":5},{"Name":"Kelpie","Strength":8,"Mentality":13,"Endurance":8,"Resistance":0,"Agility":14,"Accuracy":[15,17],"AC":2,"Special":0,"CastLevel":3,"SpecialCastLevel":0,"Level":5},{"Name":"Gazer","Strength":15,"Mentality":8,"Endurance":11,"Resistance":0,"Agility":20,"Accuracy":[15,15],"AC":3,"Special":0,"CastLevel":2,"SpecialCastLevel":0,"Level":6},{"Name":"Ghost","Strength":0,"Mentality":15,"Endurance":10,"Resistance":0,"Agility":0,"Accuracy":[0,15],"AC":0,"Special":0,"CastLevel":3,"SpecialCastLevel":0,"Level":6},{"Name":"Slime","Strength":5,"Mentality":13,"Endurance":5,"Resistance":0,"Agility":19,"Accuracy":[19,19],"AC":2,"Special":0,"CastLevel":2,"SpecialCastLevel":0,"Level":6},{"Name":"Rock-Man","Strength":19,"Mentality":0,"Endurance":15,"Resistance":0,"Agility":10,"Accuracy":[10,0],"AC":5,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":6},{"Name":"Kobold","Strength":9,"Mentality":9,"Endurance":9,"Resistance":0,"Agility":9,"Accuracy":[9,9],"AC":2,"Special":0,"CastLevel":3,"SpecialCastLevel":0,"Level":7},{"Name":"Mummy","Strength":10,"Mentality":10,"Endurance":10,"Resistance":0,"Agility":10,"Accuracy":[10,10],"AC":3,"Special":1,"CastLevel":2,"SpecialCastLevel":0,"Level":7},{"Name":"Devil Hunter","Strength":13,"Mentality":10,"Endurance":10,"Resistance":0,"Agility":10,"Accuracy":[10,18],"AC":3,"Special":2,"CastLevel":2,"SpecialCastLevel":0,"Level":7},{"Name":"Crazy One","Strength":9,"Mentality":9,"Endurance":10,"Resistance":0,"Agility":5,"Accuracy":[5,13],"AC":1,"Special":0,"CastLevel":3,"SpecialCastLevel":0,"Level":7},{"Name":"Ogre","Strength":19,"Mentality":0,"Endurance":19,"Resistance":0,"Agility":9,"Accuracy":[12,0],"AC":4,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":8},{"Name":"Headless","Strength":10,"Mentality":0,"Endurance":15,"Resistance":0,"Agility":10,"Accuracy":[10,0],"AC":3,"Special":2,"CastLevel":0,"SpecialCastLevel":0,"Level":8},{"Name":"Mud-Man","Strength":10,"Mentality":0,"Endurance":15,"Resistance":0,"Agility":10,"Accuracy":[10,0],"AC":7,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":8},{"Name":"Hell Cat","Strength":10,"Mentality":15,"Endurance":11,"Resistance":0,"Agility":18,"Accuracy":[18,16],"AC":2,"Special":2,"CastLevel":3,"SpecialCastLevel":0,"Level":8},{"Name":"Wisp","Strength":5,"Mentality":16,"Endurance":10,"Resistance":0,"Agility":20,"Accuracy":[20,20],"AC":2,"Special":0,"CastLevel":4,"SpecialCastLevel":0,"Level":9},{"Name":"Basilisk","Strength":10,"Mentality":15,"Endurance":12,"Resistance":0,"Agility":20,"Accuracy":[20,10],"AC":2,"Special":1,"CastLevel":2,"SpecialCastLevel":0,"Level":9},{"Name":"Sprite","Strength":0,"Mentality":20,"Endurance":2,"Resistance":80,"Agility":20,"Accuracy":[20,20],"AC":0,"Special":3,"CastLevel":5,"SpecialCastLevel":0,"Level":9},{"Name":"Vampire","Strength":15,"Mentality":13,"Endurance":14,"Resistance":20,"Agility":17,"Accuracy":[17,15],"AC":3,"Special":1,"CastLevel":2,"SpecialCastLevel":0,"Level":9},{"Name":"Molten Monster","Strength":8,"Mentality":0,"Endurance":20,"Resistance":50,"Agility":8,"Accuracy":[16,0],"AC":3,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":10},{"Name":"Great Lich","Strength":10,"Mentality":10,"Endurance":11,"Resistance":10,"Agility":18,"Accuracy":[10,10],"AC":4,"Special":2,"CastLevel":3,"SpecialCastLevel":0,"Level":10},{"Name":"Rampager","Strength":20,"Mentality":0,"Endurance":19,"Resistance":0,"Agility":19,"Accuracy":[19,0],"AC":3,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":10},{"Name":"Mutant","Strength":0,"Mentality":10,"Endurance":15,"Resistance":0,"Agility":0,"Accuracy":[0,20],"AC":3,"Special":0,"CastLevel":3,"SpecialCastLevel":0,"Level":10},{"Name":"Rotten Corpse","Strength":15,"Mentality":15,"Endurance":15,"Resistance":60,"Agility":15,"Accuracy":[15,15],"AC":2,"Special":2,"CastLevel":3,"SpecialCastLevel":0,"Level":11},{"Name":"Gagoyle","Strength":10,"Mentality":0,"Endurance":20,"Resistance":10,"Agility":10,"Accuracy":[10,0],"AC":6,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":11},{"Name":"Wivern","Strength":10,"Mentality":10,"Endurance":9,"Resistance":30,"Agility":20,"Accuracy":[20,9],"AC":3,"Special":2,"CastLevel":3,"SpecialCastLevel":0,"Level":11},{"Name":"Grim Death","Strength":16,"Mentality":16,"Endurance":16,"Resistance":50,"Agility":16,"Accuracy":[16,16],"AC":2,"Special":2,"CastLevel":3,"SpecialCastLevel":0,"Level":12},{"Name":"Griffin","Strength":15,"Mentality":15,"Endurance":15,"Resistance":0,"Agility":15,"Accuracy":[14,14],"AC":3,"Special":2,"CastLevel":3,"SpecialCastLevel":0,"Level":12},{"Name":"Evil Soul","Strength":0,"Mentality":20,"Endurance":10,"Resistance":0,"Agility":0,"Accuracy":[0,15],"AC":0,"Special":3,"CastLevel":4,"SpecialCastLevel":0,"Level":12},{"Name":"Cyclops","Strength":20,"Mentality":0,"Endurance":20,"Resistance":10,"Agility":20,"Accuracy":[20,0],"AC":4,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":13},{"Name":"Dancing-Swd","Strength":15,"Mentality":20,"Endurance":6,"Resistance":20,"Agility":20,"Accuracy":[20,20],"AC":0,"Special":2,"CastLevel":4,"SpecialCastLevel":0,"Level":13},{"Name":"Hydra","Strength":15,"Mentality":10,"Endurance":20,"Resistance":40,"Agility":18,"Accuracy":[18,12],"AC":8,"Special":1,"CastLevel":3,"SpecialCastLevel":0,"Level":13},{"Name":"Stheno","Strength":20,"Mentality":20,"Endurance":20,"Resistance":255,"Agility":10,"Accuracy":[10,10],"AC":255,"Special":1,"CastLevel":3,"SpecialCastLevel":0,"Level":14},{"Name":"Euryale","Strength":20,"Mentality":20,"Endurance":15,"Resistance":255,"Agility":10,"Accuracy":[15,10],"AC":255,"Special":2,"CastLevel":3,"SpecialCastLevel":0,"Level":14},{"Name":"Medusa","Strength":15,"Mentality":10,"Endurance":16,"Resistance":50,"Agility":15,"Accuracy":[15,10],"AC":4,"Special":3,"CastLevel":3,"SpecialCastLevel":0,"Level":14},{"Name":"Minotaur","Strength":15,"Mentality":7,"Endurance":20,"Resistance":40,"Agility":20,"Accuracy":[20,15],"AC":10,"Special":0,"CastLevel":3,"SpecialCastLevel":0,"Level":15},{"Name":"Dragon","Strength":15,"Mentality":7,"Endurance":20,"Resistance":50,"Agility":18,"Accuracy":[20,15],"AC":9,"Special":2,"CastLevel":4,"SpecialCastLevel":0,"Level":15},{"Name":"Dark Soul","Strength":0,"Mentality":20,"Endurance":40,"Resistance":60,"Agility":0,"Accuracy":[0,20],"AC":0,"Special":0,"CastLevel":5,"SpecialCastLevel":0,"Level":15},{"Name":"Hell Fire","Strength":15,"Mentality":20,"Endurance":30,"Resistance":30,"Agility":15,"Accuracy":[15,15],"AC":0,"Special":3,"CastLevel":5,"SpecialCastLevel":0,"Level":16},{"Name":"Astral Mud","Strength":13,"Mentality":20,"Endurance":25,"Resistance":40,"Agility":19,"Accuracy":[19,10],"AC":9,"Special":3,"CastLevel":4,"SpecialCastLevel":0,"Level":16},{"Name":"Reaper","Strength":15,"Mentality":20,"Endurance":33,"Resistance":70,"Agility":20,"Accuracy":[20,20],"AC":5,"Special":1,"CastLevel":3,"SpecialCastLevel":0,"Level":17},{"Name":"Crab God","Strength":20,"Mentality":20,"Endurance":30,"Resistance":20,"Agility":18,"Accuracy":[18,19],"AC":7,"Special":2,"CastLevel":4,"SpecialCastLevel":0,"Level":17},{"Name":"Wraith","Strength":0,"Mentality":24,"Endurance":35,"Resistance":50,"Agility":15,"Accuracy":[0,20],"AC":2,"Special":3,"CastLevel":4,"SpecialCastLevel":0,"Level":18},{"Name":"Death Skull","Strength":0,"Mentality":20,"Endurance":40,"Resistance":80,"Agility":0,"Accuracy":[0,20],"AC":0,"Special":2,"CastLevel":5,"SpecialCastLevel":0,"Level":18},{"Name":"Draconian","Strength":30,"Mentality":20,"Endurance":30,"Resistance":60,"Agility":18,"Accuracy":[18,18],"AC":7,"Special":2,"CastLevel":5,"SpecialCastLevel":1,"Level":19},{"Name":"Death Knight","Strength":35,"Mentality":0,"Endurance":35,"Resistance":50,"Agility":20,"Accuracy":[20,0],"AC":6,"Special":3,"CastLevel":0,"SpecialCastLevel":1,"Level":19},{"Name":"Guardian-Lft","Strength":25,"Mentality":0,"Endurance":40,"Resistance":70,"Agility":20,"Accuracy":[18,0],"AC":5,"Special":2,"CastLevel":0,"SpecialCastLevel":0,"Level":20},{"Name":"Guardian-Rgt","Strength":25,"Mentality":0,"Endurance":40,"Resistance":40,"Agility":20,"Accuracy":[20,0],"AC":7,"Special":2,"CastLevel":0,"SpecialCastLevel":0,"Level":20},{"Name":"Mega-Robo","Strength":40,"Mentality":0,"Endurance":50,"Resistance":0,"Agility":19,"Accuracy":[19,0],"AC":10,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":21},{"Name":"Ancient Evil","Strength":0,"Mentality":20,"Endurance":60,"Resistance":100,"Agility":18,"Accuracy":[0,20],"AC":5,"Special":0,"CastLevel":6,"SpecialCastLevel":2,"Level":22},{"Name":"Lord Ahn","Strength":40,"Mentality":20,"Endurance":60,"Resistance":100,"Agility":35,"Accuracy":[20,20],"AC":10,"Special":3,"CastLevel":5,"SpecialCastLevel":3,"Level":23},{"Name":"Frost Dragon","Strength":15,"Mentality":7,"Endurance":20,"Resistance":50,"Agility":18,"Accuracy":[20,15],"AC":9,"Special":2,"CastLevel":4,"SpecialCastLevel":0,"Level":24},{"Name":"ArchiDraconian","Strength":30,"Mentality":20,"Endurance":30,"Resistance":60,"Agility":18,"Accuracy":[18,18],"AC":7,"Special":2,"CastLevel":5,"SpecialCastLevel":1,"Level":25},{"Name":"Panzer Viper","Strength":35,"Mentality":0,"Endurance":40,"Resistance":80,"Agility":20,"Accuracy":[20,0],"AC":9,"Special":1,"CastLevel":0,"SpecialCastLevel":0,"Level":26},{"Name":"Black Knight","Strength":35,"Mentality":0,"Endurance":35,"Resistance":50,"Agility":20,"Accuracy":[20,0],"AC":6,"Special":3,"CastLevel":0,"SpecialCastLevel":1,"Level":27},{"Name":"ArchiMonk","Strength":20,"Mentality":0,"Endurance":50,"Resistance":70,"Agility":20,"Accuracy":[20,0],"AC":5,"Special":0,"CastLevel":0,"SpecialCastLevel":0,"Level":28},{"Name":"ArchiMage","Strength":10,"Mentality":19,"Endurance":30,"Resistance":70,"Agility":10,"Accuracy":[10,19],"AC":4,"Special":0,"CastLevel":6,"SpecialCastLevel":0,"Level":29},{"Name":"Neo-Necromancer","Strength":40,"Mentality":20,"Endurance":60,"Resistance":100,"Agility":30,"Accuracy":[20,20],"AC":10,"Special":3,"CastLevel":6,"SpecialCastLevel":3,"Level":30}]
+[
+  {
+    "Name": "오크",
+    "Strength": 8,
+    "Mentality": 0,
+    "Endurance": 8,
+    "Resistance": 0,
+    "Agility": 8,
+    "Accuracy": [
+      8,
+      0
+    ],
+    "AC": 1,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 1
+  },
+  {
+    "Name": "트롤",
+    "Strength": 9,
+    "Mentality": 0,
+    "Endurance": 6,
+    "Resistance": 0,
+    "Agility": 9,
+    "Accuracy": [
+      9,
+      0
+    ],
+    "AC": 1,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 1
+  },
+  {
+    "Name": "왕뱀",
+    "Strength": 7,
+    "Mentality": 3,
+    "Endurance": 7,
+    "Resistance": 0,
+    "Agility": 11,
+    "Accuracy": [
+      11,
+      6
+    ],
+    "AC": 1,
+    "Special": 1,
+    "CastLevel": 1,
+    "SpecialCastLevel": 0,
+    "Level": 1
+  },
+  {
+    "Name": "왕 지렁이",
+    "Strength": 3,
+    "Mentality": 5,
+    "Endurance": 5,
+    "Resistance": 0,
+    "Agility": 6,
+    "Accuracy": [
+      11,
+      7
+    ],
+    "AC": 1,
+    "Special": 0,
+    "CastLevel": 1,
+    "SpecialCastLevel": 0,
+    "Level": 1
+  },
+  {
+    "Name": "드와프",
+    "Strength": 10,
+    "Mentality": 0,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      0
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 2
+  },
+  {
+    "Name": "거인",
+    "Strength": 15,
+    "Mentality": 0,
+    "Endurance": 13,
+    "Resistance": 0,
+    "Agility": 8,
+    "Accuracy": [
+      8,
+      0
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 2
+  },
+  {
+    "Name": "유령",
+    "Strength": 0,
+    "Mentality": 12,
+    "Endurance": 12,
+    "Resistance": 0,
+    "Agility": 0,
+    "Accuracy": [
+      0,
+      13
+    ],
+    "AC": 0,
+    "Special": 0,
+    "CastLevel": 2,
+    "SpecialCastLevel": 0,
+    "Level": 2
+  },
+  {
+    "Name": "식인 늑대",
+    "Strength": 7,
+    "Mentality": 0,
+    "Endurance": 11,
+    "Resistance": 0,
+    "Agility": 15,
+    "Accuracy": [
+      15,
+      0
+    ],
+    "AC": 1,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 2
+  },
+  {
+    "Name": "임프",
+    "Strength": 8,
+    "Mentality": 8,
+    "Endurance": 10,
+    "Resistance": 20,
+    "Agility": 18,
+    "Accuracy": [
+      18,
+      10
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 2,
+    "SpecialCastLevel": 0,
+    "Level": 3
+  },
+  {
+    "Name": "고블린",
+    "Strength": 11,
+    "Mentality": 0,
+    "Endurance": 13,
+    "Resistance": 0,
+    "Agility": 13,
+    "Accuracy": [
+      13,
+      0
+    ],
+    "AC": 3,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 3
+  },
+  {
+    "Name": "독사",
+    "Strength": 9,
+    "Mentality": 5,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 13,
+    "Accuracy": [
+      13,
+      6
+    ],
+    "AC": 1,
+    "Special": 1,
+    "CastLevel": 1,
+    "SpecialCastLevel": 0,
+    "Level": 3
+  },
+  {
+    "Name": "벌레떼",
+    "Strength": 6,
+    "Mentality": 4,
+    "Endurance": 8,
+    "Resistance": 0,
+    "Agility": 14,
+    "Accuracy": [
+      14,
+      15
+    ],
+    "AC": 2,
+    "Special": 1,
+    "CastLevel": 1,
+    "SpecialCastLevel": 0,
+    "Level": 3
+  },
+  {
+    "Name": "거대 거미",
+    "Strength": 10,
+    "Mentality": 0,
+    "Endurance": 9,
+    "Resistance": 0,
+    "Agility": 20,
+    "Accuracy": [
+      13,
+      0
+    ],
+    "AC": 2,
+    "Special": 1,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 4
+  },
+  {
+    "Name": "그렘린",
+    "Strength": 10,
+    "Mentality": 0,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      0
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 4
+  },
+  {
+    "Name": "살인 벌",
+    "Strength": 13,
+    "Mentality": 0,
+    "Endurance": 11,
+    "Resistance": 0,
+    "Agility": 15,
+    "Accuracy": [
+      15,
+      0
+    ],
+    "AC": 1,
+    "Special": 1,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 4
+  },
+  {
+    "Name": "불도마뱀",
+    "Strength": 12,
+    "Mentality": 2,
+    "Endurance": 13,
+    "Resistance": 0,
+    "Agility": 12,
+    "Accuracy": [
+      12,
+      10
+    ],
+    "AC": 3,
+    "Special": 1,
+    "CastLevel": 1,
+    "SpecialCastLevel": 0,
+    "Level": 4
+  },
+  {
+    "Name": "흡혈 박쥐",
+    "Strength": 11,
+    "Mentality": 0,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 5,
+    "Accuracy": [
+      15,
+      0
+    ],
+    "AC": 1,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 5
+  },
+  {
+    "Name": "거대한 쥐",
+    "Strength": 13,
+    "Mentality": 0,
+    "Endurance": 18,
+    "Resistance": 0,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      0
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 5
+  },
+  {
+    "Name": "해골 병사",
+    "Strength": 10,
+    "Mentality": 0,
+    "Endurance": 19,
+    "Resistance": 0,
+    "Agility": 12,
+    "Accuracy": [
+      12,
+      0
+    ],
+    "AC": 3,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 5
+  },
+  {
+    "Name": "켈피",
+    "Strength": 8,
+    "Mentality": 13,
+    "Endurance": 8,
+    "Resistance": 0,
+    "Agility": 14,
+    "Accuracy": [
+      15,
+      17
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 5
+  },
+  {
+    "Name": "게이져",
+    "Strength": 15,
+    "Mentality": 8,
+    "Endurance": 11,
+    "Resistance": 0,
+    "Agility": 20,
+    "Accuracy": [
+      15,
+      15
+    ],
+    "AC": 3,
+    "Special": 0,
+    "CastLevel": 2,
+    "SpecialCastLevel": 0,
+    "Level": 6
+  },
+  {
+    "Name": "혼령",
+    "Strength": 0,
+    "Mentality": 15,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 0,
+    "Accuracy": [
+      0,
+      15
+    ],
+    "AC": 0,
+    "Special": 0,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 6
+  },
+  {
+    "Name": "점액 생물",
+    "Strength": 5,
+    "Mentality": 13,
+    "Endurance": 5,
+    "Resistance": 0,
+    "Agility": 19,
+    "Accuracy": [
+      19,
+      19
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 2,
+    "SpecialCastLevel": 0,
+    "Level": 6
+  },
+  {
+    "Name": "바위 인간",
+    "Strength": 19,
+    "Mentality": 0,
+    "Endurance": 15,
+    "Resistance": 0,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      0
+    ],
+    "AC": 5,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 6
+  },
+  {
+    "Name": "코볼드",
+    "Strength": 9,
+    "Mentality": 9,
+    "Endurance": 9,
+    "Resistance": 0,
+    "Agility": 9,
+    "Accuracy": [
+      9,
+      9
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 7
+  },
+  {
+    "Name": "미이라",
+    "Strength": 10,
+    "Mentality": 10,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      10
+    ],
+    "AC": 3,
+    "Special": 1,
+    "CastLevel": 2,
+    "SpecialCastLevel": 0,
+    "Level": 7
+  },
+  {
+    "Name": "악마 사냥꾼",
+    "Strength": 13,
+    "Mentality": 10,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      18
+    ],
+    "AC": 3,
+    "Special": 2,
+    "CastLevel": 2,
+    "SpecialCastLevel": 0,
+    "Level": 7
+  },
+  {
+    "Name": "미친 괴물",
+    "Strength": 9,
+    "Mentality": 9,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 5,
+    "Accuracy": [
+      5,
+      13
+    ],
+    "AC": 1,
+    "Special": 0,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 7
+  },
+  {
+    "Name": "식인 거인",
+    "Strength": 19,
+    "Mentality": 0,
+    "Endurance": 19,
+    "Resistance": 0,
+    "Agility": 9,
+    "Accuracy": [
+      12,
+      0
+    ],
+    "AC": 4,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 8
+  },
+  {
+    "Name": "헤드리스",
+    "Strength": 10,
+    "Mentality": 0,
+    "Endurance": 15,
+    "Resistance": 0,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      0
+    ],
+    "AC": 3,
+    "Special": 2,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 8
+  },
+  {
+    "Name": "진흙 인간",
+    "Strength": 10,
+    "Mentality": 0,
+    "Endurance": 15,
+    "Resistance": 0,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      0
+    ],
+    "AC": 7,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 8
+  },
+  {
+    "Name": "지옥의 고양이",
+    "Strength": 10,
+    "Mentality": 15,
+    "Endurance": 11,
+    "Resistance": 0,
+    "Agility": 18,
+    "Accuracy": [
+      18,
+      16
+    ],
+    "AC": 2,
+    "Special": 2,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 8
+  },
+  {
+    "Name": "도깨비불",
+    "Strength": 5,
+    "Mentality": 16,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      20
+    ],
+    "AC": 2,
+    "Special": 0,
+    "CastLevel": 4,
+    "SpecialCastLevel": 0,
+    "Level": 9
+  },
+  {
+    "Name": "바실리스크",
+    "Strength": 10,
+    "Mentality": 15,
+    "Endurance": 12,
+    "Resistance": 0,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      10
+    ],
+    "AC": 2,
+    "Special": 1,
+    "CastLevel": 2,
+    "SpecialCastLevel": 0,
+    "Level": 9
+  },
+  {
+    "Name": "요정",
+    "Strength": 0,
+    "Mentality": 20,
+    "Endurance": 2,
+    "Resistance": 80,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      20
+    ],
+    "AC": 0,
+    "Special": 3,
+    "CastLevel": 5,
+    "SpecialCastLevel": 0,
+    "Level": 9
+  },
+  {
+    "Name": "흡혈귀",
+    "Strength": 15,
+    "Mentality": 13,
+    "Endurance": 14,
+    "Resistance": 20,
+    "Agility": 17,
+    "Accuracy": [
+      17,
+      15
+    ],
+    "AC": 3,
+    "Special": 1,
+    "CastLevel": 2,
+    "SpecialCastLevel": 0,
+    "Level": 9
+  },
+  {
+    "Name": "무형 괴물",
+    "Strength": 8,
+    "Mentality": 0,
+    "Endurance": 20,
+    "Resistance": 50,
+    "Agility": 8,
+    "Accuracy": [
+      16,
+      0
+    ],
+    "AC": 3,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 10
+  },
+  {
+    "Name": "거대 거머리",
+    "Strength": 10,
+    "Mentality": 10,
+    "Endurance": 11,
+    "Resistance": 10,
+    "Agility": 18,
+    "Accuracy": [
+      10,
+      10
+    ],
+    "AC": 4,
+    "Special": 2,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 10
+  },
+  {
+    "Name": "광란자",
+    "Strength": 20,
+    "Mentality": 0,
+    "Endurance": 19,
+    "Resistance": 0,
+    "Agility": 19,
+    "Accuracy": [
+      19,
+      0
+    ],
+    "AC": 3,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 10
+  },
+  {
+    "Name": "돌연변이",
+    "Strength": 0,
+    "Mentality": 10,
+    "Endurance": 15,
+    "Resistance": 0,
+    "Agility": 0,
+    "Accuracy": [
+      0,
+      20
+    ],
+    "AC": 3,
+    "Special": 0,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 10
+  },
+  {
+    "Name": "썩은 시체",
+    "Strength": 15,
+    "Mentality": 15,
+    "Endurance": 15,
+    "Resistance": 60,
+    "Agility": 15,
+    "Accuracy": [
+      15,
+      15
+    ],
+    "AC": 2,
+    "Special": 2,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 11
+  },
+  {
+    "Name": "가고일",
+    "Strength": 10,
+    "Mentality": 0,
+    "Endurance": 20,
+    "Resistance": 10,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      0
+    ],
+    "AC": 6,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 11
+  },
+  {
+    "Name": "비룡",
+    "Strength": 10,
+    "Mentality": 10,
+    "Endurance": 9,
+    "Resistance": 30,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      9
+    ],
+    "AC": 3,
+    "Special": 2,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 11
+  },
+  {
+    "Name": "사신",
+    "Strength": 16,
+    "Mentality": 16,
+    "Endurance": 16,
+    "Resistance": 50,
+    "Agility": 16,
+    "Accuracy": [
+      16,
+      16
+    ],
+    "AC": 2,
+    "Special": 2,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 12
+  },
+  {
+    "Name": "그리핀",
+    "Strength": 15,
+    "Mentality": 15,
+    "Endurance": 15,
+    "Resistance": 0,
+    "Agility": 15,
+    "Accuracy": [
+      14,
+      14
+    ],
+    "AC": 3,
+    "Special": 2,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 12
+  },
+  {
+    "Name": "악의 영혼",
+    "Strength": 0,
+    "Mentality": 20,
+    "Endurance": 10,
+    "Resistance": 0,
+    "Agility": 0,
+    "Accuracy": [
+      0,
+      15
+    ],
+    "AC": 0,
+    "Special": 3,
+    "CastLevel": 4,
+    "SpecialCastLevel": 0,
+    "Level": 12
+  },
+  {
+    "Name": "사이클롭스",
+    "Strength": 20,
+    "Mentality": 0,
+    "Endurance": 20,
+    "Resistance": 10,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      0
+    ],
+    "AC": 4,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 13
+  },
+  {
+    "Name": "광란의 검",
+    "Strength": 15,
+    "Mentality": 20,
+    "Endurance": 6,
+    "Resistance": 20,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      20
+    ],
+    "AC": 0,
+    "Special": 2,
+    "CastLevel": 4,
+    "SpecialCastLevel": 0,
+    "Level": 13
+  },
+  {
+    "Name": "히드라",
+    "Strength": 15,
+    "Mentality": 10,
+    "Endurance": 20,
+    "Resistance": 40,
+    "Agility": 18,
+    "Accuracy": [
+      18,
+      12
+    ],
+    "AC": 8,
+    "Special": 1,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 13
+  },
+  {
+    "Name": "스테노",
+    "Strength": 20,
+    "Mentality": 20,
+    "Endurance": 20,
+    "Resistance": 255,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      10
+    ],
+    "AC": 255,
+    "Special": 1,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 14
+  },
+  {
+    "Name": "에우리알레",
+    "Strength": 20,
+    "Mentality": 20,
+    "Endurance": 15,
+    "Resistance": 255,
+    "Agility": 10,
+    "Accuracy": [
+      15,
+      10
+    ],
+    "AC": 255,
+    "Special": 2,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 14
+  },
+  {
+    "Name": "메두사",
+    "Strength": 15,
+    "Mentality": 10,
+    "Endurance": 16,
+    "Resistance": 50,
+    "Agility": 15,
+    "Accuracy": [
+      15,
+      10
+    ],
+    "AC": 4,
+    "Special": 3,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 14
+  },
+  {
+    "Name": "미노타우루스",
+    "Strength": 15,
+    "Mentality": 7,
+    "Endurance": 20,
+    "Resistance": 40,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      15
+    ],
+    "AC": 10,
+    "Special": 0,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 15
+  },
+  {
+    "Name": "드래곤",
+    "Strength": 15,
+    "Mentality": 7,
+    "Endurance": 20,
+    "Resistance": 50,
+    "Agility": 18,
+    "Accuracy": [
+      20,
+      15
+    ],
+    "AC": 9,
+    "Special": 2,
+    "CastLevel": 4,
+    "SpecialCastLevel": 0,
+    "Level": 15
+  },
+  {
+    "Name": "어둠의 영혼",
+    "Strength": 0,
+    "Mentality": 20,
+    "Endurance": 40,
+    "Resistance": 60,
+    "Agility": 0,
+    "Accuracy": [
+      0,
+      20
+    ],
+    "AC": 0,
+    "Special": 0,
+    "CastLevel": 5,
+    "SpecialCastLevel": 0,
+    "Level": 15
+  },
+  {
+    "Name": "지옥의 불",
+    "Strength": 15,
+    "Mentality": 20,
+    "Endurance": 30,
+    "Resistance": 30,
+    "Agility": 15,
+    "Accuracy": [
+      15,
+      15
+    ],
+    "AC": 0,
+    "Special": 3,
+    "CastLevel": 5,
+    "SpecialCastLevel": 0,
+    "Level": 16
+  },
+  {
+    "Name": "진흙 생명체",
+    "Strength": 13,
+    "Mentality": 20,
+    "Endurance": 25,
+    "Resistance": 40,
+    "Agility": 19,
+    "Accuracy": [
+      19,
+      10
+    ],
+    "AC": 9,
+    "Special": 3,
+    "CastLevel": 4,
+    "SpecialCastLevel": 0,
+    "Level": 16
+  },
+  {
+    "Name": "Reaper",
+    "Strength": 15,
+    "Mentality": 20,
+    "Endurance": 33,
+    "Resistance": 70,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      20
+    ],
+    "AC": 5,
+    "Special": 1,
+    "CastLevel": 3,
+    "SpecialCastLevel": 0,
+    "Level": 17
+  },
+  {
+    "Name": "Crab God",
+    "Strength": 20,
+    "Mentality": 20,
+    "Endurance": 30,
+    "Resistance": 20,
+    "Agility": 18,
+    "Accuracy": [
+      18,
+      19
+    ],
+    "AC": 7,
+    "Special": 2,
+    "CastLevel": 4,
+    "SpecialCastLevel": 0,
+    "Level": 17
+  },
+  {
+    "Name": "생령",
+    "Strength": 0,
+    "Mentality": 24,
+    "Endurance": 35,
+    "Resistance": 50,
+    "Agility": 15,
+    "Accuracy": [
+      0,
+      20
+    ],
+    "AC": 2,
+    "Special": 3,
+    "CastLevel": 4,
+    "SpecialCastLevel": 0,
+    "Level": 18
+  },
+  {
+    "Name": "죽음의 두개골",
+    "Strength": 0,
+    "Mentality": 20,
+    "Endurance": 40,
+    "Resistance": 80,
+    "Agility": 0,
+    "Accuracy": [
+      0,
+      20
+    ],
+    "AC": 0,
+    "Special": 2,
+    "CastLevel": 5,
+    "SpecialCastLevel": 0,
+    "Level": 18
+  },
+  {
+    "Name": "드라코니안",
+    "Strength": 30,
+    "Mentality": 20,
+    "Endurance": 30,
+    "Resistance": 60,
+    "Agility": 18,
+    "Accuracy": [
+      18,
+      18
+    ],
+    "AC": 7,
+    "Special": 2,
+    "CastLevel": 5,
+    "SpecialCastLevel": 1,
+    "Level": 19
+  },
+  {
+    "Name": "죽음의 기사",
+    "Strength": 35,
+    "Mentality": 0,
+    "Endurance": 35,
+    "Resistance": 50,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      0
+    ],
+    "AC": 6,
+    "Special": 3,
+    "CastLevel": 0,
+    "SpecialCastLevel": 1,
+    "Level": 19
+  },
+  {
+    "Name": "가디안 L-Lft",
+    "Strength": 25,
+    "Mentality": 0,
+    "Endurance": 40,
+    "Resistance": 70,
+    "Agility": 20,
+    "Accuracy": [
+      18,
+      0
+    ],
+    "AC": 5,
+    "Special": 2,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 20
+  },
+  {
+    "Name": "가디안 R-Rgt",
+    "Strength": 25,
+    "Mentality": 0,
+    "Endurance": 40,
+    "Resistance": 40,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      0
+    ],
+    "AC": 7,
+    "Special": 2,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 20
+  },
+  {
+    "Name": "메가 로보",
+    "Strength": 40,
+    "Mentality": 0,
+    "Endurance": 50,
+    "Resistance": 0,
+    "Agility": 19,
+    "Accuracy": [
+      19,
+      0
+    ],
+    "AC": 10,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 21
+  },
+  {
+    "Name": "에이션트 이블",
+    "Strength": 0,
+    "Mentality": 20,
+    "Endurance": 60,
+    "Resistance": 100,
+    "Agility": 18,
+    "Accuracy": [
+      0,
+      20
+    ],
+    "AC": 5,
+    "Special": 0,
+    "CastLevel": 6,
+    "SpecialCastLevel": 2,
+    "Level": 22
+  },
+  {
+    "Name": "로드 안",
+    "Strength": 40,
+    "Mentality": 20,
+    "Endurance": 60,
+    "Resistance": 100,
+    "Agility": 35,
+    "Accuracy": [
+      20,
+      20
+    ],
+    "AC": 10,
+    "Special": 3,
+    "CastLevel": 5,
+    "SpecialCastLevel": 3,
+    "Level": 23
+  },
+  {
+    "Name": "서리 드래곤",
+    "Strength": 15,
+    "Mentality": 7,
+    "Endurance": 20,
+    "Resistance": 50,
+    "Agility": 18,
+    "Accuracy": [
+      20,
+      15
+    ],
+    "AC": 9,
+    "Special": 2,
+    "CastLevel": 4,
+    "SpecialCastLevel": 0,
+    "Level": 24
+  },
+  {
+    "Name": "대드라코니안",
+    "Strength": 30,
+    "Mentality": 20,
+    "Endurance": 30,
+    "Resistance": 60,
+    "Agility": 18,
+    "Accuracy": [
+      18,
+      18
+    ],
+    "AC": 7,
+    "Special": 2,
+    "CastLevel": 5,
+    "SpecialCastLevel": 1,
+    "Level": 25
+  },
+  {
+    "Name": "기갑 독사",
+    "Strength": 35,
+    "Mentality": 0,
+    "Endurance": 40,
+    "Resistance": 80,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      0
+    ],
+    "AC": 9,
+    "Special": 1,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 26
+  },
+  {
+    "Name": "검은 기사",
+    "Strength": 35,
+    "Mentality": 0,
+    "Endurance": 35,
+    "Resistance": 50,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      0
+    ],
+    "AC": 6,
+    "Special": 3,
+    "CastLevel": 0,
+    "SpecialCastLevel": 1,
+    "Level": 27
+  },
+  {
+    "Name": "대전투승",
+    "Strength": 20,
+    "Mentality": 0,
+    "Endurance": 50,
+    "Resistance": 70,
+    "Agility": 20,
+    "Accuracy": [
+      20,
+      0
+    ],
+    "AC": 5,
+    "Special": 0,
+    "CastLevel": 0,
+    "SpecialCastLevel": 0,
+    "Level": 28
+  },
+  {
+    "Name": "대마법사",
+    "Strength": 10,
+    "Mentality": 19,
+    "Endurance": 30,
+    "Resistance": 70,
+    "Agility": 10,
+    "Accuracy": [
+      10,
+      19
+    ],
+    "AC": 4,
+    "Special": 0,
+    "CastLevel": 6,
+    "SpecialCastLevel": 0,
+    "Level": 29
+  },
+  {
+    "Name": "네오-네크로맨서",
+    "Strength": 40,
+    "Mentality": 20,
+    "Endurance": 60,
+    "Resistance": 100,
+    "Agility": 30,
+    "Accuracy": [
+      20,
+      20
+    ],
+    "AC": 10,
+    "Special": 3,
+    "CastLevel": 6,
+    "SpecialCastLevel": 3,
+    "Level": 30
+  }
+]

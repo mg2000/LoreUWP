@@ -21,14 +21,30 @@
             </Grid.ColumnDefinitions>
             <canvas:CanvasAnimatedControl Grid.Column="0" x:Name="canvas" ClearColor="Black" Canvas.Left="0" Canvas.Top="0" Width="576" Height="576" CreateResources="canvas_CreateResources" Draw="canvas_Draw"/>
             <StackPanel Grid.Column="0" x:Name="BattlePanel" Width="576" Height="576" Background="Black" Visibility="Collapsed">
-                <TextBlock x:Name="EnemyText0" Foreground="LightGray" FontSize="25" Margin="60, 50, 30, 0">적1</TextBlock>
-                <TextBlock x:Name="EnemyText1" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적2</TextBlock>
-                <TextBlock x:Name="EnemyText2" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적3</TextBlock>
-                <TextBlock x:Name="EnemyText3" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적4</TextBlock>
-                <TextBlock x:Name="EnemyText4" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적5</TextBlock>
-                <TextBlock x:Name="EnemyText5" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적6</TextBlock>
-                <TextBlock x:Name="EnemyText6" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적7</TextBlock>
-                <TextBlock x:Name="EnemyText7" Foreground="LightGray" FontSize="25" Margin="60, 30, 30, 0">적8</TextBlock>
+                <Border x:Name="EnemyBlock0" Background="Transparent" Margin="60, 50, 30, 0">
+                    <TextBlock x:Name="EnemyText0" Foreground="LightGray" FontSize="25">적1</TextBlock>
+                </Border>
+                <Border x:Name="EnemyBlock1" Background="Transparent" Margin="60, 30, 30, 0">
+                    <TextBlock x:Name="EnemyText1" Foreground="LightGray" FontSize="25">적2</TextBlock>
+                </Border>
+                <Border x:Name="EnemyBlock2" Background="Transparent" Margin="60, 30, 30, 0">
+                    <TextBlock x:Name="EnemyText2" Foreground="LightGray" FontSize="25">적3</TextBlock>
+                </Border>
+                <Border x:Name="EnemyBlock3" Background="Transparent" Margin="60, 30, 30, 0">
+                    <TextBlock x:Name="EnemyText3" Foreground="LightGray" FontSize="25">적4</TextBlock>
+                </Border>
+                <Border x:Name="EnemyBlock4" Background="Transparent" Margin="60, 30, 30, 0">
+                    <TextBlock x:Name="EnemyText4" Foreground="LightGray" FontSize="25">적5</TextBlock>
+                </Border>
+                <Border x:Name="EnemyBlock5" Background="Transparent" Margin="60, 30, 30, 0">
+                    <TextBlock x:Name="EnemyText5" Foreground="LightGray" FontSize="25">적6</TextBlock>
+                </Border>
+                <Border x:Name="EnemyBlock6" Background="Transparent" Margin="60, 30, 30, 0">
+                    <TextBlock x:Name="EnemyText6" Foreground="LightGray" FontSize="25">적7</TextBlock>
+                </Border>
+                <Border x:Name="EnemyBlock7" Background="Transparent" Margin="60, 30, 30, 0">
+                    <TextBlock x:Name="EnemyText7" Foreground="LightGray" FontSize="25">적8</TextBlock>
+                </Border>
             </StackPanel>
             <Grid Grid.Column="1" Background="#525252" Height="576" Margin="0, 0, 30, 0">
                 <Grid.RowDefinitions>

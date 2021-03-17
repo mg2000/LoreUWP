@@ -8,17 +8,10 @@ namespace Lore
 {
     class Common
     {
-        public static string GetGenderStr(Lore player)
-        {
-            if (player.Gender == "male")
-                return "남성";
-            else
-                return "여성";
-        }
-
         public static string GetClassStr(Lore player)
         {
-            switch (player.Class) {
+            switch (player.Class)
+            {
                 case 1:
                     return "기사";
                 case 2:
@@ -71,6 +64,14 @@ namespace Lore
                 default:
                     return "불확실한 무기";
             }
+        }
+
+        public static string GetWeaponJosaStr(int weapon)
+        {
+            if (weapon == 0 || (2 <= weapon && weapon <= 4) || (6 <= weapon && weapon <= 9))
+                return "으";
+            else
+                return "";
         }
 
         public static string GetDefenseStr(int shield)
@@ -191,6 +192,22 @@ namespace Lore
                 default:
                     return "";
             }
+        }
+
+        public static string GetMagicJosaStr(int magic)
+        {
+            if (magic == 2 || magic == 9 || magic == 10 || (14 <= magic && magic <= 16) || (18 <= magic && magic <= 21) || (25 <= magic && magic <= 28) || magic == 32 || magic == 38 || magic == 40 || magic == 41)
+                return "";
+            else
+                return "으";
+        }
+
+        public static string GetMagicMokjukStr(int magic)
+        {
+            if (magic == 2 || magic == 9 || magic == 10 || (14 <= magic && magic <= 16) || (18 <= magic && magic <= 21) || (25 <= magic && magic <= 28) || magic == 32 || magic == 38 || magic == 40 || magic == 41)
+                return "를";
+            else
+                return "을";
         }
     }
 }
