@@ -103,6 +103,7 @@ namespace Lore
 		private int mBattleToolID = 0;
 		private int mEnemyFocusID = 0;
 		private List<BattleCommand> mBattleCommandList = new List<BattleCommand>();
+		private BattleTurn mBattleTurn = BattleTurn.None;
 
 		public GamePage()
 		{
@@ -538,6 +539,50 @@ namespace Lore
 					{
 						if (mSpecialEvent == 0)
 							TalkMode(mTalkX, mTalkY, args.VirtualKey);
+					}
+					else if (mBattleTurn == BattleTurn.Player)
+					{
+
+					}
+					else if (mBattleTurn == BattleTurn.Enemy)
+					{
+						foreach (var enemy in mEncounterEnemyList)
+						{
+							if (enemy.Posion)
+							{
+								if (enemy.Unconscious)
+									enemy.Dead = true;
+								else
+								{
+									enemy.HP--;
+									if (enemy.HP <= 0)
+										enemy.Unconscious = true;
+								}
+							}
+
+							if (!enemy.Unconscious && !enemy.Dead)
+                            {
+								if (enemy.SpecialCastLevel > 0 && enemy.ENumber == 0)
+								{
+									var liveEnemyCount = 0;
+									foreach (var otherEnemy in mEncounterEnemyList)
+									{
+										if (!otherEnemy.Dead)
+											liveEnemyCount++;
+									}
+
+									if (liveEnemyCount < (mRand.Next(3) + 2) && mRand.Next(3) == 0) { }
+									var newEnemy = JoinEnemy(enemy.ENumber + mRand.Next(4) - 20);
+									DisplayEnemy();
+									AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {newEnemy.Name}(을)를 생성시켰다[/color]" }, true);
+								}
+
+								if (enemy.SpecialCastLevel > 1)
+                                {
+
+                                }
+                            }
+						}
 					}
 				}
 				else if (mWeaponShopEnd)
@@ -1354,13 +1399,74 @@ namespace Lore
 												enemy.Posion = true;
 											}
 											else if (15 <= espType && espType <= 17) {
+												AppendText(new string[] { $"{battleCommand.Player.GenderPronoun}는 염력으로 적의 심장을 멈추려 한다" }, true);
 
+												if (mRand.Next(40) < enemy.Resistance)
+                                                {
+													if (enemy.Resistance < 5)
+														enemy.Resistance = 0;
+													else
+														enemy.Resistance -= 5;
+													continue;
+												}
+
+												if (mRand.Next(80) > battleCommand.Player.Accuracy[2])
+												{
+													if (enemy.HP < 10)
+                                                    {
+														enemy.HP = 0;
+														enemy.Unconscious = true;
+                                                    }
+													else
+														enemy.HP -= 5;
+
+													continue;
+												}
+
+												enemy.Unconscious = true;
+											}
+											else
+                                            {
+												AppendText(new string[] { $"{battleCommand.Player.GenderPronoun}는 적을 환상속에 빠지게 하려한다" }, true);
+
+												if (mRand.Next(40) < enemy.Resistance)
+												{
+													if (enemy.Agility < 5)
+														enemy.Agility = 0;
+													else
+														enemy.Agility -= 5;
+													continue;
+												}
+
+												if (mRand.Next(30) > battleCommand.Player.Accuracy[2])
+													continue;
+
+												for (var i = 0; i < enemy.Accuracy.Length; i++)
+                                                {
+													if (enemy.Accuracy[i] > 0)
+														enemy.Accuracy[i]--;
+                                                }
 											}
 										}
 									}
+									else if (battleCommand.Method == 6)
+                                    {
+										if (mRand.Next(50) > battleCommand.Player.Agility)
+											AppendText(new string[] { $"그러나, 일행은 성공하지 못했다" }, true);
+										else
+										{
+											mBattleTurn = BattleTurn.RunAway;
+											AppendText(new string[] { $"[color={RGB.LightCyan}]성공적으로 도망을 갔다" }, true);
+											break;
+										}
+                                    }
 
 									AppendText(new string[] { "" }, true);
 								};
+
+								if (mBattleTurn != BattleTurn.RunAway)
+									mBattleTurn = BattleTurn.Enemy;
+								ContinueText.Visibility = Visibility.Visible;
 							}
 						}
 
@@ -4739,6 +4845,32 @@ namespace Lore
 				return false;
 		}
 
+		private BattleEnemyData JoinEnemy(int ENumber)
+        {
+			var enemy = mEnemyDataList[ENumber];
+
+			var inserted = false;
+			for (var i = 0; i < mEncounterEnemyList.Count; i++)
+            {
+				if (mEncounterEnemyList[i].Dead)
+				{
+					mEncounterEnemyList[i] = new BattleEnemyData(ENumber, enemy);
+					inserted = true;
+					break;
+				}
+			}
+
+			if (!inserted)
+            {
+				if (mEncounterEnemyList.Count == 7)
+					mEncounterEnemyList[mEncounterEnemyList.Count - 1] = new BattleEnemyData(ENumber, enemy);
+				else
+					mEncounterEnemyList.Add(new BattleEnemyData(ENumber, enemy));
+			}
+
+			return enemy;
+        }
+
 		private void JoinMember(int id)
 		{
 			var enemy = mEnemyDataList[id];
@@ -5212,6 +5344,14 @@ namespace Lore
 			CureEnd
 		}
 
+		private enum BattleTurn
+        {
+			None,
+			Player,
+			Enemy,
+			RunAway
+        }
+
 		private class BattleCommand
 		{
 			public Lore Player {
@@ -5239,6 +5379,8 @@ namespace Lore
 				set;
 			}
 		}
+
+		
 	}
 
 }
