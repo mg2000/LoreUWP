@@ -495,6 +495,18 @@ namespace Lore
 					await RefreshGame();
 				}
 
+				void EndBattle()
+				{
+					mBattleTurn = BattleTurn.None;
+
+					mEncounterEnemyList.Clear();
+
+					AppendText(new string[] { "" });
+
+					BattlePanel.Visibility = Visibility.Collapsed;
+					canvas.Visibility = Visibility.Visible;
+				}
+
 				if (mMoveEvent)
 					return;
 				else if (mTriggeredDownEvent)
@@ -561,7 +573,7 @@ namespace Lore
 							}
 
 							if (!enemy.Unconscious && !enemy.Dead)
-                            {
+							{
 								if (enemy.SpecialCastLevel > 0 && enemy.ENumber == 0)
 								{
 									var liveEnemyCount = 0;
@@ -571,18 +583,486 @@ namespace Lore
 											liveEnemyCount++;
 									}
 
-									if (liveEnemyCount < (mRand.Next(3) + 2) && mRand.Next(3) == 0) { }
-									var newEnemy = JoinEnemy(enemy.ENumber + mRand.Next(4) - 20);
-									DisplayEnemy();
-									AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {newEnemy.Name}(을)를 생성시켰다[/color]" }, true);
+									if (liveEnemyCount < (mRand.Next(3) + 2) && mRand.Next(3) == 0) {
+										var newEnemy = JoinEnemy(enemy.ENumber + mRand.Next(4) - 20);
+										DisplayEnemy();
+										AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {newEnemy.Name}(을)를 생성시켰다[/color]" }, true);
+									}
+
+									if (enemy.SpecialCastLevel > 1)
+									{
+										liveEnemyCount = 0;
+										foreach (var otherEnemy in mEncounterEnemyList)
+										{
+											if (!otherEnemy.Dead)
+												liveEnemyCount++;
+										}
+
+										if (mPlayerList.Count >= 6 && liveEnemyCount < 7 && (mRand.Next(5) == 0)) {
+											var turnEnemy = TurnMind(mPlayerList[5]);
+											mPlayerList.RemoveAt(5);
+
+											DisplayPlayerInfo();
+											DisplayEnemy();
+
+											AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {turnEnemy.Name}(을)를 자기편으로 끌어들였다[/color]" }, true);
+										}
+									}
+
+									if (enemy.SpecialCastLevel > 2 && enemy.Special != 0 && mRand.Next(5) == 0) {
+										foreach (var player in mPlayerList) {
+											if (player.Dead == 0) {
+												AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}에게 죽음의 공격을 시도했다[/color]" }, true);
+
+												if (mRand.Next(60) > player.Agility)
+													AppendText(new string[] { $"죽음의 공격은 실패했다" }, true);
+												else if (mRand.Next(20) < player.Luck)
+													AppendText(new string[] { $"그러나, {player.Name}(은)는 죽음의 공격을 피했다" }, true);
+												else {
+													AppendText(new string[] { $"[color={RGB.Red}]{player.Name}(은)는 죽었다 !!" }, true);
+
+													if (player.Dead == 0) {
+														player.Dead = 1;
+														if (player.HP > 0)
+															player.HP = 0;
+													}
+												}
+											}
+										}
+									}
+
+									var agility = enemy.Agility;
+									if (agility > 20)
+										agility = 20;
+
+									if (enemy.Special > 0 && mRand.Next(50) < agility) {
+										liveEnemyCount = 0;
+										foreach (var otherEnemy in mEncounterEnemyList)
+										{
+											if (!otherEnemy.Dead)
+												liveEnemyCount++;
+										}
+
+										if (liveEnemyCount > 3) {
+											if (enemy.Special == 1) {
+												var normalList = new List<Lore>();
+
+												foreach (var player in mPlayerList) {
+													if (player.Poison == 0)
+														normalList.Add(player);
+												}
+
+												var destPlayer = normalList[mRand.Next(normalList.Count)];
+
+												AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {destPlayer.Name}에게 독 공격을 시도했다[/color]" }, true);
+												if (mRand.Next(40) > enemy.Agility) {
+													AppendText(new string[] { $"독 공격은 실패했다" }, true);
+													continue;
+												}
+
+												if (mRand.Next(20) < destPlayer.Luck)
+												{
+													AppendText(new string[] { $"그러나, {destPlayer.Name}(은)는 독 공격을 피했다" }, true);
+													continue;
+												}
+
+												AppendText(new string[] { $"[color={RGB.Red}]{destPlayer.Name}(은)는 중독 되었다 !!" }, true);
+
+												if (destPlayer.Poison == 0)
+													destPlayer.Poison = 1;
+											}
+											else if (enemy.Special == 2) {
+												var normalList = new List<Lore>();
+
+												foreach (var player in mPlayerList)
+												{
+													if (player.Unconscious == 0)
+														normalList.Add(player);
+												}
+
+												var destPlayer = normalList[mRand.Next(normalList.Count)];
+
+												AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {destPlayer.Name}에게 치명적 공격을 시도했다[/color]" }, true);
+												if (mRand.Next(50) > enemy.Agility)
+												{
+													AppendText(new string[] { $"치명적 공격은 실패했다" }, true);
+													continue;
+												}
+
+												if (mRand.Next(20) < destPlayer.Luck)
+												{
+													AppendText(new string[] { $"그러나, {destPlayer.Name}(은)는 치명적 공격을 피했다" }, true);
+													continue;
+												}
+
+												AppendText(new string[] { $"[color={RGB.Red}]{destPlayer.Name}(은)는 의식불명이 되었다 !!" }, true);
+
+												if (destPlayer.Unconscious == 0)
+												{
+													destPlayer.Unconscious = 1;
+
+													if (destPlayer.HP > 0)
+														destPlayer.HP = 0;
+												}
+											}
+											else if (enemy.Special == 3) {
+												var normalList = new List<Lore>();
+
+												foreach (var player in mPlayerList)
+												{
+													if (player.Dead == 0)
+														normalList.Add(player);
+												}
+
+												var destPlayer = normalList[mRand.Next(normalList.Count)];
+
+												AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {destPlayer.Name}에게 죽음의 공격을 시도했다[/color]" }, true);
+												if (mRand.Next(60) > enemy.Agility)
+												{
+													AppendText(new string[] { $"죽음의 공격은 실패했다" }, true);
+													continue;
+												}
+
+												if (mRand.Next(20) < destPlayer.Luck)
+												{
+													AppendText(new string[] { $"그러나, {destPlayer.Name}(은)는 죽음의 공격을 피했다" }, true);
+													continue;
+												}
+
+												AppendText(new string[] { $"[color={RGB.Red}]{destPlayer.Name}(은)는 죽었다 !!" }, true);
+
+												if (destPlayer.Dead == 0)
+												{
+													destPlayer.Dead = 1;
+
+													if (destPlayer.HP > 0)
+														destPlayer.HP = 0;
+												}
+											}
+
+											continue;
+										}
+
+										if (mRand.Next(enemy.Accuracy[0] * 1000) > mRand.Next(enemy.Accuracy[1] * 1000) && enemy.Strength > 0)
+										{
+											if (mRand.Next(20) >= enemy.Accuracy[0])
+											{
+												AppendText(new string[] { $"그러나, {enemy.Name}(은)는 빗맞추었다" }, true);
+												continue;
+											}
+
+											var normalList = new List<Lore>();
+
+											foreach (var player in mPlayerList)
+											{
+												if (player.IsAvailable)
+													normalList.Add(player);
+											}
+
+											var destPlayer = normalList[mRand.Next(normalList.Count)];
+
+											var attackPoint = enemy.Strength * enemy.Level * (mRand.Next(10) + 1) / 10;
+
+											if (mRand.Next(50) < destPlayer.Resistance)
+											{
+												AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {destPlayer.Name}(을)를 공격했다[/color]",
+													$"그러나, {destPlayer.Name}(은)는 적의 공격을 저지했다"
+												}, true);
+												continue;
+											}
+
+											attackPoint -= destPlayer.AC * destPlayer.Level[0] * (mRand.Next(10) + 1) / 10;
+
+											if (attackPoint <= 0)
+											{
+												AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {destPlayer.Name}(을)를 공격했다[/color]",
+													$"그러나, {destPlayer.Name}(은)는 적의 공격을 방어했다"
+												}, true);
+												continue;
+											}
+
+											if (destPlayer.Dead > 0)
+												destPlayer.Dead += attackPoint;
+
+											if (destPlayer.Unconscious > 0 && destPlayer.Dead == 0)
+												destPlayer.Unconscious += attackPoint;
+
+											if (destPlayer.HP > 0)
+												destPlayer.HP -= attackPoint;
+
+											AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {destPlayer.Name}에게 공격 받았다[/color]",
+												$"[color={RGB.Magenta}]{destPlayer.Name}(은)는[/color] [color={RGB.LightMagenta}]{attackPoint}[/color]만큼의 피해를 입었다"
+											}, true);
+										}
+										else
+										{
+											void CastAttack(int castPower, Lore player) {
+												if (mRand.Next(20) >= enemy.Accuracy[1]) {
+													AppendText(new string[] { $"{enemy.Name}의 마법공격은 빗나갔다" }, true);
+													return;
+												}
+
+												castPower -= mRand.Next(castPower / 2);
+												castPower -= player.AC * player.Level[0] * (mRand.Next(10) + 1) / 10;
+												if (castPower <= 0) {
+													AppendText(new string[] { $"그러나, {player.Name}(은)는 적의 마법을 막아냈다" }, true);
+													return;
+												}
+
+												if (player.Dead > 0)
+													player.Dead += castPower;
+
+												if (player.Unconscious > 0 && player.Dead == 0)
+													player.Unconscious += castPower;
+
+												if (player.HP > 0)
+													player.HP -= castPower;
+
+												AppendText(new string[] { $"[color={RGB.Magenta}]{player.Name}(은)는[/color] [color={RGB.LightMagenta}]{castPower}[/color]만큼의 피해를 입었다" }, true);
+											}
+
+											void CastAttckOne(Lore player)
+											{
+												string castName;
+												int castPower;
+												if (1 <= enemy.Mentality && enemy.Mentality <= 3)
+												{
+													castName = "충격";
+													castPower = 1;
+												}
+												else if (4 <= enemy.Mentality && enemy.Mentality <= 8)
+												{
+													castName = "냉기";
+													castPower = 2;
+												}
+												else if (9 <= enemy.Mentality && enemy.Mentality <= 10)
+												{
+													castName = "고통";
+													castPower = 4;
+												}
+												else if (11 <= enemy.Mentality && enemy.Mentality <= 14)
+												{
+													castName = "고통";
+													castPower = 6;
+												}
+												else if (15 <= enemy.Mentality && enemy.Mentality <= 18)
+												{
+													castName = "고통";
+													castPower = 7;
+												}
+												else
+												{
+													castName = "번개";
+													castPower = 10;
+												}
+
+												castPower *= enemy.Level;
+												AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {player.Name}에게 '{castName}'마법을 사용했다[/color]" }, true);
+
+												CastAttack(castPower, player);
+											}
+
+											void CastAttackAll(List<Lore> destPlayerList) {
+												string castName;
+												int castPower;
+												if (1 <= enemy.Mentality && enemy.Mentality <= 6)
+												{
+													castName = "열파";
+													castPower = 1;
+												}
+												else if (7 <= enemy.Mentality && enemy.Mentality <= 12)
+												{
+													castName = "에너지";
+													castPower = 2;
+												}
+												else if (13 <= enemy.Mentality && enemy.Mentality <= 16)
+												{
+													castName = "초음파";
+													castPower = 3;
+												}
+												else if (17 <= enemy.Mentality && enemy.Mentality <= 20)
+												{
+													castName = "혹한기";
+													castPower = 5;
+												}
+												else
+												{
+													castName = "화염폭풍";
+													castPower = 8;
+												}
+
+												castPower *= enemy.Level;
+												AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 일행 모두에게 '{castName}'마법을 사용했다[/color]" }, true);
+
+												foreach (var player in destPlayerList)
+													CastAttack(castPower, player);
+											}
+
+											void CureEnemy(BattleEnemyData whomEnemy, int curePoint) {
+												if (enemy == whomEnemy)
+													AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 자신을 치료했다[/color]" }, true);
+												else
+													AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {whomEnemy.Name}(을)를 치료했다[/color]" }, true);
+
+												if (whomEnemy.Dead)
+													whomEnemy.Dead = false;
+												else if (whomEnemy.Unconscious) {
+													whomEnemy.Unconscious = false;
+													if (whomEnemy.HP <= 0)
+														whomEnemy.HP = 1;
+												}
+												else {
+													whomEnemy.HP += curePoint;
+													if (whomEnemy.HP > whomEnemy.Endurance * whomEnemy.Level)
+														whomEnemy.HP = whomEnemy.Endurance * whomEnemy.Level;
+												}
+											}
+
+
+											var normalList = new List<Lore>();
+
+											foreach (var player in mPlayerList)
+											{
+												if (player.IsAvailable)
+													normalList.Add(player);
+											}
+
+											var destPlayer = normalList[mRand.Next(normalList.Count)];
+
+											if (enemy.CastLevel == 1)
+											{
+												CastAttckOne(destPlayer);
+											}
+											else if (enemy.CastLevel == 2)
+											{
+												CastAttckOne(destPlayer);
+											}
+											else if (enemy.CastLevel == 3) {
+												if (mRand.Next(normalList.Count) < 2)
+													CastAttckOne(destPlayer);
+												else
+													CastAttackAll(normalList);
+											}
+											else if (enemy.CastLevel == 4) {
+												if ((enemy.HP < enemy.Endurance * enemy.Level / 3) && mRand.Next(2) == 0)
+													CureEnemy(enemy, enemy.Level * enemy.Mentality / 4);
+												else if (mRand.Next(normalList.Count) < 2)
+													CastAttckOne(destPlayer);
+												else
+													CastAttackAll(normalList);
+											}
+											else if (enemy.CastLevel == 5) {
+												if ((enemy.HP < enemy.Endurance * enemy.Level / 3) && mRand.Next(3) == 0)
+													CureEnemy(enemy, enemy.Level * enemy.Mentality / 4);
+												else if (mRand.Next(normalList.Count) < 2)
+												{
+													var totalCurrentHP = 0;
+													var totalFullHP = 0;
+
+													foreach (var enemyOne in mEncounterEnemyList) {
+														totalCurrentHP += enemyOne.HP;
+														totalFullHP += enemyOne.Endurance * enemyOne.Level;
+													}
+
+													totalFullHP /= 3;
+
+													if (mEncounterEnemyList.Count > 2 && totalCurrentHP < totalFullHP && mRand.Next(2) == 0) {
+														foreach (var enemyOne in mEncounterEnemyList)
+															CureEnemy(enemyOne, enemy.Level * enemy.Mentality / 6);
+													}
+													else {
+														Lore weakestPlayer = null;
+
+														foreach (var player in mPlayerList) {
+															if (player.IsAvailable && (weakestPlayer == null || weakestPlayer.HP > player.HP))
+																weakestPlayer = player;
+														}
+
+														CastAttckOne(weakestPlayer);
+													}
+												}
+												else
+													CastAttackAll(normalList);
+											}
+											else if (enemy.CastLevel == 6) {
+												if ((enemy.HP < enemy.Endurance * enemy.Level / 3) && mRand.Next(3) == 0)
+												{
+													CureEnemy(enemy, enemy.Level * enemy.Mentality / 4);
+													continue;
+												}
+
+												var avgAC = 0;
+												var avgCount = 0;
+
+												foreach (var player in mPlayerList) {
+													if (player.IsAvailable) {
+														avgAC += player.AC;
+														avgCount++;
+													}
+												}
+
+												avgAC /= avgCount;
+
+												if (avgAC > 4 && mRand.Next(5) == 0) {
+													foreach (var player in mPlayerList) {
+														AppendText(new string[] { $"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {player.Name}의 갑옷파괴를 시도했다[/color]" }, true);
+														if (player.Luck > mRand.Next(21))
+															AppendText(new string[] { $"그러나, {enemy.Name}(은)는 성공하지 못했다" }, true);
+														else {
+															AppendText(new string[] { $"[color={RGB.Magenta}]{player.Name}의 갑옷은 파괴되었다[/color]" }, true);
+
+															if (player.AC > 0)
+																player.AC--;
+														}
+													}
+
+													DisplayPlayerInfo();
+												}
+												else {
+													var totalCurrentHP = 0;
+													var totalFullHP = 0;
+
+													foreach (var enemyOne in mEncounterEnemyList)
+													{
+														totalCurrentHP += enemyOne.HP;
+														totalFullHP += enemyOne.Endurance * enemyOne.Level;
+													}
+
+													totalFullHP /= 3;
+
+													if (mEncounterEnemyList.Count > 2 && totalCurrentHP < totalFullHP && mRand.Next(3) == 0)
+													{
+														foreach (var enemyOne in mEncounterEnemyList)
+															CureEnemy(enemyOne, enemy.Level * enemy.Mentality / 6);
+													}
+													else if (mRand.Next(normalList.Count) < 2)
+													{
+														Lore weakestPlayer = null;
+
+														foreach (var player in mPlayerList)
+														{
+															if (player.IsAvailable && (weakestPlayer == null || weakestPlayer.HP > player.HP))
+																weakestPlayer = player;
+														}
+
+														CastAttckOne(weakestPlayer);
+													}
+													else
+														CastAttackAll(normalList);
+												}
+											}
+
+											ContinueText.Visibility = Visibility;
+											mBattleTurn = BattleTurn.Player;
+										}
+									}
 								}
-
-								if (enemy.SpecialCastLevel > 1)
-                                {
-
-                                }
-                            }
+							}
 						}
+					}
+					else if (mBattleTurn == BattleTurn.RunAway)
+					{
+						EndBattle();
 					}
 				}
 				else if (mWeaponShopEnd)
@@ -1402,7 +1882,7 @@ namespace Lore
 												AppendText(new string[] { $"{battleCommand.Player.GenderPronoun}는 염력으로 적의 심장을 멈추려 한다" }, true);
 
 												if (mRand.Next(40) < enemy.Resistance)
-                                                {
+												{
 													if (enemy.Resistance < 5)
 														enemy.Resistance = 0;
 													else
@@ -1413,10 +1893,10 @@ namespace Lore
 												if (mRand.Next(80) > battleCommand.Player.Accuracy[2])
 												{
 													if (enemy.HP < 10)
-                                                    {
+													{
 														enemy.HP = 0;
 														enemy.Unconscious = true;
-                                                    }
+													}
 													else
 														enemy.HP -= 5;
 
@@ -1426,7 +1906,7 @@ namespace Lore
 												enemy.Unconscious = true;
 											}
 											else
-                                            {
+											{
 												AppendText(new string[] { $"{battleCommand.Player.GenderPronoun}는 적을 환상속에 빠지게 하려한다" }, true);
 
 												if (mRand.Next(40) < enemy.Resistance)
@@ -1442,24 +1922,27 @@ namespace Lore
 													continue;
 
 												for (var i = 0; i < enemy.Accuracy.Length; i++)
-                                                {
+												{
 													if (enemy.Accuracy[i] > 0)
 														enemy.Accuracy[i]--;
-                                                }
+												}
 											}
 										}
 									}
 									else if (battleCommand.Method == 6)
-                                    {
+									{
 										if (mRand.Next(50) > battleCommand.Player.Agility)
 											AppendText(new string[] { $"그러나, 일행은 성공하지 못했다" }, true);
 										else
 										{
 											mBattleTurn = BattleTurn.RunAway;
 											AppendText(new string[] { $"[color={RGB.LightCyan}]성공적으로 도망을 갔다" }, true);
+
+											mParty.Etc[5] = 2;
+
 											break;
 										}
-                                    }
+									}
 
 									AppendText(new string[] { "" }, true);
 								};
@@ -3137,16 +3620,6 @@ namespace Lore
 							{
 								mMenuMode = MenuMode.None;
 
-								void RunawayBattle()
-								{
-									mEncounterEnemyList.Clear();
-
-									AppendText(new string[] { "" });
-
-									BattlePanel.Visibility = Visibility.Collapsed;
-									canvas.Visibility = Visibility.Visible;
-								}
-
 								void StartBattle()
 								{
 									mParty.Etc[5] = 1;
@@ -3186,7 +3659,7 @@ namespace Lore
 								{
 									if (avgLuck > avgAgility)
 									{
-										RunawayBattle();
+										EndBattle();
 									}
 									else
 										BattleMode();
@@ -4846,30 +5319,56 @@ namespace Lore
 		}
 
 		private BattleEnemyData JoinEnemy(int ENumber)
-        {
-			var enemy = mEnemyDataList[ENumber];
+		{
+			BattleEnemyData enemy = new BattleEnemyData(ENumber, mEnemyDataList[ENumber]);
 
+			AssignEnemy(enemy);
+
+			return enemy;
+		}
+
+		private BattleEnemyData TurnMind(Lore player) {
+			var enemy = new BattleEnemyData(1, new EnemyData()
+			{
+				Name = player.Name,
+				Strength = player.Strength,
+				Mentality = player.Mentality,
+				Endurance = player.Endurance,
+				Resistance = player.Resistance,
+				Agility = player.Agility,
+				Accuracy = new int[] { player.Accuracy[0], player.Accuracy[1] },
+				AC = player.AC,
+				Special = player.Class == 7 ? 2 : 0,
+				CastLevel = player.Level[1] / 4,
+				SpecialCastLevel = 0,
+				Level = player.Level[0],
+			});
+
+			AssignEnemy(enemy);
+
+			return enemy;
+		}
+
+		private void AssignEnemy(BattleEnemyData enemy) {
 			var inserted = false;
 			for (var i = 0; i < mEncounterEnemyList.Count; i++)
-            {
+			{
 				if (mEncounterEnemyList[i].Dead)
 				{
-					mEncounterEnemyList[i] = new BattleEnemyData(ENumber, enemy);
+					mEncounterEnemyList[i] = enemy;
 					inserted = true;
 					break;
 				}
 			}
 
 			if (!inserted)
-            {
+			{
 				if (mEncounterEnemyList.Count == 7)
-					mEncounterEnemyList[mEncounterEnemyList.Count - 1] = new BattleEnemyData(ENumber, enemy);
+					mEncounterEnemyList[mEncounterEnemyList.Count - 1] = enemy;
 				else
-					mEncounterEnemyList.Add(new BattleEnemyData(ENumber, enemy));
+					mEncounterEnemyList.Add(enemy);
 			}
-
-			return enemy;
-        }
+		}
 
 		private void JoinMember(int id)
 		{
@@ -5345,12 +5844,12 @@ namespace Lore
 		}
 
 		private enum BattleTurn
-        {
+		{
 			None,
 			Player,
 			Enemy,
 			RunAway
-        }
+		}
 
 		private class BattleCommand
 		{
