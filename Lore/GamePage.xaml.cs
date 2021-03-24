@@ -82,9 +82,6 @@ namespace Lore
 
 		private bool mTrainingEnd = false;
 
-		// KeyDown에서 이벤트 처리가 이루어졌으면, KeyUp에서는 이벤트를 처리하지 않도록 체크
-		private bool mKeyDownShowMenu = false;
-
 		// 1 - 로어성에서 병사를 만났을때 발생하는 이벤트
 		// 2 - 로어성을 떠날때 스켈레톤을 만나는 이벤트
 		// 3 - 스켈레톤의 답을 거절했을때 이벤트
@@ -105,6 +102,8 @@ namespace Lore
 		private Queue<BattleCommand> mBattleCommandQueue = new Queue<BattleCommand>();
 		private Queue<BattleEnemyData> mBatteEnemyQueue = new Queue<BattleEnemyData>();
 		private BattleTurn mBattleTurn = BattleTurn.None;
+
+		private bool mLoading = true;
 
 		public GamePage()
 		{
@@ -198,7 +197,7 @@ namespace Lore
 
 				Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
 
-				if (mMoveEvent || mSpecialEvent > 0)
+				if (mLoading || mMoveEvent || mSpecialEvent > 0)
 					return;
 				else if (ContinueText.Visibility == Visibility.Visible)
 				{
@@ -252,21 +251,24 @@ namespace Lore
 
 								needUpdateStat = true;
 							}
-
-							if (needUpdateStat)
-							{
-								DisplayHP();
-								DisplayCondition();
-							}
-
-							DetectGameOver();
-
-							if (mParty.Etc[4] > 0)
-								mParty.Etc[4]--;
-
-							if (mRand.Next(mEncounter * 20) == 0)
-								EncounterEnemy();
 						});
+
+						if (needUpdateStat)
+						{
+							DisplayHP();
+							DisplayCondition();
+						}
+
+						DetectGameOver();
+
+						if (mParty.Etc[4] > 0)
+							mParty.Etc[4]--;
+
+						if (mRand.Next(mEncounter * 20) == 0)
+						{
+							EncounterEnemy();
+							mTriggeredDownEvent = true;
+						}
 					}
 
 					var x = mParty.XAxis;
@@ -496,84 +498,121 @@ namespace Lore
 					await RefreshGame();
 				}
 
-				void EndBattle(string[] endMessage)
+				void EndBattle()
 				{
+					if (mBattleTurn == BattleTurn.Win) {
+						var endMessage = "";
+
+						if (mParty.Etc[5] == 2)
+							endMessage = "";
+						else {
+							var goldPlus = 0;
+							foreach (var enemy in mEncounterEnemyList) {
+								var enemyInfo = mEnemyDataList[enemy.ENumber];
+								var point = enemyInfo.AC == 0 ? 1 : enemyInfo.AC;
+								var plus = enemyInfo.Level;
+								plus *= enemyInfo.Level;
+								plus *= enemyInfo.Level;
+								plus *= point;
+								goldPlus += plus;
+							}
+
+							mParty.Gold += goldPlus;
+
+							endMessage = $"일행은 {goldPlus}개의 금을 얻었다.";
+						}
+
+						AppendText(new string[] { endMessage });
+
+						mEncounterEnemyList.Clear();
+
+						BattlePanel.Visibility = Visibility.Collapsed;
+						canvas.Visibility = Visibility.Visible;
+					}
+					else if (mBattleTurn == BattleTurn.RunAway) {
+						AppendText(new string[] { "" });
+
+						mEncounterEnemyList.Clear();
+
+						BattlePanel.Visibility = Visibility.Collapsed;
+						canvas.Visibility = Visibility.Visible;
+					}
+					else if (mBattleTurn == BattleTurn.Lose) {
+						ShowGameOver(new string[] {
+							$"[color={RGB.LightMagenta}]일행은 모두 전투에서 패했다 !![/color]",
+							$"[color={RGB.LightGreen}]    어떻게 하시겠습니까 ?[/color]"
+						});
+					}
+					
 					mBattleTurn = BattleTurn.None;
-
-					mEncounterEnemyList.Clear();
-
-					AppendText(endMessage);
-
-					BattlePanel.Visibility = Visibility.Collapsed;
-					canvas.Visibility = Visibility.Visible;
 				}
 
-				void CureSpell(Lore player, Lore whomPlayer, int magic)
+				void CureSpell(Lore player, Lore whomPlayer, int magic, List<string> cureResult = null)
 				{
 					switch (magic)
 					{
 						case 0:
-							HealOne(player, whomPlayer);
+							HealOne(player, whomPlayer, cureResult);
 							break;
 						case 1:
-							CureOne(player, whomPlayer);
+							CureOne(player, whomPlayer, cureResult);
 							break;
 						case 2:
-							CureOne(player, whomPlayer);
-							HealOne(player, whomPlayer);
+							CureOne(player, whomPlayer, cureResult);
+							HealOne(player, whomPlayer, cureResult);
 							break;
 						case 3:
-							ConsciousOne(player, whomPlayer);
+							ConsciousOne(player, whomPlayer, cureResult);
 							break;
 						case 4:
-							RevitalizeOne(player, whomPlayer);
+							RevitalizeOne(player, whomPlayer, cureResult);
 							break;
 						case 5:
-							ConsciousOne(player, whomPlayer);
-							CureOne(player, whomPlayer);
-							HealOne(player, whomPlayer);
+							ConsciousOne(player, whomPlayer, cureResult);
+							CureOne(player, whomPlayer, cureResult);
+							HealOne(player, whomPlayer, cureResult);
 							break;
 						case 6:
-							RevitalizeOne(player, whomPlayer);
-							ConsciousOne(player, whomPlayer);
-							CureOne(player, whomPlayer);
-							HealOne(player, whomPlayer);
+							RevitalizeOne(player, whomPlayer, cureResult);
+							ConsciousOne(player, whomPlayer, cureResult);
+							CureOne(player, whomPlayer, cureResult);
+							HealOne(player, whomPlayer, cureResult);
 							break;
 					}
 
 					UpdatePlayersStat();
 				}
 
-				void CureAllSpell(Lore player, int magic)
+				void CureAllSpell(Lore player, int magic, List<string> cureResult = null)
 				{
 					switch (magic)
 					{
 						case 0:
-							HealAll(player);
+							HealAll(player, cureResult);
 							break;
 						case 1:
-							CureAll(player);
+							CureAll(player, cureResult);
 							break;
 						case 2:
-							CureAll(player);
-							HealAll(player);
+							CureAll(player, cureResult);
+							HealAll(player, cureResult);
 							break;
 						case 3:
-							ConsciousAll(player);
+							ConsciousAll(player, cureResult);
 							break;
 						case 4:
-							ConsciousAll(player);
-							CureAll(player);
-							HealAll(player);
+							ConsciousAll(player, cureResult);
+							CureAll(player, cureResult);
+							HealAll(player, cureResult);
 							break;
 						case 5:
-							RevitalizeAll(player);
+							RevitalizeAll(player, cureResult);
 							break;
 						case 6:
-							RevitalizeAll(player);
-							ConsciousAll(player);
-							CureAll(player);
-							HealAll(player);
+							RevitalizeAll(player, cureResult);
+							ConsciousAll(player, cureResult);
+							CureAll(player, cureResult);
+							HealAll(player, cureResult);
 							break;
 
 					}
@@ -840,10 +879,12 @@ namespace Lore
 							if (enemy.HP <= 0)
 							{
 								enemy.HP = 0;
-								enemy.Unconscious = true;
+								enemy.Unconscious = false;
+								enemy.Dead = false;
 
 								battleResult.Add($"[color={RGB.LightRed}]적은 {battleCommand.Player.GenderPronoun}의 공격으로 의식불명이 되었다[/color]");
 								plusExperience(enemy);
+								enemy.Unconscious = true;
 							}
 							else
 							{
@@ -1352,9 +1393,9 @@ namespace Lore
 						else if (battleCommand.Method == 4)
 						{
 							if (battleCommand.FriendID < mPlayerList.Count)
-								CureSpell(battleCommand.Player, mPlayerList[battleCommand.FriendID], battleCommand.Tool);
+								CureSpell(battleCommand.Player, mPlayerList[battleCommand.FriendID], battleCommand.Tool, battleResult);
 							else
-								CureAllSpell(battleCommand.Player, battleCommand.Tool);
+								CureAllSpell(battleCommand.Player, battleCommand.Tool, battleResult);
 						}
 						else if (battleCommand.Method == 5)
 						{
@@ -1947,7 +1988,7 @@ namespace Lore
 					}
 				}
 
-				if (mMoveEvent)
+				if (mMoveEvent || mLoading)
 					return;
 				else if (mTriggeredDownEvent)
 				{
@@ -2005,7 +2046,7 @@ namespace Lore
 					{
 						ExecuteBattle();
 					}
-					else if (mBattleTurn == BattleTurn.RunAway)
+					else if (mBattleTurn == BattleTurn.RunAway || mBattleTurn == BattleTurn.Win || mBattleTurn == BattleTurn.Lose)
 					{
 						EndBattle();
 					}
@@ -2161,6 +2202,26 @@ namespace Lore
 
 								ExecuteBattle();
 							}
+						}
+
+						async Task LoadGame() {
+							await LoadFile();
+
+							mMenuMode = MenuMode.None;
+
+							mBattlePlayerID = 0;
+							mBattleFriendID = 0;
+							mBattleCommandID = 0;
+							mBattleToolID = 0;
+							mEnemyFocusID = 0;
+							mBattleCommandQueue.Clear();
+							mBatteEnemyQueue.Clear();
+							mBattleTurn = BattleTurn.None;
+
+							canvas.Visibility = Visibility.Visible;
+							BattlePanel.Visibility = Visibility.Collapsed;
+
+							AppendText(new string[] { $"[color={RGB.LightCyan}]저장했던 게임을 다시 불러옵니다[/color]" });
 						}
 
 						if (mMenuMode == MenuMode.EnemySelectMode) {
@@ -2954,9 +3015,7 @@ namespace Lore
 								}
 								else if (mMenuFocusID == 3)
 								{
-									await LoadFile();
-
-									AppendText(new string[] { $"[color={RGB.LightCyan}]저장했던 게임을 다시 불러옵니다[/color]" });
+									LoadGame();
 								}
 								else if (mMenuFocusID == 4)
 								{
@@ -3832,6 +3891,8 @@ namespace Lore
 
 								void StartBattle()
 								{
+									mBattleTurn = BattleTurn.Player;
+
 									mParty.Etc[5] = 1;
 									for (var i = 0; i < mPlayerList.Count; i++)
 									{
@@ -3869,10 +3930,11 @@ namespace Lore
 								{
 									if (avgLuck > avgAgility)
 									{
+										mBattleTurn = BattleTurn.RunAway;
 										EndBattle();
 									}
 									else
-										BattleMode();
+										StartBattle();
 								}
 							}
 							else if (mMenuMode == MenuMode.BattleCommand)
@@ -3990,6 +4052,71 @@ namespace Lore
 
 									ShowMenu(MenuMode.CastESP, menuStr);
 								}
+								else if (mMenuFocusID == 6) {
+									if (mBattlePlayerID == 0) {
+										foreach (var player in mPlayerList) {
+											if (player.IsAvailable)
+											{
+												var method = 0;
+												var tool = 0;
+												var enemyID = 0;
+
+												if (player.Class == 0 || player.Class == 1 || (4 <= player.Class && player.Class <= 8) || player.Class == 10) {
+													method = 0;
+													tool = 0;
+												}
+												else if (player.Class == 2 || player.Class == 9) {
+													method = 1;
+													if (0 <= player.Level[1] && player.Level[1] <= 1)
+														tool = 1;
+													else if (2 <= player.Level[1] && player.Level[1] <= 3)
+														tool = 2;
+													else if (4 <= player.Level[1] && player.Level[1] <= 7)
+														tool = 3;
+													else if (8 <= player.Level[1] && player.Level[1] <= 11)
+														tool = 4;
+													else if (12 <= player.Level[1] && player.Level[1] <= 15)
+														tool = 5;
+													else
+														tool = 6;
+
+													tool = (int)Math.Round((double)tool / 2);
+													if (tool == 0)
+														tool = 1;
+												}
+												else if (player.Class == 3) {
+													method = 5;
+													tool = 4;
+
+													for (var i = 0; i < mEncounterEnemyList.Count; i++)
+													{
+														if (!mEncounterEnemyList[i].Unconscious && !mEncounterEnemyList[i].Dead) {
+															enemyID = i;
+															break;
+														}
+													}
+												}
+
+												mBattleCommandQueue.Enqueue(new BattleCommand()
+												{
+													Player = player,
+													FriendID = 0,
+													Method = method,
+													Tool = tool,
+													EnemyID = enemyID
+												});
+											}
+										}
+
+										DialogText.TextHighlighters.Clear();
+										DialogText.Blocks.Clear();
+
+										ExecuteBattle();
+									}
+									else {
+										AddBattleCommand();
+									}
+								}
 							}
 							else if (mMenuMode == MenuMode.CastOneMagic)
 							{
@@ -4029,6 +4156,18 @@ namespace Lore
 								mBattleToolID = mMenuFocusID;
 
 								AddBattleCommand();
+							}
+							else if (mMenuMode == MenuMode.BattleLose) {
+								mMenuMode = MenuMode.None;
+
+								if (mMenuFocusID == 0) {
+									await LoadGame();
+
+
+								}
+								else {
+									CoreApplication.Exit();
+								}
 							}
 						}
 					}
@@ -4222,17 +4361,24 @@ namespace Lore
 				InvokeSpeicalEventType2();
 		}
 
-		private void HealOne(Lore player, Lore whomPlayer)
+		private void ShowCureResult(string message, List<string> cureResult) {
+			if (cureResult == null)
+				AppendText(new string[] { message }, true);
+			else
+				cureResult.Add(message);
+		}
+
+		private void HealOne(Lore player, Lore whomPlayer, List<string> cureResult)
 		{
 			if (whomPlayer.Dead > 0 || whomPlayer.Unconscious > 0 || whomPlayer.Poison > 0)
 			{
 				if (mParty.Etc[5] == 0)
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 치료될 상태가 아닙니다." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 치료될 상태가 아닙니다.", cureResult);
 			}
 			else if (whomPlayer.HP >= whomPlayer.Endurance * whomPlayer.Level[0])
 			{
 				if (mParty.Etc[5] == 0)
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 치료할 필요가 없습니다.." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 치료할 필요가 없습니다..", cureResult);
 			}
 			else
 			{
@@ -4246,25 +4392,25 @@ namespace Lore
 				{
 					player.SP -= needSP;
 					whomPlayer.HP += needSP * 3 / 2;
-					if (whomPlayer.HP > whomPlayer.Level[0] * mMagicWhomPlayer.Endurance)
-						whomPlayer.HP = whomPlayer.Level[0] * mMagicWhomPlayer.Endurance;
+					if (whomPlayer.HP > whomPlayer.Level[0] * whomPlayer.Endurance)
+						whomPlayer.HP = whomPlayer.Level[0] * whomPlayer.Endurance;
 
-					AppendText(new string[] { $"[color={RGB.White}]{whomPlayer.Name}(은)는 치료되어 졌습니다.[/color]" }, true);
+					ShowCureResult($"[color={RGB.White}]{whomPlayer.Name}(은)는 치료되어 졌습니다.[/color]", cureResult);
 				}
 			}
 		}
 
-		private void CureOne(Lore player, Lore whomPlayer)
+		private void CureOne(Lore player, Lore whomPlayer, List<string> cureResult)
 		{
 			if (whomPlayer.Dead > 0 || whomPlayer.Unconscious > 0)
 			{
 				if (mParty.Etc[5] == 0)
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 독이 치료될 상태가 아닙니다." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 독이 치료될 상태가 아닙니다.", cureResult);
 			}
 			else if (whomPlayer.Poison == 0)
 			{
 				if (mParty.Etc[5] == 0)
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 독에 걸리지 않았습니다." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 독에 걸리지 않았습니다.", cureResult);
 			}
 			else if (whomPlayer.SP < 15)
 			{
@@ -4277,21 +4423,21 @@ namespace Lore
 				player.SP -= 15;
 				whomPlayer.Poison = 0;
 
-				AppendText(new string[] { $"[color={RGB.White}]{whomPlayer.Name}의 독은 제거 되었습니다.[/color]" }, true);
+				ShowCureResult($"[color={RGB.White}]{whomPlayer.Name}의 독은 제거 되었습니다.[/color]", cureResult);
 			}
 		}
 
-		private void ConsciousOne(Lore player, Lore whomPlayer)
+		private void ConsciousOne(Lore player, Lore whomPlayer, List<string> cureResult)
 		{
 			if (whomPlayer.Dead > 0)
 			{
 				if (mParty.Etc[5] == 0)
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 의식이 돌아올 상태가 아닙니다." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 의식이 돌아올 상태가 아닙니다.", cureResult);
 			}
 			else if (whomPlayer.Unconscious == 0)
 			{
 				if (mParty.Etc[5] == 0)
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 의식불명이 아닙니다." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 의식불명이 아닙니다.", cureResult);
 			}
 			else
 			{
@@ -4308,17 +4454,17 @@ namespace Lore
 					if (whomPlayer.HP <= 0)
 						whomPlayer.HP = 1;
 
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 의식을 되찾았습니다." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 의식을 되찾았습니다.", cureResult);
 				}
 			}
 		}
 
-		private void RevitalizeOne(Lore player, Lore whomPlayer)
+		private void RevitalizeOne(Lore player, Lore whomPlayer, List<string> cureResult)
 		{
 			if (whomPlayer.Dead == 0)
 			{
 				if (mParty.Etc[5] == 0)
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 아직 살아 있습니다." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 아직 살아 있습니다.", cureResult);
 			}
 			else
 			{
@@ -4338,41 +4484,41 @@ namespace Lore
 					if (whomPlayer.Unconscious == 0)
 						whomPlayer.Unconscious = 1;
 
-					AppendText(new string[] { $"{whomPlayer.Name}(은)는 다시 생명을 얻었습니다." }, true);
+					ShowCureResult($"{whomPlayer.Name}(은)는 다시 생명을 얻었습니다.", cureResult);
 
 				}
 			}
 		}
 
-		private void HealAll(Lore player)
+		private void HealAll(Lore player, List<string> cureResult)
 		{
 			mPlayerList.ForEach(delegate (Lore whomPlayer)
 			{
-				HealOne(player, whomPlayer);
+				HealOne(player, whomPlayer, cureResult);
 			});
 		}
 
-		private void CureAll(Lore player)
+		private void CureAll(Lore player, List<string> cureResult)
 		{
 			mPlayerList.ForEach(delegate (Lore whomPlayer)
 			{
-				CureOne(player, whomPlayer);
+				CureOne(player, whomPlayer, cureResult);
 			});
 		}
 
-		private void ConsciousAll(Lore player)
+		private void ConsciousAll(Lore player, List<string> cureResult)
 		{
 			mPlayerList.ForEach(delegate (Lore whomPlayer)
 			{
-				ConsciousOne(player, whomPlayer);
+				ConsciousOne(player, whomPlayer, cureResult);
 			});
 		}
 
-		private void RevitalizeAll(Lore player)
+		private void RevitalizeAll(Lore player, List<string> cureResult)
 		{
 			mPlayerList.ForEach(delegate (Lore whomPlayer)
 			{
-				RevitalizeOne(player, whomPlayer);
+				RevitalizeOne(player, whomPlayer, cureResult);
 			});
 		}
 
@@ -4613,7 +4759,6 @@ namespace Lore
 					foodMenuItem[i] = $"{(i + 1) * 10} 인분 : 금 {(i + 1) * 100} 개";
 
 				ShowMenu(MenuMode.Grocery, foodMenuItem);
-				mKeyDownShowMenu = true;
 			}
 
 			if (mParty.Map == 6)
@@ -4902,17 +5047,14 @@ namespace Lore
 				else if ((moveX == 7 && moveY == 72) || (moveX == 13 && moveY == 68) || (moveX == 13 && moveY == 72))
 				{
 					GoWeaponShop();
-					mKeyDownShowMenu = true; ;
 				}
 				else if ((moveX == 86 && moveY == 13) || (moveX == 85 && moveY == 11))
 				{
 					GoHospital();
-					mKeyDownShowMenu = true;
 				}
 				else if ((moveX == 20 && moveY == 11) || (moveX == 24 && moveY == 12))
 				{
 					GoTrainingCenter();
-					mKeyDownShowMenu = true;
 				}
 				else if ((moveX == 49 && moveY == 50) || (moveX == 51 && moveY == 50))
 				{
@@ -5111,11 +5253,11 @@ namespace Lore
 		{
 			try
 			{
-				await LoadEnemyData();
-				await LoadFile();
-
 				mMapTiles = await SpriteSheet.LoadAsync(device, new Uri("ms-appx:///Assets/lore_tile.png"), new Vector2(64, 64), Vector2.Zero);
 				mCharacterTiles = await SpriteSheet.LoadAsync(device, new Uri("ms-appx:///Assets/lore_sprite.png"), new Vector2(64, 64), Vector2.Zero);
+
+				await LoadEnemyData();
+				await LoadFile();
 			}
 			catch (Exception e)
 			{
@@ -5385,6 +5527,8 @@ namespace Lore
 		}
 
 		private async Task LoadFile() {
+			mLoading = true;
+
 			var storageFolder = ApplicationData.Current.LocalFolder;
 
 			var saveFile = await storageFolder.CreateFileAsync("loreSave.dat", CreationCollisionOption.OpenIfExists);
@@ -5418,6 +5562,8 @@ namespace Lore
 			DisplayPlayerInfo();
 
 			InitializeMap();
+
+			mLoading = false;
 		}
 
 		private void DisplayPlayerInfo() {
@@ -5830,9 +5976,31 @@ namespace Lore
 			}
 		}
 
+		private void ShowGameOver(string[] gameOverMessage) {
+			AppendText(gameOverMessage);
+
+			ShowMenu(MenuMode.BattleLose, new string[] {
+				"이전의 게임을 재개한다",
+				"게임을 끝낸다"
+			});
+		}
+
 		private void DetectGameOver()
 		{
+			var allPlayerDead = true;
+			foreach (var player in mPlayerList) {
+				if (player.IsAvailable) {
+					allPlayerDead = false;
+					break;
+				}
+			}
 
+			if (allPlayerDead) {
+				mParty.Etc[5] = 255;
+
+				ShowGameOver(new string[] { "일행은 모험중에 모두 목숨을 잃었다." });
+				mTriggeredDownEvent = true;
+			}
 		}
 
 
@@ -5842,8 +6010,6 @@ namespace Lore
 			ShowMenu(MenuMode.ConfirmExitMap, new string[] {
 			"예, 그렇습니다.",
 			"아니오, 원하지 않습니다."});
-
-			mKeyDownShowMenu = true;
 		}
 
 		private void ShowSign(int x, int y)
@@ -6043,7 +6209,8 @@ namespace Lore
 			CastSpecial,
 			ChooseBattleCureSpell,
 			ApplyBattleCureSpell,
-			CastESP
+			CastESP,
+			BattleLose
 		}
 
 		private enum CureMenuState
