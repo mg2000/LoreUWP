@@ -105,6 +105,9 @@ namespace Lore
 
 		private bool mLoading = true;
 
+		private Dictionary<EnterType, string> mEnterTypeMap = new Dictionary<EnterType, string>();
+		private EnterType mTryEnterType = EnterType.None;
+
 		public GamePage()
 		{
 			var rootFrame = Window.Current.Content as Frame;
@@ -188,6 +191,8 @@ namespace Lore
 			mEnemyTextList.Add(EnemyText5);
 			mEnemyTextList.Add(EnemyText6);
 			mEnemyTextList.Add(EnemyText7);
+
+			mEnterTypeMap[EnterType.CastleLore] = "로어 성";
 
 
 			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
@@ -312,6 +317,29 @@ namespace Lore
 
 					if (x > 4 && x < mMapWidth - 3 && y > 4 && y < mMapHeight - 3)
 					{
+						void ShowEnterMenu(EnterType enterType)
+						{
+							mTryEnterType = enterType;
+
+							AppendText(new string[] { $"{mEnterTypeMap[enterType]} 에 들어가기를 원합니까 ?" });
+
+							ShowMenu(MenuMode.AskEnter, new string[] {
+									"예, 그렇습니다.",
+									"아니오, 원하지 않습니다."
+								});
+						}
+
+						void EnterMap()
+						{
+							if (mParty.Map == 1)
+							{
+								if (x == 19 && y == 10)
+								{
+									ShowEnterMenu(EnterType.CastleLore);
+								}
+							}
+						}
+
 						if (mPosition == PositionType.Town)
 						{
 							if (mMapLayer[x + mMapWidth * y] == 0)
@@ -326,7 +354,8 @@ namespace Lore
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 22)
 							{
-								// Enter Mode
+								EnterMap();
+								mTriggeredDownEvent = true;
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 23)
 							{
@@ -395,7 +424,8 @@ namespace Lore
 							}
 							else
 							{
-
+								EnterMap();
+								mTriggeredDownEvent = true;
 							}
 						}
 					}
@@ -1998,7 +2028,6 @@ namespace Lore
 				else if (mSpecialEvent == 3)
 				{
 					mSpecialEvent = 0;
-					mParty.Etc[30] |= 1;
 
 					await ExitCastleLore();
 				}
@@ -2088,6 +2117,117 @@ namespace Lore
 				}
 				else if (mMenuMode != MenuMode.None)
 				{
+					void ShowCastOneMagicMenu()
+					{
+						string[] menuStr;
+
+						var player = mPlayerList[mBattlePlayerID];
+
+						int availCount;
+						if (0 <= player.Level[1] && player.Level[1] <= 1)
+							availCount = 2;
+						else if (2 <= player.Level[1] && player.Level[1] <= 3)
+							availCount = 3;
+						else if (4 <= player.Level[1] && player.Level[1] <= 7)
+							availCount = 4;
+						else if (8 <= player.Level[1] && player.Level[1] <= 11)
+							availCount = 5;
+						else if (12 <= player.Level[1] && player.Level[1] <= 15)
+							availCount = 6;
+						else
+							availCount = 7;
+
+						menuStr = new string[availCount];
+						for (var i = 1; i <= availCount; i++)
+						{
+							menuStr[i - 1] = Common.GetMagicStr(i);
+						}
+
+						ShowMenu(MenuMode.CastOneMagic, menuStr);
+					}
+
+					void ShowCastAllMagicMenu()
+					{
+						string[] menuStr;
+
+						var player = mPlayerList[mBattlePlayerID];
+
+						int availCount;
+						if (0 <= player.Level[1] && player.Level[1] <= 1)
+							availCount = 1;
+						else if (player.Level[1] == 2)
+							availCount = 2;
+						else if (3 <= player.Level[1] && player.Level[1] <= 5)
+							availCount = 3;
+						else if (6 <= player.Level[1] && player.Level[1] <= 9)
+							availCount = 4;
+						else if (10 <= player.Level[1] && player.Level[1] <= 13)
+							availCount = 5;
+						else if (14 <= player.Level[1] && player.Level[1] <= 17)
+							availCount = 6;
+						else
+							availCount = 7;
+
+						menuStr = new string[availCount];
+						const int allMagicIdx = 6;
+						for (var i = 1 + allMagicIdx; i <= availCount + allMagicIdx; i++)
+						{
+							menuStr[i - allMagicIdx - 1] = Common.GetMagicStr(i);
+						}
+
+						ShowMenu(MenuMode.CastAllMagic, menuStr);
+					}
+
+					void ShowCastSpecialMenu() {
+						string[] menuStr;
+
+						var player = mPlayerList[mBattlePlayerID];
+
+						int availCount;
+						if (0 <= player.Level[1] && player.Level[1] <= 4)
+							availCount = 1;
+						else if (5 <= player.Level[1] && player.Level[1] <= 9)
+							availCount = 2;
+						else if (10 <= player.Level[1] && player.Level[1] <= 11)
+							availCount = 3;
+						else if (12 <= player.Level[1] && player.Level[1] <= 13)
+							availCount = 4;
+						else if (14 <= player.Level[1] && player.Level[1] <= 15)
+							availCount = 5;
+						else if (16 <= player.Level[1] && player.Level[1] <= 17)
+							availCount = 6;
+						else
+							availCount = 7;
+
+						menuStr = new string[availCount];
+						const int allSpecialIdx = 12;
+						for (var i = 1 + allSpecialIdx; i <= availCount + allSpecialIdx; i++)
+						{
+							menuStr[i - allSpecialIdx - 1] = Common.GetMagicStr(i);
+						}
+
+						ShowMenu(MenuMode.CastSpecial, menuStr);
+					}
+
+					void ShowCureDestMenu(Lore player, MenuMode menuMode)
+					{
+						AppendText(new string[] { "누구에게" });
+						string[] playerList;
+
+						if (player.Level[1] / 2 - 3 < 0)
+							playerList = new string[mPlayerList.Count];
+						else
+							playerList = new string[mPlayerList.Count + 1];
+
+						for (var i = 0; i < mPlayerList.Count; i++)
+							playerList[i] = mPlayerList[i].Name;
+
+						if (player.Level[1] / 2 - 3 > 0)
+							playerList[playerList.Length - 1] = "모든 사람들에게";
+
+						ShowMenu(menuMode, playerList);
+					}
+
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp)
 					{
 						if (mMenuMode == MenuMode.EnemySelectMode)
@@ -2138,11 +2278,37 @@ namespace Lore
 					{
 						if (mMenuMode != MenuMode.None && mSpecialEvent == 0)
 						{
-							if (mMenuMode == MenuMode.EnemySelectMode)
+							if (mMenuMode == MenuMode.CastOneMagic ||
+							mMenuMode == MenuMode.CastAllMagic ||
+							mMenuMode == MenuMode.CastSpecial ||
+							mMenuMode == MenuMode.ChooseBattleCureSpell ||
+							mMenuMode == MenuMode.CastESP)
 							{
-								mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
 								BattleMode();
 							}
+							else if (mMenuMode == MenuMode.EnemySelectMode)
+							{
+								mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
+
+								switch (mBattleCommandID)
+								{
+									case 0:
+										BattleMode();
+										break;
+									case 1:
+										ShowCastOneMagicMenu();
+										break;
+									case 3:
+										ShowCastSpecialMenu();
+										break;
+								}
+							}
+							else if (mMenuMode == MenuMode.ApplyBattleCureSpell)
+								ShowCureDestMenu(mPlayerList[mBattlePlayerID], MenuMode.ChooseBattleCureSpell);
+							else if (mMenuMode == MenuMode.BattleStart || 
+								mMenuMode == MenuMode.BattleCommand ||
+								mMenuMode == MenuMode.JoinSkeleton)
+								return;
 							else
 							{
 								AppendText(new string[] { "" });
@@ -2246,24 +2412,6 @@ namespace Lore
 
 									ShowMenu(applyAllCureMode, cureMagicMenu);
 								}
-							}
-
-							void ShowCureDestMenu(Lore player, MenuMode menuMode) {
-								AppendText(new string[] { "누구에게" });
-								string[] playerList;
-
-								if (player.Level[1] / 2 - 3 < 0)
-									playerList = new string[mPlayerList.Count];
-								else
-									playerList = new string[mPlayerList.Count + 1];
-
-								for (var i = 0; i < mPlayerList.Count; i++)
-									playerList[i] = mPlayerList[i].Name;
-
-								if (player.Level[1] / 2 - 3 > 0)
-									playerList[playerList.Length - 1] = "모든 사람들에게";
-
-								ShowMenu(menuMode, playerList);
 							}
 
 							string[] GetCureSpellList(Lore player) {
@@ -3873,6 +4021,8 @@ namespace Lore
 							else if (mMenuMode == MenuMode.JoinSkeleton)
 							{
 								mMenuMode = MenuMode.None;
+								
+								mParty.Etc[30] |= 1;
 
 								if (mMenuFocusID == 0)
 								{
@@ -3949,93 +4099,15 @@ namespace Lore
 								}
 								else if (mMenuFocusID == 1)
 								{
-									string[] menuStr;
-
-									var player = mPlayerList[mBattlePlayerID];
-
-									int availCount;
-									if (0 <= player.Level[1] && player.Level[1] <= 1)
-										availCount = 2;
-									else if (2 <= player.Level[1] && player.Level[1] <= 3)
-										availCount = 3;
-									else if (4 <= player.Level[1] && player.Level[1] <= 7)
-										availCount = 4;
-									else if (8 <= player.Level[1] && player.Level[1] <= 11)
-										availCount = 5;
-									else if (12 <= player.Level[1] && player.Level[1] <= 15)
-										availCount = 6;
-									else
-										availCount = 7;
-
-									menuStr = new string[availCount];
-									for (var i = 1; i <= availCount; i++)
-									{
-										menuStr[i - 1] = Common.GetMagicStr(i);
-									}
-
-									ShowMenu(MenuMode.CastOneMagic, menuStr);
+									ShowCastOneMagicMenu();
 								}
 								else if (mMenuFocusID == 2)
 								{
-									string[] menuStr;
-
-									var player = mPlayerList[mBattlePlayerID];
-
-									int availCount;
-									if (0 <= player.Level[1] && player.Level[1] <= 1)
-										availCount = 1;
-									else if (player.Level[1] == 2)
-										availCount = 2;
-									else if (3 <= player.Level[1] && player.Level[1] <= 5)
-										availCount = 3;
-									else if (6 <= player.Level[1] && player.Level[1] <= 9)
-										availCount = 4;
-									else if (10 <= player.Level[1] && player.Level[1] <= 13)
-										availCount = 5;
-									else if (14 <= player.Level[1] && player.Level[1] <= 17)
-										availCount = 6;
-									else
-										availCount = 7;
-
-									menuStr = new string[availCount];
-									const int allMagicIdx = 6;
-									for (var i = 1 + allMagicIdx; i <= availCount + allMagicIdx; i++)
-									{
-										menuStr[i - allMagicIdx - 1] = Common.GetMagicStr(i);
-									}
-
-									ShowMenu(MenuMode.CastAllMagic, menuStr);
+									ShowCastAllMagicMenu();
 								}
 								else if (mMenuFocusID == 3)
 								{
-									string[] menuStr;
-
-									var player = mPlayerList[mBattlePlayerID];
-
-									int availCount;
-									if (0 <= player.Level[1] && player.Level[1] <= 4)
-										availCount = 1;
-									else if (5 <= player.Level[1] && player.Level[1] <= 9)
-										availCount = 2;
-									else if (10 <= player.Level[1] && player.Level[1] <= 11)
-										availCount = 3;
-									else if (12 <= player.Level[1] && player.Level[1] <= 13)
-										availCount = 4;
-									else if (14 <= player.Level[1] && player.Level[1] <= 15)
-										availCount = 5;
-									else if (16 <= player.Level[1] && player.Level[1] <= 17)
-										availCount = 6;
-									else
-										availCount = 7;
-
-									menuStr = new string[availCount];
-									const int allSpecialIdx = 12;
-									for (var i = 1 + allSpecialIdx; i <= availCount + allSpecialIdx; i++)
-									{
-										menuStr[i - allSpecialIdx - 1] = Common.GetMagicStr(i);
-									}
-
-									ShowMenu(MenuMode.CastSpecial, menuStr);
+									ShowCastSpecialMenu();
 								}
 								else if (mMenuFocusID == 4)
 								{
@@ -4167,6 +4239,38 @@ namespace Lore
 								}
 								else {
 									CoreApplication.Exit();
+								}
+							}
+							else if (mMenuMode == MenuMode.AskEnter) {
+								mMenuMode = MenuMode.None;
+
+								if (mMenuFocusID == 0) {
+									switch (mTryEnterType) {
+										case EnterType.CastleLore:
+											mParty.Map = 6;
+											mParty.XAxis = 50;
+											mParty.YAxis = 94;
+											await RefreshGame();
+											mMapLayer[48 + mMapWidth * 51] = 47;
+											mMapLayer[49 + mMapWidth * 51] = 44;
+											mMapLayer[50 + mMapWidth * 51] = 44;
+											mMapLayer[51 + mMapWidth * 51] = 44;
+											mMapLayer[52 + mMapWidth * 51] = 47;
+											
+											mMapLayer[48 + mMapWidth * 52] = 47;
+											mMapLayer[49 + mMapWidth * 52] = 44;
+											mMapLayer[50 + mMapWidth * 52] = 44;
+											mMapLayer[51 + mMapWidth * 52] = 44;
+											mMapLayer[52 + mMapWidth * 52] = 45;
+
+											for (var i = 48; i < 53; i++)
+												mMapLayer[i + mMapWidth * 87] = 44;
+
+											break;
+									}
+								}
+								else {
+									AppendText(new string[] { "" });
 								}
 							}
 						}
@@ -6210,7 +6314,8 @@ namespace Lore
 			ChooseBattleCureSpell,
 			ApplyBattleCureSpell,
 			CastESP,
-			BattleLose
+			BattleLose,
+			AskEnter
 		}
 
 		private enum CureMenuState
@@ -6258,7 +6363,10 @@ namespace Lore
 			}
 		}
 
-		
+		private enum EnterType {
+			None,
+			CastleLore
+		}
 	}
 
 }

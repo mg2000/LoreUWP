@@ -38,13 +38,10 @@ namespace Lore
             set;
         }
 
-        private int[] mEtc = new int[100];
         public int[] Etc
         {
-            get
-            {
-                return mEtc;
-            }
+            get;
+            set;
         }
     }
 }

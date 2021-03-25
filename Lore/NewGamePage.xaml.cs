@@ -1094,7 +1094,8 @@ namespace Lore
 							XAxis = 51,
 							YAxis = 31,
 							Food = 20,
-							Gold = 2000
+							Gold = 2000,
+							Etc = new int[100]
 						};
 						for (var i = 0; i < party.Etc.Length; i++)
 							party.Etc[i] = 0;
