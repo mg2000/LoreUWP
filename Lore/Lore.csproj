@@ -163,6 +163,13 @@
     <Content Include="Assets\K_DEN2.MAP" />
     <Content Include="Assets\LAVA.MAP" />
     <Content Include="Assets\enemyData.dat" />
+    <Content Include="Assets\DEN1.MAP" />
+    <Content Include="Assets\DEN2.MAP" />
+    <Content Include="Assets\DEN3.MAP" />
+    <Content Include="Assets\DEN4.MAP" />
+    <Content Include="Assets\DEN5.MAP" />
+    <Content Include="Assets\DEN6.MAP" />
+    <Content Include="Assets\DEN7.MAP" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\lore_tile.png" />
     <Content Include="Properties\Default.rd.xml" />
