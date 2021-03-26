@@ -195,6 +195,7 @@ namespace Lore
 			mEnterTypeMap[EnterType.CastleLore] = "로어 성";
 			mEnterTypeMap[EnterType.Menace] = "메나스";
 			mEnterTypeMap[EnterType.LastDitch] = "라스트디치";
+			mEnterTypeMap[EnterType.GroundGate] = "지하 출입구";
 
 
 			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
@@ -4069,6 +4070,13 @@ namespace Lore
 										else
 											ExitCastleLore();
 									}
+									else if (mParty.Map == 7) {
+										mParty.Map = 1;
+										mParty.XAxis = 76;
+										mParty.YAxis = 56;
+
+										await RefreshGame();
+									}
 									else if (mParty.Map == 14) {
 										mParty.Map = 1;
 										mParty.XAxis = 17;
@@ -4357,6 +4365,14 @@ namespace Lore
 											}
 
 											break;
+										case EnterType.GroundGate:
+											mParty.Map = 8;
+											mParty.XAxis = 49;
+											mParty.YAxis = 9;
+
+											await RefreshGame();
+											break;
+
 									}
 								}
 								else {
@@ -4580,6 +4596,15 @@ namespace Lore
 				}
 				else
 					ShowExitMenu();
+			}
+			else if (mParty.Map == 7) {
+				if (mParty.XAxis == 49) {
+
+				}
+				else if (mParty.YAxis == 70)
+				{
+					ShowExitMenu();
+				}
 			}
 			else if (mParty.Map == 14)
 			{
@@ -5020,6 +5045,17 @@ namespace Lore
 
 				totalLen += run.Text.Length;
 			}
+		}
+
+		private void Talk(string dialog)
+		{
+			Talk(new string[] { dialog });
+		}
+
+		private void Talk(string[] dialog)
+		{
+			AppendText(dialog);
+			ContinueText.Visibility = Visibility.Visible;
 		}
 
 		private void TalkMode(int moveX, int moveY, VirtualKey key = VirtualKey.None)
@@ -5514,6 +5550,87 @@ namespace Lore
 
 					mTalkMode = 0;
 				}
+			}
+			else if (mParty.Map == 7) {
+				if (moveX == 50 && moveY == 54)
+					Talk($"LASTDITCH 성과 VALIANT PEOPLES 성은 매우 닮았다는 말이 있습니다.");
+				else if (moveX == 7 && moveY == 43)
+					Talk("이 세계는 다섯개의 대륙으로 되어 있다더군요.");
+				else if (moveX == 67 && moveY == 34)
+					Talk("각각의 대륙에는 서로 통하는 문이 존재합니다.");
+				else if (moveX == 42 && moveY == 8)
+					Talk("당신은 PYRAMID 안에서 쉽게 창을 발견할 수 있을것입니다.");
+				else if (moveX == 64 && moveY == 9)
+					Talk("GROUND GATE 는 여기로부터 서쪽에 나타나곤 합니다.");
+				else if (moveX == 13 && moveY == 67)
+					Talk("LORE 특공대의 지휘관은 저의 남편인데 'Lore Hunter'라고 불렸습니다.");
+				else if (moveX == 56 && moveY == 41)
+					Talk("Major Mummy 와 두마리의 Sphinx 의 공격은 가히 치명적입니다.");
+				else if (moveX == 43 && moveY == 33)
+					Talk("ROUND GATE 는 당신을 다른 대륙으로 인도해 줄것입니다.");
+				else if (moveX == 31 && moveY == 55)
+					Talk("LORE 특공대의 지휘관은 상당히 능력있는 인물이었습니다.");
+				else if ((moveX == 35 && moveY == 18) || (moveX == 35 && moveY == 20) || (moveX == 40 && moveY == 17) || (moveX == 40 && moveY == 19) || (moveX == 40 && moveY == 21) || (moveX == 39 && moveY == 40))
+				{
+					if (mParty.Etc[12] == 0)
+						Talk("성주님을 만나 보십시오.");
+					else
+						Talk("당신이 성공하기를 빕니다.");
+				}
+				else if (moveX == 36 && moveY == 40 && mParty.Etc[13] < 2)
+				{
+					AppendText(new string[] {
+						$"나의 이름은 [color={RGB.LightCyan}]Polaris[/color]요.",
+						"당신들과 같이 Major Mummy 를 물리치고 싶소.",
+						$"[color={RGB.LightGreen}]내가 당신의 일행에 끼여도 되겠소?[/color]"
+					});
+
+					//ShowMenu();
+				}
+				else if ((moveX == 17 && moveY == 18) || (moveX == 23 && moveY == 18) || (moveX == 20 && moveY == 20) || (moveX == 15 && moveY == 23))
+					GoTrainingCenter();
+				else if ((moveX == 56 && moveY == 16) || (moveX == 53 && moveY == 19) || (moveX == 57 && moveY == 21) || (moveX == 58 && moveY == 24))
+					GoGrocery();
+				else if ((moveX == 58 && moveY == 55) || (moveX == 58 && moveY == 57) || (moveX == 58 && moveY == 59))
+					GoWeaponShop();
+				else if ((moveX == 16 && moveY == 55) || (moveX == 16 && moveY == 57) || (moveX == 16 && moveY == 59))
+					GoHospital();
+				else if (moveX == 37 && moveY == 16) {
+					if (mParty.Etc[12] == 0) {
+						Talk(new string[] {
+							$" 당신이 {mPlayerList[0].Name}이오?",
+							" 나는 Lord Ahn 에게 당신이 온다는 소식을 전해받았소.  들었다시피 우리성에는  큰 문제가 있소." +
+							" 그것은 이 성의 북쪽에 위치해있는 동굴 때문이오.  그 동굴때문에 우리들은 상당한 압박을받고 있소.",
+							$" 만약 당신들이 위대한 영웅이라면, [color={RGB.LightCyan}]PYRAMID[/color]라는 동굴에 있는 [color={RGB.LightCyan}]Major Mummy[/color]를 처단해 주시오.",
+							" 당신들이 이 임무를 완수하면  나는 당신들에게 도움에 대한 댓가를 치뤄주겠소."
+						});
+
+						mParty.Etc[12]++;
+					}
+					else if (mParty.Etc[12] == 1) {
+						Talk($" 부탁하건데, PYRAMID의 '[color={RGB.LightCyan}]Major Mummy[/color]'를 처단해 주시오.");
+					}
+					else if (mParty.Etc[12] == 2) {
+						Talk(new string[] {
+							"당신의 성공에 경의를 표하오.",
+							$"[color={RGB.LightCyan}][EXP + 10000][/color]"
+						});
+
+						foreach (var player in mPlayerList) {
+							player.Experience += 10000;
+						}
+
+						mParty.Etc[12]++;
+					}
+					else if (mParty.Etc[12] == 3) {
+						Talk(new string[] {
+							$" 이 성의 북동쪽에 '[color={RGB.LightCyan}]GROUND GATE[/color]' 라는것이 있소." +
+							$" 만약 당신이 '[color={RGB.LightCyan}]GROUND GATE[/color]' 속에 들어간다면 '[color={RGB.LightCyan}]VALIANT PEOPLES[/color]'성으로 통하게 될것이오.",
+							$"[color={RGB.LightCyan}]VALIANT PEOPLES[/color]'는 Necromancer에게 매우 심하게 영향을 받고있소"
+						});
+					}
+				}
+
 			}
 		}
 
@@ -6730,7 +6847,8 @@ namespace Lore
 			None,
 			CastleLore,
 			Menace,
-			LastDitch
+			LastDitch,
+			GroundGate
 		}
 	}
 
