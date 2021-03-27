@@ -2130,26 +2130,26 @@ namespace Lore
 					{
 						EndBattle();
 					}
-				}
-				else if (mWeaponShopEnd)
-				{
-					mWeaponShopEnd = false;
-					GoWeaponShop();
-				}
-				else if (mCureMenuState == CureMenuState.NotCure)
-				{
-					mCureMenuState = CureMenuState.None;
-					ShowHealType();
-				}
-				else if (mCureMenuState == CureMenuState.CureEnd)
-				{
-					mCureMenuState = CureMenuState.None;
-					GoHospital();
-				}
-				else if (mTrainingEnd == true)
-				{
-					mTrainingEnd = false;
-					GoTrainingCenter();
+					else if (mWeaponShopEnd)
+					{
+						mWeaponShopEnd = false;
+						GoWeaponShop();
+					}
+					else if (mTrainingEnd == true)
+					{
+						mTrainingEnd = false;
+						GoTrainingCenter();
+					}
+					else if (mCureMenuState == CureMenuState.NotCure)
+					{
+						mCureMenuState = CureMenuState.None;
+						ShowHealType();
+					}
+					else if (mCureMenuState == CureMenuState.CureEnd)
+					{
+						mCureMenuState = CureMenuState.None;
+						GoHospital();
+					}
 				}
 				else if (mTalkMode == 0 && mMenuMode == MenuMode.None && (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadMenu))
 				{
@@ -3281,6 +3281,8 @@ namespace Lore
 							{
 								mMenuMode = MenuMode.None;
 
+								AppendText(new string[] { "" });
+
 								mEncounter = 6 - (mMenuFocusID + 1);
 							}
 							else if (mMenuMode == MenuMode.OrderFromCharacter)
@@ -3289,7 +3291,7 @@ namespace Lore
 
 								mOrderFromPlayerID = mMenuFocusID;
 
-								AppendText(new string[] { "[color=e0ffff]순서를 바꿀 일원[/color]" });
+								AppendText(new string[] { $"[color={RGB.LightCyan}]순서를 바꿀 일원[/color]" });
 
 								ShowCharacterMenu(MenuMode.OrderToCharacter);
 							}
@@ -4007,6 +4009,8 @@ namespace Lore
 
 										ContinueText.Visibility = Visibility.Visible;
 
+										DisplayPlayerInfo();
+
 										mTrainingEnd = true;
 									}
 								}
@@ -4452,13 +4456,13 @@ namespace Lore
 					AppendText(new string[] { $"[color={RGB.Red}]일행은 식량이 바닥났다[/color]" }, append);
 				else 
 				if (player.Dead > 0)
-					AppendText(new string[] { $"{player.Name}는 죽었다" }, append);
+					AppendText(new string[] { $"{player.Name}(은)는 죽었다" }, append);
 				else if (player.Unconscious > 0 && player.Poison == 0)
 				{
 					player.Unconscious = player.Unconscious - player.Level[0] - player.Level[1] - player.Level[2];
 					if (player.Unconscious <= 0)
 					{
-						AppendText(new string[] { $"{player.Name}는 의식이 회복되었다" }, append);
+						AppendText(new string[] { $"{player.Name}(은)는 의식이 회복되었다" }, append);
 						player.Unconscious = 0;
 						if (player.HP <= 0)
 							player.HP = 1;
@@ -4466,7 +4470,7 @@ namespace Lore
 						//mParty.Food--;
 					}
 					else
-						AppendText(new string[] { $"[color={RGB.White}]{player.Name}는 의식이 회복되었다[/color]" }, append);
+						AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 의식이 회복되었다[/color]" }, append);
 				}
 				else if (player.Unconscious > 0 && player.Poison > 0)
 					AppendText(new string[] { $"독때문에 {player.Name}의 의식은 회복되지 않았다" }, append);
@@ -4489,10 +4493,10 @@ namespace Lore
 					{
 						player.HP = player.Endurance * player.Level[0];
 
-						AppendText(new string[] { $"[color={RGB.White}]{player.Name}는 모든 건강이 회복되었다[/color]" }, append);
+						AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 모든 건강이 회복되었다[/color]" }, append);
 					}
 					else
-						AppendText(new string[] { $"[color={RGB.White}]{player.Name}는 모든 건강이 회복되었다[/color]" }, append);
+						AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 치료되었다[/color]" }, append);
 
 					//mParty.Food--;
 				}
@@ -4967,8 +4971,14 @@ namespace Lore
 					str = "\r\n" + text[i];
 
 				var startIdx = 0;
-				while ((startIdx = str.IndexOf("[")) >= 0)
+				while ((startIdx = str.IndexOf("[", startIdx)) >= 0)
 				{
+					if (startIdx < str.Length - 1 && str[startIdx + 1] == '[') {
+						str = str.Remove(startIdx, 1);
+						startIdx++;
+						continue;
+					}
+
 					var preRun = new Run();
 					preRun.Text = str.Substring(0, startIdx);
 
@@ -5006,7 +5016,7 @@ namespace Lore
 					if (tagData[0] == "color" && tagData.Length > 1 && tagData[1].Length == 6)
 					{
 						var tagRun = new Run();
-						tagRun.Text = str.Substring(0, startIdx);
+						tagRun.Text = str.Substring(0, startIdx).Replace("[[", "[");
 
 						paragraph.Inlines.Add(tagRun);
 						DialogText.TextHighlighters.Add(new TextHighlighter()
@@ -5025,6 +5035,7 @@ namespace Lore
 					}
 
 					str = str.Substring(startIdx + endTag.Length);
+					startIdx = 0;
 				}
 
 				var run = new Run();
@@ -5477,7 +5488,7 @@ namespace Lore
 						else if (mParty.Etc[9] == 4)
 						{
 							AppendText(new string[] { "당신들의 성공을 축하하오 !!",
-						"[color={RGB.LightCyan}][EXP + 1000][/color]" });
+						$"[color={RGB.LightCyan}][[EXP + 1000][/color]" });
 
 							mPlayerList.ForEach(delegate (Lore player)
 							{
@@ -5613,7 +5624,7 @@ namespace Lore
 					else if (mParty.Etc[12] == 2) {
 						Talk(new string[] {
 							"당신의 성공에 경의를 표하오.",
-							$"[color={RGB.LightCyan}][EXP + 10000][/color]"
+							$"[color={RGB.LightCyan}][[EXP + 10000][/color]"
 						});
 
 						foreach (var player in mPlayerList) {
