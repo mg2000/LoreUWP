@@ -86,7 +86,13 @@ namespace Lore
 		// 2 - 로어성을 떠날때 스켈레톤을 만나는 이벤트
 		// 3 - 스켈레톤의 답을 거절했을때 이벤트
 		// 4 - 게임 세계 도전 여부 Y/N
+		// 5~6 - 드라코니안 피라밋 방문 이벤트
+		// 7 - 에이션트 이블 이벤트
 		private int mSpecialEvent = 0;
+
+		// 전투 이벤트
+		// 1 - 로어성 경비병과의 전투
+		private int mBattleEvent = 0;
 
 		private volatile bool mMoveEvent = false;
 
@@ -107,6 +113,11 @@ namespace Lore
 
 		private Dictionary<EnterType, string> mEnterTypeMap = new Dictionary<EnterType, string>();
 		private EnterType mTryEnterType = EnterType.None;
+
+		private Lore mReserveMember = null;
+		private int mMemberX = -1;
+		private int mMemberY = -1;
+		private byte mMemberLeftTile = 0;
 
 		public GamePage()
 		{
@@ -196,9 +207,29 @@ namespace Lore
 			mEnterTypeMap[EnterType.Menace] = "메나스";
 			mEnterTypeMap[EnterType.LastDitch] = "라스트디치";
 			mEnterTypeMap[EnterType.GroundGate] = "지하 출입구";
+			
+			mEnterTypeMap[EnterType.AnotherLore] = "또다른 성전";
+			mEnterTypeMap[EnterType.ValiantPeoples] = "배리안트 피플즈";
+			mEnterTypeMap[EnterType.GaiaTerra] = "가이아 테라";
+			mEnterTypeMap[EnterType.Quake] = "퀘이크";
+			mEnterTypeMap[EnterType.Wivern] = "와이번";
+			mEnterTypeMap[EnterType.WaterField] = "워터 필드";
+			mEnterTypeMap[EnterType.Notice] = "공지";
+			mEnterTypeMap[EnterType.LockUp] = "룩업";
+			mEnterTypeMap[EnterType.SwampKeep] = "스웜프 킵";
+			mEnterTypeMap[EnterType.EvilGod] = "이블 갓";
+			mEnterTypeMap[EnterType.Muddy] = "머디";
+			mEnterTypeMap[EnterType.ImperiumMinor] = "임페리움 마이너";
+			mEnterTypeMap[EnterType.EvilConcentration] = "이블 컨센츄레이션";
+			mEnterTypeMap[EnterType.Pyramid] = "피라미드";
+			mEnterTypeMap[EnterType.EvilSeal] = "이블 씰";
+			mEnterTypeMap[EnterType.SwampGate] = "스웜프 게이트";
+			mEnterTypeMap[EnterType.LastShelter] = "라스트 쉘터";
+			mEnterTypeMap[EnterType.DungeonOfEvil] = "던전 오브 이블";
+			mEnterTypeMap[EnterType.ChamberOfNecromancer] = "챔버 오브 네크로맨서";
 
 
-			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
+			TypedEventHandler <CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
 			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
 			gamePageKeyDownEvent = async (sender, args) =>
 			{
@@ -320,18 +351,6 @@ namespace Lore
 
 					if (x > 4 && x < mMapWidth - 3 && y > 4 && y < mMapHeight - 3)
 					{
-						void ShowEnterMenu(EnterType enterType)
-						{
-							mTryEnterType = enterType;
-
-							AppendText(new string[] { $"{mEnterTypeMap[enterType]}에 들어가기를 원합니까 ?" });
-
-							ShowMenu(MenuMode.AskEnter, new string[] {
-									"예, 그렇습니다.",
-									"아니오, 원하지 않습니다."
-								});
-						}
-
 						void EnterMap()
 						{
 							if (mParty.Map == 1)
@@ -342,6 +361,73 @@ namespace Lore
 									ShowEnterMenu(EnterType.LastDitch);
 								else if (x == 16 && y == 88)
 									ShowEnterMenu(EnterType.Menace);
+								else if (x == 16 && y == 88)
+									ShowEnterMenu(EnterType.AnotherLore);
+							}
+							else if (mParty.Map == 2) {
+								if (x == 18 && y == 25)
+									ShowEnterMenu(EnterType.ValiantPeoples);
+								else if (x == 30 && y == 81)
+									ShowEnterMenu(EnterType.GaiaTerra);
+								else if (x == 81 && y == 46)
+									ShowEnterMenu(EnterType.Quake);
+								else if (x == 43 && y == 6)
+									ShowEnterMenu(EnterType.Wivern);
+							}
+							else if (mParty.Map == 3) {
+								if (x == 73 && y == 18)
+									ShowEnterMenu(EnterType.WaterField);
+								else if (x == 22 && y == 61)
+									ShowEnterMenu(EnterType.Notice);
+								else if (x == 95 && y == 41)
+									ShowEnterMenu(EnterType.LockUp);
+							}
+							else if (mParty.Map == 4) {
+								if (x == 47 && y == 34)
+									ShowEnterMenu(EnterType.SwampKeep);
+								else if (x == 47 && y == 56)
+									ShowEnterMenu(EnterType.EvilGod);
+								else if (x == 81 && y == 15)
+									ShowEnterMenu(EnterType.Muddy);
+							}
+							else if (mParty.Map == 5) {
+								if (x == 14 && y == 30)
+									ShowEnterMenu(EnterType.ImperiumMinor);
+								else if (x == 33 && y == 13)
+									ShowEnterMenu(EnterType.EvilConcentration);
+							}
+							else if (mParty.Map == 7) {
+								ShowEnterMenu(EnterType.Pyramid);
+							}
+							else if (mParty.Map == 8) {
+								ShowEnterMenu(EnterType.EvilSeal);
+							}
+							else if (mParty.Map == 10) {
+								ShowEnterMenu(EnterType.Wivern);
+							}
+							else if (mParty.Map == 13) {
+								ShowEnterMenu(EnterType.SwampKeep);
+							}
+							else if (mParty.Map == 16) {
+								ShowEnterMenu(EnterType.WaterField);
+							}
+							else if (mParty.Map == 21) {
+								if (y < 6)
+									ShowEnterMenu(EnterType.SwampGate);
+								else
+									ShowEnterMenu(EnterType.ImperiumMinor);
+							}
+							else if (mParty.Map == 22) {
+								if (y < 6)
+									ShowEnterMenu(EnterType.SwampKeep);
+								else
+									ShowEnterMenu(EnterType.LastShelter);
+							}
+							else if (mParty.Map == 23) {
+								ShowEnterMenu(EnterType.DungeonOfEvil);
+							}
+							else if (mParty.Map == 25) {
+								ShowEnterMenu(EnterType.ChamberOfNecromancer);
 							}
 						}
 
@@ -399,6 +485,7 @@ namespace Lore
 							{
 								MovePlayer(x, y);
 								InvokeSpecialEvent();
+
 								mTriggeredDownEvent = true;
 							}
 							else if (1 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 21)
@@ -442,6 +529,7 @@ namespace Lore
 							{
 								MovePlayer(x, y);
 								InvokeSpecialEvent();
+									
 								mTriggeredDownEvent = true;
 							}
 							else if ((1 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 40) || mMapLayer[x + mMapWidth * y] == 51) {
@@ -586,26 +674,43 @@ namespace Lore
 					if (mBattleTurn == BattleTurn.Win) {
 						var endMessage = "";
 
-						if (mParty.Etc[5] == 2)
-							endMessage = "";
-						else {
-							var goldPlus = 0;
-							foreach (var enemy in mEncounterEnemyList) {
-								var enemyInfo = mEnemyDataList[enemy.ENumber];
-								var point = enemyInfo.AC == 0 ? 1 : enemyInfo.AC;
-								var plus = enemyInfo.Level;
-								plus *= enemyInfo.Level;
-								plus *= enemyInfo.Level;
-								plus *= point;
-								goldPlus += plus;
+						if (mBattleEvent == 0)
+						{
+							if (mParty.Etc[5] == 2)
+								endMessage = "";
+							else
+							{
+								var goldPlus = 0;
+								foreach (var enemy in mEncounterEnemyList)
+								{
+									var enemyInfo = mEnemyDataList[enemy.ENumber];
+									var point = enemyInfo.AC == 0 ? 1 : enemyInfo.AC;
+									var plus = enemyInfo.Level;
+									plus *= enemyInfo.Level;
+									plus *= enemyInfo.Level;
+									plus *= point;
+									goldPlus += plus;
+								}
+
+								mParty.Gold += goldPlus;
+
+								endMessage = $"일행은 {goldPlus}개의 금을 얻었다.";
+
+								AppendText(new string[] { endMessage });
 							}
-
-							mParty.Gold += goldPlus;
-
-							endMessage = $"일행은 {goldPlus}개의 금을 얻었다.";
 						}
-
-						AppendText(new string[] { endMessage });
+						else if (mBattleEvent == 1) {
+							if (mParty.Etc[5] != 255) {
+								if (mParty.Etc[5] == 0) {
+									Talk($"[color={RGB.White}]당신들은 수감소 병사들을 물리쳤다.[/color]");
+									mParty.Etc[49] |= (1 << 2);
+									mMapLayer[50 + mMapWidth * 11] = 44;
+									mMapLayer[51 + mMapWidth * 11] = 44;
+									mMapLayer[49 + mMapWidth * 10] = 44;
+									mMapLayer[52 + mMapWidth * 10] = 44;
+								}
+							}
+						}
 
 						mEncounterEnemyList.Clear();
 
@@ -699,27 +804,6 @@ namespace Lore
 					}
 
 					UpdatePlayersStat();
-				}
-
-				void BattleMode()
-				{
-					var player = mPlayerList[mBattlePlayerID];
-					mBattleFriendID = 0;
-					mBattleToolID = 0;
-
-					AppendText(new string[] {
-							$"{player.Name}의 전투 모드 ===>"
-						});
-
-					ShowMenu(MenuMode.BattleCommand, new string[] {
-							$"한 명의 적을 {Common.GetWeaponStr(player.Weapon)}{Common.GetWeaponJosaStr(player.Weapon)}로 공격",
-							"한 명의 적에게 마법 공격",
-							"모든 적에게 마법 공격",
-							"적에게 특수 마법 공격",
-							"일행을 치료",
-							"적에게 초능력 사용",
-							mBattlePlayerID == 0 ? "일행에게 무조건 공격 할 것을 지시" : "도망을 시도함"
-						});
 				}
 
 				void ExecuteBattle() {
@@ -1285,7 +1369,7 @@ namespace Lore
 								}
 
 								battleResult.Add($"[color={RGB.LightCyan}]적은 우리의 편이 되었다[/color]");
-								JoinMember(enemy.ENumber);
+								JoinMemberFromEnemy(enemy.ENumber);
 								enemy.Dead = true;
 								enemy.Unconscious = true;
 								enemy.HP = 0;
@@ -2086,6 +2170,102 @@ namespace Lore
 					TalkMode(mTalkX, mTalkY, args.VirtualKey);
 				}
 				else if (ContinueText.Visibility == Visibility.Visible) {
+					void InvokeSpecialEventLaterPart() {
+						if (mSpecialEvent == 1)
+						{
+							mParty.Etc[49] |= 1 << 4;
+							mSpecialEvent = 0;
+						}
+						else if (mSpecialEvent == 2)
+						{
+							mMoveEvent = true;
+							for (var y = mParty.YAxis - 4; y < mParty.YAxis; y++)
+							{
+								mMapLayer[mParty.XAxis + mMapWidth * (y - 1)] = 44;
+								mMapLayer[mParty.XAxis + mMapWidth * y] = 48;
+								Task.Delay(500).Wait();
+							}
+							mMoveEvent = false;
+
+							TalkMode(mTalkX, mTalkY, args.VirtualKey);
+							mSpecialEvent = 0;
+						}
+						else if (mSpecialEvent == 5)
+						{
+							if ((mParty.Etc[15] & (1 << 1)) > 0)
+								AppendText(new string[] { "그러나, 아무도 살고 있지 않았다." });
+							else if (mParty.Etc[4] == 0)
+							{
+								Talk(new string[] {
+									" 나는 Draconian이라고 하오. 이런곳까지 사람이 찾아오리라고는 생각하지 못했는데 참 의외로군요. 나는 숨어 지내는 오랜 세월동안에 여러가지 학문을 연구하고 있었소." +
+									"  특히 천문학에 대해서는 특별히 전염하여 다루었소.  내가 그동안 알아낸 지식들은 다음과 같은 것이오.",
+									" 지금 우리가 살고있는 지구는 태양계에서  세번째로 위치한 행성인데 이상하게도 위성인 달이 지구보다도 더 오래되었다는 사실이 연구되었소." +
+									" 또한 이 지구가 세차운동에 의해 2 등성이었던 북극성이 다른 별로 바뀐다는걸 알았소",
+									" 물리학에서 알아낸것은, 중수반응에서 매질의 차이로 빛이 속도가 느려진 틈을 이용해 빛 보다 빠른 입자가 생겨났소. 하지만 절대적인 빛의 속도에는 미치지 못했지만 말이오." +
+									"  이것을 잘만 이용하면 미래로의 타임머신이  가능하다는 걸 입증할 수가 있소.",
+									" 사실 이런것은 당신에게는 별 의미가 없는 것일지도 모르오. 하지만 마지막으로 알아낸것은 바로 당신이 응징하고자 하는  Necromancer 의 출처에 관한 것이오." +
+									" 당신은 시그너스 X1과 같은 블랙홀에 대해서 알고있을 것이오. 이런 물리학적인 파라독스에 의해 그는 생겨났던것이오."
+								});
+
+								mSpecialEvent = 6;
+							}
+							else {
+								AppendText(new string[] { " 나의 운명을 생각해 보니  나 역시  당신들을 필연적으로 만나 Necromancer를 물리쳐야 한다는걸 깨닭았소." +
+								" 당신들 일행의 제일 뒤에서 도와주고 싶소. 어떻소." });
+
+								ShowMenu(MenuMode.JoinDraconian, new string[] {
+									"저도 바라던 차입니다",
+									"별로 좋지는 않군요"
+								}); ;
+							}
+						}
+						else if (mSpecialEvent == 6) {
+							Talk(new string[] {
+								" 지금 우리가 있는 3차원 위에 또 다른 차원이 있다고 생각하오?  생각은 하더라도 눈으로 확인은 못해봤을것이오. 우리는 2차원을 인식 할 수가 있소." +
+								"  하지만 실제로 2차원에  살고있는 생물은 자신의 차원은 인식해도 우리가 살고있는 3차원은 인식할 수가 없는 것이오." +
+								" 그의 차원에는 우리의 차원이  존재하지 않기  때문에 개념을 잡을수가 없는 것이오.  마찬가지로 우리 또한 지금의 차원보다 한 차원 높은 4 차원을 개념을 잡기가 어려운 것이오.",
+								" 어떤이는 4차원은 시간의 축이 보태어 진다고 하는 이론을 세우더군요.  하지만 나의 이론은 시간은 모든 차원의 기준이며 4차원에 국한 되지는 않는다는 생각이오." +
+								" 3차원에서는 동 시간대에 무한한 2차원을 포함 하듯이 4차원에서는 동 시간대에  무한한 3차원을 포함하고 있다는 이론이 성립되오." +
+								" 말이 조금은 빗나갔지만  이 이론으로 Necromancer의 출처를 해명해 보겠소",
+								" 방금 말했듯이 3차원은 이 공간만이 존재하는 것은 아니오. 동 시대를 살아가는 다른 공간도 인정해야 한다는 말이오.  그 공간들을 이어주는 것이 바로 블랙 홀이란 것이지요." +
+								"  그는 원래 그가 있던 공간에서 블랙 홀을 통해서 다른 공간으로 가려고 시도를 했고 웜 홀을 통해 시공간을 가로질러 오래전 우리의 공간에 화이트 홀이 생기는 틈을 이용하여 내려왔던 것이오.",
+								" 하지만 3차원에 사는 나로서는 그가 전에  있던 공간에서 왜 이쪽으로 왔는지  알수가 없었지요. 그래서 그와 같이 이 공간으로 들어왔던 심복들을 통해 그 사정을 알게 되었소.",
+								" Necromacer는 저쪽의 공간에서도 지금과 마찬가지로 차원을 통해 그 공간에 도달했소. 역시 거기서도 악을 뿌리며 거기의 생명체들을 위협했소." +
+								" 하지만 어떤 선택되어진 6인의 용사들에 의해 쫒겨나서 여기로 온것이오.  지금의 당신들과 비슷하다고 생각되지 않소? 그렇소." +
+								" 다른 공간의 당신들에게 쫒겨난후 다시 여기서 당신들을 또 만나게 된것이오. Necromancer와 당신들의 운명은 언제까지나 쫒고 쫒기며 대립하여야하는 운명으로 탄생되었던 것이오." +
+								" 이런  이유에서 당신은 그를 반드시 무찌를 수가  있다는 근거가 되는 것이오.",
+								" 당신들의 건투를 빌어주겠소."
+							});
+						}
+						else if (mSpecialEvent == 7) {
+							mParty.XAxis = 47;
+							mParty.YAxis = 56;
+
+							Talk(" 여기는 EVIL GOD 라는 동굴이오. 여기의 보스는 Crab God인데 적 자체는 별거 아니지만  떼를 지어서 다니기 때문에 약간의 애를 먹을 것이오." +
+							" 7갈래의 길중에서 한곳에 봉인이 숨겨져 있을 것이오.");
+
+							mSpecialEvent = 8;
+						}
+						else if (mSpecialEvent == 8) {
+							mParty.XAxis = 81;
+							mParty.YAxis = 15;
+
+							Talk(" 여기는 Muddy 라는 동굴이오.  여기의 보스는 Astral Mud라는 자인데  그리 실력이 있다고는 볼수가 없소." +
+							" 다만 동굴 자체가 어려운 미로라는 것과 시야가 좁아지는 불편등은 감수해야만 할 것이오." +
+							" 그리고 마지막에 3마리의 Dragon과 7마리의 Mud-Man을 거쳐야만 그가 나타나기 때문에 약간 까다로울 것이오.");
+
+							mSpecialEvent = 9;
+						}
+						else if (mSpecialEvent == 9) {
+							mParty.XAxis = 15;
+							mParty.YAxis = 14;
+
+							Talk(" 여기는 이 대륙의 외진곳이오. 여기서는 어떤 만남이 기다리고 있을 것이오.");
+
+							mParty.Etc[15] |= 1;
+						}
+					}
+
 					ContinueText.Visibility = Visibility.Collapsed;
 
 					if (mBattleTurn == BattleTurn.None)
@@ -2094,25 +2274,8 @@ namespace Lore
 						DialogText.TextHighlighters.Clear();
 					}
 
-					if (mSpecialEvent == 1)
-					{
-						mParty.Etc[49] |= 1 << 4;
-						mSpecialEvent = 0;
-					}
-					else if (mSpecialEvent == 2)
-					{
-						mMoveEvent = true;
-						for (var y = mParty.YAxis - 4; y < mParty.YAxis; y++)
-						{
-							mMapLayer[mParty.XAxis + mMapWidth * (y - 1)] = 44;
-							mMapLayer[mParty.XAxis + mMapWidth * y] = 48;
-							Task.Delay(500).Wait();
-						}
-						mMoveEvent = false;
-
-						TalkMode(mTalkX, mTalkY, args.VirtualKey);
-						mSpecialEvent = 0;
-					}
+					if (mSpecialEvent > 0)
+						InvokeSpecialEventLaterPart();
 					else if (mTalkMode > 0)
 					{
 						if (mSpecialEvent == 0)
@@ -4072,7 +4235,7 @@ namespace Lore
 											ContinueText.Visibility = Visibility.Visible;
 										}
 										else
-											ExitCastleLore();
+											await ExitCastleLore();
 									}
 									else if (mParty.Map == 7) {
 										mParty.Map = 1;
@@ -4103,8 +4266,8 @@ namespace Lore
 
 								if (mMenuFocusID == 0)
 								{
-									JoinMember(18);
-									ExitCastleLore();
+									JoinMemberFromEnemy(18);
+									await ExitCastleLore();
 								}
 								else if (mMenuFocusID == 1)
 								{
@@ -4115,25 +4278,6 @@ namespace Lore
 							else if (mMenuMode == MenuMode.BattleStart)
 							{
 								mMenuMode = MenuMode.None;
-
-								void StartBattle()
-								{
-									mBattleTurn = BattleTurn.Player;
-
-									mParty.Etc[5] = 1;
-									for (var i = 0; i < mPlayerList.Count; i++)
-									{
-										if (mPlayerList[i].IsAvailable)
-										{
-											mBattlePlayerID = i;
-											break;
-										}
-									}
-
-									mBattleCommandQueue.Clear();
-
-									BattleMode();
-								}
 
 								var avgLuck = 0;
 								mPlayerList.ForEach(delegate (Lore player)
@@ -4376,7 +4520,19 @@ namespace Lore
 
 											await RefreshGame();
 											break;
+										case EnterType.Pyramid:
+											mParty.Map = 11;
+											mParty.XAxis = 24;
+											mParty.YAxis = 44;
 
+											await RefreshGame();
+
+											if (mParty.Etc[12] > 1) {
+												mMapLayer[24 + mMapWidth * 43] = 50;
+												mMapLayer[25 + mMapWidth * 43] = 50;
+											}
+
+											break;
 									}
 								}
 								else {
@@ -4401,6 +4557,55 @@ namespace Lore
 								UpdatePlayersStat();
 								mParty.Etc[31] |= (1 << 6);
 							}
+							else if (mMenuMode == MenuMode.SwapMember) {
+								mMenuMode = MenuMode.None;
+
+								mPlayerList[mMenuFocusID + 1] = mReserveMember;
+								mReserveMember = null;
+
+								LeaveMemberPosition();
+
+								DisplayPlayerInfo();
+
+								AppendText(new string[] { "" });
+							}
+							else if (mMenuMode == MenuMode.JoinPolaris) {
+								mMenuMode = MenuMode.None;
+
+								if (mMenuFocusID == 0)
+								{
+									var player = GetMemberFromEnemy(9);
+									player.Name = "Polaris";
+									player.Class = 4;
+									player.Level[1] = 3;
+									player.Weapon = 4;
+									player.Shield = 1;
+									player.WeaPower = 10;
+									player.ShiPower = 1;
+									player.ArmPower = 2;
+									player.AC = 3;
+
+									JoinMember(player);
+								}
+								else
+									ShowNoThanks();
+							}
+							else if (mMenuMode == MenuMode.JoinDraconian) {
+								mMenuMode = MenuMode.None;
+
+								if (mMenuFocusID == 0)
+								{
+									var player = GetMemberFromEnemy(61);
+									player.Class = 4;
+									player.Level[0] = 17;
+
+									JoinMember(player);
+
+									mParty.Etc[15] |= (1 << 1);
+								}
+								else
+									Talk(" 다시 생각해보니 나는 당신들과 같이 싸울 운명이 아닌것 같소.");
+							}
 						}
 					}
 				}
@@ -4408,6 +4613,46 @@ namespace Lore
 
 			Window.Current.CoreWindow.KeyDown += gamePageKeyDownEvent;
 			Window.Current.CoreWindow.KeyUp += gamePageKeyUpEvent;
+		}
+
+		private void StartBattle()
+		{
+			mBattleTurn = BattleTurn.Player;
+
+			mParty.Etc[5] = 1;
+			for (var i = 0; i < mPlayerList.Count; i++)
+			{
+				if (mPlayerList[i].IsAvailable)
+				{
+					mBattlePlayerID = i;
+					break;
+				}
+			}
+
+			mBattleCommandQueue.Clear();
+
+			BattleMode();
+		}
+
+		private void BattleMode()
+		{
+			var player = mPlayerList[mBattlePlayerID];
+			mBattleFriendID = 0;
+			mBattleToolID = 0;
+
+			AppendText(new string[] {
+				$"{player.Name}의 전투 모드 ===>"
+			});
+
+			ShowMenu(MenuMode.BattleCommand, new string[] {
+				$"한 명의 적을 {Common.GetWeaponStr(player.Weapon)}{Common.GetWeaponJosaStr(player.Weapon)}로 공격",
+				"한 명의 적에게 마법 공격",
+				"모든 적에게 마법 공격",
+				"적에게 특수 마법 공격",
+				"일행을 치료",
+				"적에게 초능력 사용",
+				mBattlePlayerID == 0 ? "일행에게 무조건 공격 할 것을 지시" : "도망을 시도함"
+			});
 		}
 
 		private void GoWeaponShop()
@@ -4524,14 +4769,80 @@ namespace Lore
 			ContinueText.Visibility = Visibility.Visible;
 		}
 
-		private void InvokeSpecialEvent() {
+		private void ShowEnterMenu(EnterType enterType)
+		{
+			mTryEnterType = enterType;
+
+			AppendText(new string[] { $"{mEnterTypeMap[enterType]}에 들어가기를 원합니까 ?" });
+
+			ShowMenu(MenuMode.AskEnter, new string[] {
+				"예, 그렇습니다.",
+				"아니오, 원하지 않습니다."
+			});
+		}
+
+		private bool InvokeSpecialEvent() {
 			void FindGold(int gold) {
 				AppendText(new string[] { $"당신은 금화 {gold}개를 발견했다." });
 
 				mParty.Gold += gold;
 			}
 
-			if (mParty.Map == 6)
+			if (mParty.Map == 1)
+			{
+				if ((mParty.Etc[31] & (1 << 7)) == 0)
+				{
+					Talk("일행들은 100 인분의 식량을 발견했다.");
+
+					if (mParty.Food > 155)
+						mParty.Food = 255;
+					else
+						mParty.Food += 100;
+
+					mParty.Etc[31] |= (1 << 7);
+				}
+				else
+					Talk("일행들은 100 인분의 식량을 발견했다.");
+
+				return false;
+			}
+			else if (mParty.Map == 4)
+			{
+				if (mParty.XAxis == 39 && mParty.YAxis == 17)
+				{
+					AppendText(new string[] { " 일행은 공간 이동이 되었다" });
+
+					mParty.XAxis = 45;
+					mParty.YAxis = 40;
+				}
+				else if (mParty.XAxis == 25 && mParty.YAxis == 15)
+				{
+					Talk(" 여기는 인간과 드래곤의 중간 종족이며  혼란스런 세상을 피해 은둔하고있는 Draconian이란자가 살고있는 피라밋이었다.");
+					mSpecialEvent = 5;
+				}
+				else if (mParty.XAxis == 19 && mParty.YAxis == 38)
+				{
+					if ((mParty.Etc[15] & 1) > 0)
+					{
+						mParty.XAxis = 45;
+						mParty.YAxis = 40;
+
+						Talk(" 이제는 더 이상 할말이 없소.");
+					}
+					else
+					{
+						Talk(new string[] {
+							" 나는 Ancient Evil 이란 존재이오. 이제 나는 육신은 없는 영이오. 당신은 Lord Ahn 을 만나보았겠군요. 그리고 우리들의 운명적인 만남도 역시 예시 받았겠군요.",
+							" 사실이야 어떻든 당신에게 이 대륙에서의  할 일을 말해 주겠소."
+						});
+
+						mSpecialEvent = 7;
+					}
+				}
+
+				return true;
+			}
+			else if (mParty.Map == 6)
 			{
 				if (mParty.XAxis == 61 && mParty.YAxis == 81)
 				{
@@ -4563,7 +4874,38 @@ namespace Lore
 							enemyNumber = 2;
 						}
 
-						// 적 정보 추가
+						mEncounterEnemyList.Clear();
+						for (var i = 0; i < enemyNumber; i++)
+						{
+							var enemy = JoinEnemy(25);
+							enemy.Name = $"병사{i + 1}";
+							enemy.Special = 0;
+							enemy.CastLevel = 0;
+							enemy.ENumber = 0;
+						}
+
+						HideMap();
+						DisplayEnemy();
+
+						mBattleEvent = 1;
+
+						var hasMadJoe = false;
+						foreach (var player in mPlayerList)
+						{
+							if (player.Name == "Mad Joe")
+							{
+								Talk(new string[] { " 우리들 뒤에 있던  Mad Joe가 전투가 일어나자마자 도망을 가버렸다." });
+								mPlayerList.Remove(player);
+								DisplayPlayerInfo();
+
+								mBattleTurn = BattleTurn.Enemy;
+								hasMadJoe = true;
+								break;
+							}
+						}
+
+						if (!hasMadJoe)
+							StartBattle();
 					}
 				}
 				else if (mParty.XAxis == 40 && mParty.YAxis == 78)
@@ -4600,15 +4942,25 @@ namespace Lore
 				}
 				else
 					ShowExitMenu();
-			}
-			else if (mParty.Map == 7) {
-				if (mParty.XAxis == 49) {
 
+				return true;
+			}
+			else if (mParty.Map == 7)
+			{
+				if (mParty.XAxis == 49)
+				{
+					ShowEnterMenu(EnterType.GroundGate);
+				}
+				else if (mParty.XAxis == 29 || mParty.XAxis == 31)
+				{
+					mMapLayer[30 + mMapWidth * mParty.YAxis] = 45;
 				}
 				else if (mParty.YAxis == 70)
 				{
 					ShowExitMenu();
 				}
+
+				return true;
 			}
 			else if (mParty.Map == 14)
 			{
@@ -4659,7 +5011,7 @@ namespace Lore
 					mParty.Etc[31] |= (1 << 5);
 				}
 				else if ((mParty.XAxis == 15 && mParty.YAxis == 19) && (mParty.Etc[31] & (1 << 6)) == 0)
-				{ 
+				{
 					AppendText(new string[] {
 						$"[color={RGB.White}]당신은 황금의 방패를 발견했다.[/color]",
 						$"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]"
@@ -4667,7 +5019,11 @@ namespace Lore
 
 					ShowCharacterMenu(MenuMode.ChooseGoldShield);
 				}
+
+				return true;
 			}
+			else
+				return true;
 		}
 
 		private void ShowCureResult(string message, List<string> cureResult) {
@@ -4875,6 +5231,37 @@ namespace Lore
 				menuStr[i] = mPlayerList[i].Name;
 
 			ShowMenu(menuMode, menuStr);
+		}
+
+		private void JoinMember(Lore player)
+		{
+			if (mPlayerList.Count < 6)
+			{
+				mPlayerList.Add(player);
+				DisplayPlayerInfo();
+
+				if (mMemberLeftTile > 0)
+					LeaveMemberPosition();
+			}
+			else
+			{
+				AppendText(new string[] { "교체 시킬 인물은 누구입니까 ?" });
+				var memberNames = new string[mPlayerList.Count - 1];
+				for (var i = 1; i < mPlayerList.Count; i++)
+					memberNames[i - 1] = mPlayerList[i].Name;
+
+				mReserveMember = player;
+
+				ShowMenu(MenuMode.SwapMember, memberNames);
+			}
+		}
+
+		private void LeaveMemberPosition() {
+			mMapLayer[mMemberX + mMapWidth * mMemberY] = mMemberLeftTile;
+
+			mMemberLeftTile = 0;
+			mMemberX = -1;
+			mMemberY = -1;
 		}
 
 		private void FocusMenuItem()
@@ -5596,7 +5983,14 @@ namespace Lore
 						$"[color={RGB.LightGreen}]내가 당신의 일행에 끼여도 되겠소?[/color]"
 					});
 
-					//ShowMenu();
+					ShowMenu(MenuMode.JoinPolaris, new string[] {
+						"나는 당신의 제안을 받아 들이겠소",
+						"나는 당신의 도움은 필요 없소"
+					});
+
+					mMemberLeftTile = 44;
+					mMemberX = moveX;
+					mMemberY = moveY;
 				}
 				else if ((moveX == 17 && moveY == 18) || (moveX == 23 && moveY == 18) || (moveX == 20 && moveY == 20) || (moveX == 15 && moveY == 23))
 					GoTrainingCenter();
@@ -6321,11 +6715,12 @@ namespace Lore
 			}
 		}
 
-		private void JoinMember(int id)
-		{
+
+		private Lore GetMemberFromEnemy(int id) {
 			var enemy = mEnemyDataList[id];
 
-			var player = new Lore() {
+			var player = new Lore()
+			{
 				Name = enemy.Name,
 				Gender = "male",
 				Class = 0,
@@ -6426,6 +6821,13 @@ namespace Lore
 					player.Experience = 5100000;
 					break;
 			}
+
+			return player;
+		}
+
+		private void JoinMemberFromEnemy(int id)
+		{
+			var player = GetMemberFromEnemy(id);
 
 			if (mPlayerList.Count >= 6)
 				mPlayerList[5] = player;
@@ -6806,7 +7208,10 @@ namespace Lore
 			CastESP,
 			BattleLose,
 			AskEnter,
-			ChooseGoldShield
+			ChooseGoldShield,
+			SwapMember,
+			JoinPolaris,
+			JoinDraconian
 		}
 
 		private enum CureMenuState
@@ -6859,7 +7264,26 @@ namespace Lore
 			CastleLore,
 			Menace,
 			LastDitch,
-			GroundGate
+			GroundGate,
+			AnotherLore,
+			ValiantPeoples,
+			GaiaTerra,
+			Quake,
+			Wivern,
+			WaterField,
+			Notice,
+			LockUp,
+			SwampKeep,
+			EvilGod,
+			Muddy,
+			ImperiumMinor,
+			EvilConcentration,
+			Pyramid,
+			EvilSeal,
+			SwampGate,
+			LastShelter,
+			DungeonOfEvil,
+			ChamberOfNecromancer
 		}
 	}
 
