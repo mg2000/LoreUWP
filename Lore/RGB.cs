@@ -27,6 +27,8 @@ namespace Lore
         //yellow    = 14;
         //white     = 15;
 
+        public const string Green = "00ff00";
+        public const string Cyan = "00ffff";
         public const string Magenta = "ff00ff";
         public const string LightGreen = "90ee90";
         public const string White = "ffffff";
