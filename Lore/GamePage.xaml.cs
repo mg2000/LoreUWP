@@ -91,11 +91,14 @@ namespace Lore
 		// 10~13 - 스웜프 게이트 들어갈때 이벤트
 		// 14~15 - 오이디푸스 창 발견 이벤트
 		// 16 - 미이라의 방 발견 이벤트
+		// 17 - 리겔과 만나는 이벤트
+		// 18 - 이블 컨센트레이션 입구 이벤트
 		private int mSpecialEvent = 0;
 
 		// 전투 이벤트
 		// 1 - 로어성 경비병과의 전투
 		// 2 - 미이라 장군과의 전투
+		// 3 - 이블 컨센트레이션 입구 전투
 		private int mBattleEvent = 0;
 
 		private volatile bool mMoveEvent = false;
@@ -442,10 +445,7 @@ namespace Lore
 								var oriX = mParty.XAxis;
 								var oriY = mParty.YAxis;
 								MovePlayer(x, y);
-								if (!InvokeSpecialEvent()) {
-									mParty.XAxis = oriX;
-									mParty.YAxis = oriY;
-								}
+								InvokeSpecialEvent(oriX, oriY);
 								mTriggeredDownEvent = true;
 							}
 							else if (1 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 21)
@@ -495,11 +495,7 @@ namespace Lore
 								var oriX = mParty.XAxis;
 								var oriY = mParty.YAxis;
 								MovePlayer(x, y);
-								if (!InvokeSpecialEvent())
-								{
-									mParty.XAxis = oriX;
-									mParty.YAxis = oriY;
-								}
+								InvokeSpecialEvent(oriX, oriY);
 
 								mTriggeredDownEvent = true;
 							}
@@ -545,11 +541,7 @@ namespace Lore
 								var oriX = mParty.XAxis;
 								var oriY = mParty.YAxis;
 								MovePlayer(x, y);
-								if (!InvokeSpecialEvent())
-								{
-									mParty.XAxis = oriX;
-									mParty.YAxis = oriY;
-								}
+								InvokeSpecialEvent(oriX, oriY);
 
 								mTriggeredDownEvent = true;
 							}
@@ -690,7 +682,7 @@ namespace Lore
 					await RefreshGame();
 				}
 
-				void EndBattle()
+				async Task EndBattle()
 				{
 					if (mBattleTurn == BattleTurn.Win) {
 						
@@ -753,6 +745,15 @@ namespace Lore
 									mParty.Etc[12]++;
 								}
 							}
+						}
+						else if (mBattleEvent == 3) {
+							mParty.Etc[43] |= 1;
+
+							mParty.Map = 23;
+							mParty.XAxis = 24;
+							mParty.YAxis = 44;
+
+							await RefreshGame();
 						}
 
 						mEncounterEnemyList.Clear();
@@ -1019,7 +1020,7 @@ namespace Lore
 							#if DEBUG
 							var exp = 5000;
 							#else
-							var exp = enemy.ENumber * enemy.ENumber * enemy.ENumber / 8;
+							var exp = (enemy.ENumber + 1) * (enemy.ENumber + 1) * (enemy.ENumber + 1) / 8;
 							if (exp == 0)
 								exp = 1;
 							#endif
@@ -2426,6 +2427,24 @@ namespace Lore
 
 							StartBattle();
 						}
+						else if (mSpecialEvent == 17) {
+							AppendText(new string[] {
+							$" 나는 VALIANT PEOPLES 의 용사였던 [color={RGB.LightCyan}]Rigel[/color]이오." +
+							" 내가 동굴속에서 적들을 막아내는 동안 지각변동으로 인해  이런 절벽이 군데 군데 생겼소." +
+							"  나는 이제 너무 지치고 많은 상처를 입어서 혼자 힘으로는 이곳을 빠져 나갈수가 없소.",
+							" 나를 도와 주시오."
+							});
+
+							ShowMenu(MenuMode.JoinRigel, new string[] {
+								"좋소, 같이 모험을 합시다",
+								"식량과 치료는 해결해 주겠소",
+								"당신을 도와줄 시간이 없소"
+							});
+						}
+						else if (mSpecialEvent == 18) {
+							mBattleEvent = 3;
+							StartBattle();
+						}
 					}
 
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -2765,6 +2784,9 @@ namespace Lore
 							mBattleCommandQueue.Clear();
 							mBatteEnemyQueue.Clear();
 							mBattleTurn = BattleTurn.None;
+
+							mSpecialEvent = 0;
+							mBattleEvent = 0;
 
 							ShowMap();
 
@@ -4460,6 +4482,13 @@ namespace Lore
 											}
 										}
 									}
+									else if (mParty.Map == 12) {
+										mParty.Map = 7;
+										mParty.XAxis = 38;
+										mParty.YAxis = 6;
+
+										await RefreshGame();
+									}
 									else if (mParty.Map == 14) {
 										mParty.Map = 1;
 										mParty.XAxis = 17;
@@ -4767,8 +4796,170 @@ namespace Lore
 												else
 													await EnterSwampGate();
 											}
+											else if (mParty.Map == 21) {
+												mParty.Map = 13;
+												mParty.XAxis = 80;
+												mParty.YAxis = 67;
+
+												await RefreshGame();
+											}
 
 											break;
+										case EnterType.ValiantPeoples:
+											mParty.Map = 8;
+											mParty.XAxis = 37;
+											mParty.YAxis = 69;
+
+											await RefreshGame();
+											break;
+										case EnterType.GaiaTerra:
+											mParty.Map = 9;
+											mParty.XAxis = 25;
+											mParty.YAxis = 44;
+
+											await RefreshGame();
+											break;
+										case EnterType.Quake:
+											mParty.Map = 15;
+											mParty.XAxis = 24;
+											mParty.YAxis = 69;
+
+											await RefreshGame();
+											break;
+										case EnterType.Wivern:
+											if (mParty.Map == 2)
+											{
+												mParty.Map = 16;
+												mParty.XAxis = 19;
+												mParty.YAxis = 34;
+											}
+											else if (mParty.Map == 10) {
+												mParty.Map = 16;
+												mParty.XAxis = 19;
+												mParty.YAxis = 9;
+											}
+
+											await RefreshGame();
+											break;
+										case EnterType.WaterField:
+											if (mParty.Map == 3)
+											{
+												mParty.Map = 10;
+												mParty.XAxis = 24;
+												mParty.YAxis = 69;
+											}
+											else if (mParty.Map == 16) {
+												mParty.Map = 10;
+												mParty.XAxis = 25;
+												mParty.YAxis = 7;
+											}
+
+
+											await RefreshGame();
+
+											if ((mParty.Etc[37] & (1 << 3)) > 0)
+												mMapLayer[39 + mMapWidth * 55] = 44;
+
+											break;
+										case EnterType.Notice:
+											mParty.Map = 17;
+											mParty.XAxis = 55;
+											mParty.YAxis = 93;
+
+											await RefreshGame();
+											break;
+										case EnterType.LockUp:
+											mParty.Map = 18;
+											mParty.XAxis = 24;
+											mParty.YAxis = 93;
+										
+											await RefreshGame();
+											break;
+										case EnterType.SwampKeep:
+											if (mParty.Map == 4)
+											{
+												mParty.Map = 21;
+												mParty.XAxis = 24;
+												mParty.YAxis = 44;
+											}
+											else if (mParty.Map == 13) {
+												mParty.Map = 21;
+												mParty.XAxis = 24;
+												mParty.YAxis = 5;
+											}
+
+											await RefreshGame();
+											break;
+										case EnterType.EvilGod:
+											mParty.Map = 19;
+											mParty.XAxis = 25;
+											mParty.YAxis = 44;
+
+											await RefreshGame();
+											break;
+										case EnterType.Muddy:
+											mParty.Map = 20;
+											mParty.XAxis = 24;
+											mParty.YAxis = 94;
+
+											await RefreshGame();
+											break;
+										case EnterType.ImperiumMinor:
+											if (mParty.Map == 5)
+											{
+												mParty.Map = 22;
+												mParty.XAxis = 24;
+												mParty.YAxis = 44;
+											}
+											else if (mParty.Map == 21) {
+												if (mParty.Etc[39] % 2 == 1 && mParty.Etc[40] % 2 == 1)
+													AppendText(new string[] { " 라바 게이트는 작동되지 않았다." });
+												else {
+													mEncounterEnemyList.Clear();
+
+													if ((mParty.Etc[41] & (1 << 1)) == 0) {
+														// 계속 구현...
+													}
+												}
+											}
+
+											await RefreshGame();
+											break;
+										case EnterType.EvilConcentration:
+											if ((mParty.Etc[43] & 1) == 0)
+											{
+												mEncounterEnemyList.Clear();
+												for (var i = 0; i < 7; i++)
+													JoinEnemy(53);
+												mEncounterEnemyList[mRand.Next(6) + 1] = new BattleEnemyData(68, mEnemyDataList[68]);
+
+												HideMap();
+												DisplayEnemy();
+
+												Talk("나는 EVIL CONCENTRATION 성의 입구를 지키는 임무를 맡고 있는 Frost Dragon이다.  내가 지키고 있는한  너희들은 한 발자국도  들여놓지 않을것이다.");
+
+												mSpecialEvent = 18;
+											}
+											else {
+												mParty.Map = 23;
+												mParty.XAxis = 24;
+												mParty.YAxis = 44;
+
+												await RefreshGame();
+											}
+
+											break;
+										case EnterType.EvilSeal:
+											mParty.Map = 12;
+											mParty.XAxis = 24;
+											mParty.YAxis = 69;
+
+											await RefreshGame();
+
+											if (mParty.Etc[13] > 1)
+												mMapLayer[17 + mMapWidth * 8] = 0;
+											break;
+											
 									}
 								}
 								else {
@@ -4822,6 +5013,8 @@ namespace Lore
 									player.AC = 3;
 
 									JoinMember(player);
+
+									mMapLayer[36 + mMapWidth * 40] = 44;
 								}
 								else
 									ShowNoThanks();
@@ -4861,6 +5054,77 @@ namespace Lore
 
 									mParty.Etc[32] |= (1 << 7);
 								}
+							}
+							else if (mMenuMode == MenuMode.JoinLoreHunter) {
+								mMenuMode = MenuMode.None;
+
+								if (mMenuFocusID == 0)
+								{
+									var player = GetMemberFromEnemy(38);
+									player.Name = "Lore Hunter";
+									player.Class = 7;
+									player.Weapon = 5;
+									player.Shield = 2;
+									player.Armor = 1;
+									player.WeaPower = 15;
+									player.ShiPower = 2;
+									player.ArmPower = 2;
+									player.AC = 4;
+
+									JoinMember(player);
+
+									mMapLayer[39 + mMapWidth * 55] = 44;
+									mParty.Etc[37] |= (1 << 3);
+								}
+								else
+									ShowNoThanks();
+							}
+							else if (mMenuMode == MenuMode.JoinRigel) {
+								mMenuMode = MenuMode.None;
+
+								if (mMenuFocusID == 0)
+								{
+									var player = GetMemberFromEnemy(13);
+									player.Name = "Rigel";
+									player.Class = 7;
+									player.Weapon = 4;
+									player.Shield = 1;
+									player.Armor = 1;
+									player.WeaPower = 10;
+									player.ShiPower = 1;
+									player.ArmPower = 2;
+									player.AC = 3;
+									player.HP = 1;
+
+									mParty.Etc[30] |= (1 << 1);
+								}
+								else if (mMenuFocusID == 1)
+								{
+									Talk(" 일행은 그에게 치료 마법을 사용하여  상처를 모두 치료한후  그가 이곳을 빠져 나갈수 있을 정도의 식량을 나누어 주었다." +
+									" 그러자 Rigel이란 그 용사는 우리의 무기에 신의 축복을 내려주고는 자신의 길을 떠났다.");
+
+									if (mParty.Food > 4)
+										mParty.Food -= 5;
+									else
+										mParty.Food = 0;
+
+									mPlayerList[0].SP = 0;
+
+									foreach (var player in mPlayerList)
+									{
+										if (mRand.Next(20) < player.Luck && mRand.Next(20) < player.Luck)
+											player.WeaPower = (int)Math.Round(player.WeaPower * 1.2);
+									}
+
+									DisplayPlayerInfo();
+								}
+								else
+								{
+									AppendText(new string[] { "" });
+								}
+
+								mParty.Etc[30] |= 1 << 1;
+								mSpecialEvent = 0;
 							}
 						}
 					}
@@ -5041,7 +5305,7 @@ namespace Lore
 			});
 		}
 
-		private bool InvokeSpecialEvent() {
+		private void InvokeSpecialEvent(int prevX, int prevY) {
 			void FindGold(int gold) {
 				AppendText(new string[] { $"당신은 금화 {gold}개를 발견했다." });
 
@@ -5059,12 +5323,14 @@ namespace Lore
 					else
 						mParty.Food += 100;
 
-					mParty.Etc[31] |= (1 << 7);
+					mParty.Etc[31] |= 1 << 7;
 				}
 				else
-					Talk("일행들은 100 인분의 식량을 발견했다.");
+					Talk("우리들은 아무것도 발견할수 없었다.");
 
-				return false;
+
+				mParty.XAxis = prevX;
+				mParty.YAxis = prevY;
 			}
 			else if (mParty.Map == 4)
 			{
@@ -5099,8 +5365,6 @@ namespace Lore
 						mSpecialEvent = 7;
 					}
 				}
-
-				return true;
 			}
 			else if (mParty.Map == 6)
 			{
@@ -5202,8 +5466,6 @@ namespace Lore
 				}
 				else
 					ShowExitMenu();
-
-				return true;
 			}
 			else if (mParty.Map == 7)
 			{
@@ -5219,8 +5481,6 @@ namespace Lore
 				{
 					ShowExitMenu();
 				}
-
-				return true;
 			}
 			else if (mParty.Map == 8) {
 				if (mParty.XAxis == 49) {
@@ -5228,8 +5488,6 @@ namespace Lore
 				}
 				else if (mParty.YAxis == 70)
 					ShowExitMenu();
-
-				return true;
 			}
 			else if (mParty.Map == 9) {
 				if ((mParty.XAxis == 9 && mParty.YAxis == 24) && (mParty.Etc[34] & 1) == 0)
@@ -5268,8 +5526,6 @@ namespace Lore
 				}
 				else if (mParty.YAxis == 45)
 					ShowExitMenu();
-
-				return true;
 			}
 			else if (mParty.Map == 10) {
 				if (mParty.YAxis == 45)
@@ -5278,8 +5534,6 @@ namespace Lore
 					mParty.YAxis = 44;
 				else if (mParty.YAxis == 70)
 					ShowExitMenu();
-
-				return true;
 			}
 			else if (mParty.Map == 11) {
 				if (mParty.XAxis == 19 && mParty.YAxis == 29 && (mParty.Etc[32] & 1) == 0) {
@@ -5328,8 +5582,48 @@ namespace Lore
 
 					mSpecialEvent = 16;
 				}
+			}
+			else if (mParty.Map == 12) {
+				if (mParty.YAxis == 70)
+					ShowExitMenu();
+				else if (mParty.YAxis == 49 && (mParty.YAxis - prevY) != 1) {
+					if (mParty.XAxis == 32) {
+						AppendText(new string[] { "여기는 옳은 문이었다." });
+						mMapLayer[32 + mMapWidth * 48] = 0;
+					}
+					else {
+						AppendText(new string[] { "당신은 바보군요, 다시 생각하십시오." });
+						mParty.XAxis = 24;
+						mParty.YAxis = 69;
+					}
+				}
+				else if (mParty.YAxis == 9 && mParty.Etc[13] < 2) {
+					if (mParty.XAxis == 17) {
+						mMapLayer[17 + mMapWidth * 8] = 0;
+						mParty.Etc[13] = 2;
 
-				return true;
+						Talk(new string[] {
+						$"[color={RGB.Yellow}]당신은 황금의 봉인을 찾았다 !![/color]",
+						$"[color={RGB.White}]그러므로 당신의 임무는 성공했다.[/color]",
+						$"[color={RGB.White}]이제는 GAIA TERRA로 돌아가라.[/color]"
+						});
+					}
+					else {
+						for (var y = 9; y < 23; y++)
+							mMapLayer[mParty.XAxis + mMapWidth * y] = 49;
+					}
+				}
+				else if (mParty.XAxis == 11 && mParty.YAxis == 47 && (mParty.Etc[30] & (1 << 1)) == 0) {
+					Talk(" 일행들은 심한 부상 때문에 거의 몸을 가누지 못하는 한 남자와 마주쳤다.");
+
+					mSpecialEvent = 17;
+				}
+				else if (mParty.Etc[3] == 0 && mParty.XAxis == 11 && mParty.YAxis == 47) {
+					AppendText(new string[] { "일행들은 절벽으로 떨어질뻔 했다." });
+
+					mParty.XAxis = prevX;
+					mParty.YAxis = prevY;
+				}
 			}
 			else if (mParty.Map == 14)
 			{
@@ -5388,11 +5682,7 @@ namespace Lore
 
 					ShowCharacterMenu(MenuMode.ChooseGoldShield);
 				}
-
-				return true;
 			}
-			else
-				return true;
 		}
 
 		private void ShowCureResult(string message, List<string> cureResult) {
@@ -6311,7 +6601,8 @@ namespace Lore
 						mTalkMode = 0;
 					}
 				}
-				else if ((mParty.Etc[30] & 1) == 0 && mTalkMode == 1) {
+				else if ((mParty.Etc[30] & 1) == 0 && mTalkMode == 1)
+				{
 					AppendText(new string[] { $" 나는 스켈레톤이라 불리는 종족의 사람이오.",
 						" 우리 종족의 사람들은 나를 제외하고는 모두 네크로맨서에게 굴복하여 그의 부하가 되었지만 나는 그렇지 않소." +
 						" 나는 네크로맨서 의 영향을 피해서 이곳 로어 성으로 왔지만 나의 혐오스런 생김새 때문에 이곳 사람들에게 배척되어서 지금은 어디로도 갈 수 없는 존재가 되었소." +
@@ -6326,7 +6617,8 @@ namespace Lore
 					mTalkMode = 0;
 				}
 			}
-			else if (mParty.Map == 7) {
+			else if (mParty.Map == 7)
+			{
 				if (moveX == 50 && moveY == 54)
 					Talk($"LASTDITCH 성과 VALIANT PEOPLES 성은 매우 닮았다는 말이 있습니다.");
 				else if (moveX == 7 && moveY == 43)
@@ -6377,8 +6669,10 @@ namespace Lore
 					GoWeaponShop();
 				else if ((moveX == 16 && moveY == 55) || (moveX == 16 && moveY == 57) || (moveX == 16 && moveY == 59))
 					GoHospital();
-				else if (moveX == 37 && moveY == 16) {
-					if (mParty.Etc[12] == 0) {
+				else if (moveX == 37 && moveY == 16)
+				{
+					if (mParty.Etc[12] == 0)
+					{
 						Talk(new string[] {
 							$" 당신이 {mPlayerList[0].Name}이오?",
 							" 나는 Lord Ahn 에게 당신이 온다는 소식을 전해받았소.  들었다시피 우리성에는  큰 문제가 있소." +
@@ -6389,30 +6683,222 @@ namespace Lore
 
 						mParty.Etc[12]++;
 					}
-					else if (mParty.Etc[12] == 1) {
+					else if (mParty.Etc[12] == 1)
+					{
 						Talk($" 부탁하건데, PYRAMID의 '[color={RGB.LightCyan}]Major Mummy[/color]'를 처단해 주시오.");
 					}
-					else if (mParty.Etc[12] == 2) {
+					else if (mParty.Etc[12] == 2)
+					{
 						Talk(new string[] {
 							"당신의 성공에 경의를 표하오.",
 							$"[color={RGB.LightCyan}][[EXP + 10000][/color]"
 						});
 
-						foreach (var player in mPlayerList) {
+						foreach (var player in mPlayerList)
+						{
 							player.Experience += 10000;
 						}
 
 						mParty.Etc[12]++;
 					}
-					else if (mParty.Etc[12] == 3) {
+					else if (mParty.Etc[12] == 3)
+					{
 						Talk(new string[] {
 							$" 이 성의 북동쪽에 '[color={RGB.LightCyan}]GROUND GATE[/color]' 라는것이 있소." +
 							$" 만약 당신이 '[color={RGB.LightCyan}]GROUND GATE[/color]' 속에 들어간다면 '[color={RGB.LightCyan}]VALIANT PEOPLES[/color]'성으로 통하게 될것이오.",
-							$"[color={RGB.LightCyan}]VALIANT PEOPLES[/color]'는 Necromancer에게 매우 심하게 영향을 받고있소"
+							$"'[color={RGB.LightCyan}]VALIANT PEOPLES[/color]'는 Necromancer에게 매우 심하게 영향을 받고있소"
 						});
 					}
 				}
+			}
+			else if (mParty.Map == 9)
+			{
+				if ((moveX == 11 && moveY == 10) || (moveX == 14 && moveY == 11) || (moveX == 11 && moveY == 14))
+					GoTrainingCenter();
+				else if ((moveX == 39 && moveY == 36) || (moveX == 36 && moveY == 38) || (moveX == 40 && moveY == 40))
+					GoGrocery();
+				else if ((moveX == 36 && moveY == 9) || (moveX == 39 && moveY == 11) || (moveX == 40 && moveY == 14))
+					GoWeaponShop();
+				else if ((moveX == 8 && moveY == 38) || (moveX == 11 && moveY == 40) || (moveX == 15 && moveY == 39))
+					GoHospital();
+				else if (moveX == 23 && moveY == 37)
+					Talk(" EVIL SEAL 의 어디엔가에 '황금의 봉인'이 숨겨져 있다더군요.");
+				else if (moveX == 22 && moveY == 11)
+					Talk(" 황금의 갑옷이 QUAKE 동굴 안에 숨겨져있다는 소문이 떠돌고 있습니다.");
+				else if (moveX == 27 && moveY == 17)
+					Talk(" VALIANT PEOPLES 성은 네크로맨서에 대한 강한저항 때문에  그에 의해 쑥밭이 되어 버렸습니다.");
+				else if (moveX == 29 && moveY == 30)
+					Talk(" VALIANT PEOPLES 최대의 사냥꾼인 Rigel은 성을파괴시킨 적들을 물리치기 위해서 EVIL SEAL로 들어갔습니다.");
+				else if (moveX == 33 && moveY == 37)
+					Talk("위쪽에는 SWAMP 대륙으로 통하는 문이 있지만 아무도 접근 할 수가 없습니다.");
+				else if (moveX == 37 && moveY == 13)
+					Talk("QUAKE속에는 많은 비밀문이 있다고 들었습니다.");
+				else if (moveX == 14 && moveY == 41)
+					Talk("'WATER FIELD 로 통하는 문에는 세마리의 Wivern이 지키고 있습니다.");
+				else if (moveX == 25 && moveY == 6)
+					Talk("SWAMP 대륙으로 통하는 문에는 고르곤 세자매가 살고 있소.");
+				else if ((moveX == 33 && moveY == 23) || (moveX == 36 && moveY == 23) || (moveX == 40 && moveY == 23) || (moveX == 34 && moveY == 26) || (moveX == 37 && moveY == 26) || (moveX == 40 && moveY == 26))
+				{
+					if (mParty.Etc[13] == 0)
+						Talk("우리 성주님을 만나보십시오.");
+					else
+						Talk("당신의 성공을 빌겠습니다.");
+				}
+				else if (moveX == 41 && moveY == 24)
+				{
+					if (mParty.Etc[13] == 0)
+					{
+						Talk(new string[] {
+							" 당신을 만나게되어 영광이오.",
+							" 나는 LORE 대륙에서의 당신의 공훈을 높이 평가하며, 또한 LAST DITCH성을 구제하것에 대해서도 감사를 표하오." +
+							$"  LAST DITCH 성의 쌍둥이성인 '[color={RGB.LightCyan}]VALIANT PEOPLES[/color]'는 네크로맨서에 대한 강한 저항 때문에 그에 의해서  처참히 파괴되었소." +
+							$"  그런후에 그는 'VALIANT PEOPLES'의 지하에다가 [color={RGB.LightCyan}]EVIL SEAL[/color]이라는 동굴을 구축하였소.",
+							"그리고 그는 EVIL SEAL의 어디엔가에  이 대륙의 운명을 담고 있는  황금의 봉인을 숨겨놓았소. 만약 그 봉인이 풀어진다면, 이 대륙은 봉인 속에서 나타난 괴물들에 의해서 황폐화  될 것이오.",
+							$" 한시바삐 EVIL SEAL 로 가시오, 그리고 '[color={RGB.LightCyan}]황금의 봉인[/color]'을 찾으시오."
+						});
+						mParty.Etc[13]++;
+					}
+					else if (mParty.Etc[13] == 1)
+					{
+						Talk(new string[] {
+							$" VALIANT PEOPLES에 있는 EVIL SEAL로 가서 [color={RGB.LightCyan}]황금의 봉인[/color]을 찾아오시오.",
+							" 지금 지체할 시간이 없소."
+						});
+					}
+					else if (mParty.Etc[13] == 2)
+					{
+						Talk(new string[] {
+							" 오, 당신은 황금의 봉인을 찾았군요 !",
+							$" [color={RGB.LightCyan}][[ EXP + 10000 ][/color]"
+						});
 
+						foreach (var player in mPlayerList)
+						{
+							player.Experience += 10000;
+						}
+
+						mParty.Etc[13]++;
+					}
+					else if (mParty.Etc[13] == 3)
+					{
+						Talk(new string[] {
+							" 그러나, 이 대륙에는 아직 위험한 장소가  많이 있소.",
+							$" 여기로부터 북동쪽에 '[color={RGB.LightCyan}]QUAKE[/color]라고 불리는 동굴이있소. 만약 QUAKE 마저 무너뜨리면, 이 대륙은 다시 평화롭게 될것이오.",
+							$" [color={RGB.LightCyan}]QUAKE[/color]로 가서 보스인 ArchiGagoyle과 Zombie들을 물리쳐 주십시오."
+						});
+						mParty.Etc[13]++;
+					}
+					else if (mParty.Etc[13] == 4)
+					{
+						Talk($"QUAKE의 [color={RGB.LightCyan}]ArchiGagoyle[/color]을 물리치십시오.");
+					}
+					else if (mParty.Etc[13] == 5)
+					{
+						Talk(new string[] {
+							" 당신들은 위대한 영웅임에 틀림없군요.",
+							$" [color={RGB.LightCyan}][[ EXP + 40000 ][/color]",
+							"",
+							$" 여기에 [color={RGB.LightCyan}]Water Key[/color]가 있소.",
+							$" 이 열쇠는 [color={RGB.LightCyan}]WATER FIELD[/color]의 문을 열것이오."
+						});
+
+						foreach (var player in mPlayerList)
+						{
+							player.Experience += 40000;
+						}
+
+						mParty.Etc[13]++;
+					}
+					else if (mParty.Etc[13] == 6)
+						Talk($"WIVERN 동굴의 [color={RGB.LightCyan}]WATER FIELD의 문[/color]을 통하여 다음 대륙으로 가십시오.");
+				}
+			}
+			else if (mParty.Map == 10)
+			{
+				if ((moveX == 35 && moveY == 31) || (moveX == 37 && moveY == 32) || (moveX == 38 && moveY == 34))
+					GoTrainingCenter();
+				else if ((moveX == 16 && moveY == 56) || (moveX == 11 && moveY == 58) || (moveX == 10 && moveY == 54))
+					GoGrocery();
+				else if ((moveX == 10 && moveY == 29) || (moveX == 10 && moveY == 31) || (moveX == 12 && moveY == 33))
+					GoWeaponShop();
+				else if ((moveX == 32 && moveY == 59) || (moveX == 34 && moveY == 53) || (moveX == 40 && moveY == 57))
+					GoHospital();
+				else if (moveX == 10 && moveY == 15)
+					Talk("NOTICE 동굴의 Hidra는 머리가 셋이나 달렸다더군요.");
+				else if (moveX == 13 && moveY == 17)
+					Talk("NOTICE 동굴은 혼란스러운 미로라서 항상 주위를 염두에 두셔야 합니다.");
+				else if (moveX == 23 && moveY == 21)
+					Talk("LOCKUP 동굴은 미로로 구성된 동굴이오.");
+				else if (moveX == 26 && moveY == 21)
+					Talk("LOCKUP 속에 Minotaur는 네크로맨서의 부하는 아닙니다.");
+				else if (moveX == 23 && moveY == 68)
+					Talk(" LOCKUP 의 보스인 Huge Dragon은 아주 거대한 용이라는데,  그것의 꼬리 또한 강력한 무기라서 조심해야 할것이오.");
+				else if (moveX == 36 && moveY == 15)
+					Talk(" 고르곤 세자매의 힘은 네크로맨서의 힘과 필적하지만 중대한 약점이 하나 있소.");
+				else if (moveX == 39 && moveY == 17)
+					Talk("Stheno 와 Euryale는 거의 불멸의 생명체 입니다.");
+				else if (moveX == 39 && moveY == 55)
+				{
+					Talk(new string[] {
+					" 나는 LORE 특공대의 대장인 Lore Hunter 라고 하오. 여기서의 적들과는, 이제 대항하기가 혼자서는 무리라고 판단했소." +
+					" 그래서, 나는 여태껏 여기서 새로운 영웅들을 기다리고 있었소.",
+					" 내가 당신의 일행에 끼게 되는걸 어떻게 생각하오 ?"
+					});
+
+					ShowMenu(MenuMode.JoinLoreHunter, new string[] {
+						"우리도 그러기를 바라오",
+						"몸이 완전히 회복될때까지 기다리시오"
+					});
+				}
+				else if (moveX == 24 && moveY == 17) {
+					if (mParty.Etc[14] == 0) {
+						Talk(new string[] {
+						" 여기는 WATER FIELD 라는 성이오.  이곳이 당신이 마지막으로 거칠 우리편의 성이오.",
+						" 차원의 틈을 통해 네크로맨서가 내려 오던날이 대륙은 거의 전부가 바다로 가라않았소." +
+						" 하지만  그때에 살아 남은 사람들은 아직 가라않지 않은 이곳에 찾아와서 이 성을 건립했소.그리고는  공이 컸던 나를 왕으로 추대했던 것이오.",
+						" 당신도 생각하고 있다시피 이 대륙은 거의 물로 덮혀있소.  하지만 이곳처럼 물이 차지않은 두곳에 네크로맨서 는 이미 이 대륙의 지배를 위한 동굴을 만들었소." +
+						" 그 두곳의 적들은 여타의 대륙과는 비교가 안될 정도의  거대한 적들이 많이 있소.",
+						" 우리로서는 더 이상 손을 쓸수가 없소.  이곳 사람들의 마지막 희망인  이 곳이 적들에게 점령된다면 WIVERN 동굴로 이어지는 워터 게이트를 통해 다른 대륙도 하나둘씩  점령되어 갈것이오."
+						});
+
+						mParty.Etc[14]++;
+					}
+					else if (mParty.Etc[14] == 1)
+						Talk(" 먼저,  여기서 남서쪽의 어느 섬에 있는 동굴인 NOTICE에 가서 보스인 Hidra를 물리쳐 주십시오.");
+					else if (mParty.Etc[14] == 2) {
+						Talk(new string[] {
+							"Hidra를 물리치다니 ... 대단한 능력이오.",
+							$" [color={RGB.LightCyan}][[ EXP + 150000 ][/color]",
+							"이제는 소문으로만 듣던 당신들의 능력을 믿을 수 있겠소."
+						});
+
+						foreach (var player in mPlayerList)
+						{
+							player.Experience += 150000;
+						}
+
+						mParty.Etc[14]++;
+					}
+					else if (mParty.Etc[14] == 3)
+						Talk(" 이번에는  대륙의 동쪽에 있는 LOCKUP 동굴속의 Huge Dragon을 물리쳐 주시오.");
+					else if (mParty.Etc[14] == 4) {
+						Talk(new string[] {
+							"역시 위대한 영웅이오 !!",
+							$" [color={RGB.LightCyan}][[ EXP + 300000 ][/color]",
+							"여기에 Swamp Key 가 있소."
+						});
+
+						foreach (var player in mPlayerList)
+						{
+							player.Experience += 300000;
+						}
+
+						mParty.Etc[14]++;
+					}
+					else if (mParty.Etc[14] == 5) {
+						Talk(" Swamp Key 는 GAIA TERRA 의 스왐프 게이트를 여는데 사용되오.  거기서 늪의 대륙으로 가시오. 늪의 대륙은 완전한 적들의 소굴이므로 매우 주의하시오.");
+					}
+				}
 			}
 		}
 
@@ -7535,7 +8021,9 @@ namespace Lore
 			SwapMember,
 			JoinPolaris,
 			JoinDraconian,
-			ChooseOedipusSpear
+			ChooseOedipusSpear,
+			JoinLoreHunter,
+			JoinRigel
 		}
 
 		private enum CureMenuState
