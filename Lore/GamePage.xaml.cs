@@ -5618,7 +5618,7 @@ namespace Lore
 
 					mSpecialEvent = 17;
 				}
-				else if (mParty.Etc[3] == 0 && mParty.XAxis == 11 && mParty.YAxis == 47) {
+				else if (mParty.Etc[3] == 0 && !(mParty.XAxis == 11 && mParty.YAxis == 47)) {
 					AppendText(new string[] { "일행들은 절벽으로 떨어질뻔 했다." });
 
 					mParty.XAxis = prevX;
