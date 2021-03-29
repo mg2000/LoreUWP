@@ -5096,6 +5096,8 @@ namespace Lore
 									player.AC = 3;
 									player.HP = 1;
 
+									JoinMember(player);
+
 									mParty.Etc[30] |= (1 << 1);
 								}
 								else if (mMenuFocusID == 1)
