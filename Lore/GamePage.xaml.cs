@@ -93,12 +93,18 @@ namespace Lore
 		// 16 - 미이라의 방 발견 이벤트
 		// 17 - 리겔과 만나는 이벤트
 		// 18 - 이블 컨센트레이션 입구 이벤트
+		// 19 - 황금의 방패 획득 이벤트
+		// 20 - 황금의 갑옷 획득 이벤트
+		// 21 - 아키가고일과 전투 이벤트
+		// 22 - 와이번과의 전부
 		private int mSpecialEvent = 0;
 
 		// 전투 이벤트
 		// 1 - 로어성 경비병과의 전투
 		// 2 - 미이라 장군과의 전투
 		// 3 - 이블 컨센트레이션 입구 전투
+		// 4 - 아키가고일과의 전투
+		// 5 - 와이번과의 전투
 		private int mBattleEvent = 0;
 
 		private volatile bool mMoveEvent = false;
@@ -125,6 +131,8 @@ namespace Lore
 		private int mMemberX = -1;
 		private int mMemberY = -1;
 		private byte mMemberLeftTile = 0;
+
+		private bool mPenetration = false;
 
 		public GamePage()
 		{
@@ -524,7 +532,7 @@ namespace Lore
 								EnterLava();
 								MovePlayer(x, y);
 							}
-							else if (27 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 47)
+							else if (24 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 47)
 							{
 								// Move Move
 								MovePlayer(x, y);
@@ -570,7 +578,8 @@ namespace Lore
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 54)
 							{
-								
+								EnterMap();
+								mTriggeredDownEvent = true;
 							}
 							else if (41 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 47)
 							{
@@ -755,6 +764,13 @@ namespace Lore
 
 							await RefreshGame();
 						}
+						else if (mBattleEvent == 4) {
+							Talk($"[color={RGB.White}]당신은 ArchiGagoyle을 물리쳤다.[/color]");
+							mParty.Etc[13]++;
+						}
+						else if (mBattleEvent == 5) {
+							mParty.Etc[36] = 3;
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -763,6 +779,16 @@ namespace Lore
 					}
 					else if (mBattleTurn == BattleTurn.RunAway) {
 						AppendText(new string[] { "" });
+
+						if (mBattleEvent == 5) {
+							var aliveWivernCount = 0;
+							foreach (var enemy in mEncounterEnemyList) {
+								if (!enemy.Dead)
+									aliveWivernCount++;
+							}
+
+							mParty.Etc[36] = 3 - aliveWivernCount;
+						}
 
 						mEncounterEnemyList.Clear();
 
@@ -1015,7 +1041,7 @@ namespace Lore
 							}
 						}
 
-						void plusExperience(BattleEnemyData enemy)
+						void PlusExperience(BattleEnemyData enemy)
 						{
 							#if DEBUG
 							var exp = 5000;
@@ -1067,7 +1093,7 @@ namespace Lore
 
 								}
 
-								plusExperience(enemy);
+								PlusExperience(enemy);
 								enemy.HP = 0;
 								enemy.Dead = true;
 								DisplayEnemy();
@@ -1105,7 +1131,7 @@ namespace Lore
 								enemy.Dead = false;
 
 								battleResult.Add($"[color={RGB.LightRed}]적은 {battleCommand.Player.GenderPronoun}의 공격으로 의식불명이 되었다[/color]");
-								plusExperience(enemy);
+								PlusExperience(enemy);
 								enemy.Unconscious = true;
 							}
 							else
@@ -1126,7 +1152,7 @@ namespace Lore
 							{
 								battleResult.Add($"[color={RGB.LightRed}]{battleCommand.Player.GenderPronoun}의 마법은 적의 시체 위에서 작열했다[/color]");
 
-								plusExperience(enemy);
+								PlusExperience(enemy);
 								enemy.HP = 0;
 								enemy.Dead = true;
 								DisplayEnemy();
@@ -1162,17 +1188,18 @@ namespace Lore
 
 							if (magicPoint <= 0)
 							{
-								battleResult.Add($"그러나, 적은 {battleCommand.Player.GenderPronoun}의 공격을 막았다");
+								battleResult.Add($"그러나, 적은 {battleCommand.Player.GenderPronoun}의 마법 공격을 막았다");
 								return;
 							}
 
 							enemy.HP -= magicPoint;
 							if (enemy.HP <= 0)
 							{
+								battleResult.Add($"[color={RGB.LightRed}]적은 {battleCommand.Player.GenderPronoun}의 마법에 의해 의식불능이 되었다[/color]");
+								PlusExperience(enemy);
+
 								enemy.HP = 0;
 								enemy.Unconscious = true;
-
-								battleResult.Add($"[color={RGB.LightRed}]적은 {battleCommand.Player.GenderPronoun}의 공격으로 의식불명이 되었다[/color]");
 							}
 							else
 							{
@@ -1480,12 +1507,12 @@ namespace Lore
 									if (enemy.Unconscious && !enemy.Dead)
 									{
 										enemy.Dead = true;
-										plusExperience(enemy);
+										PlusExperience(enemy);
 									}
 									else if (impactPoint == 0 && !enemy.Unconscious)
 									{
 										enemy.Unconscious = true;
-										plusExperience(enemy);
+										PlusExperience(enemy);
 									}
 								}
 								else if (7 <= espType && espType == 10)
@@ -1507,12 +1534,12 @@ namespace Lore
 										if (enemyOne.Unconscious && !enemyOne.Dead)
 										{
 											enemyOne.Dead = true;
-											plusExperience(enemyOne);
+											PlusExperience(enemyOne);
 										}
 										else if (impactPoint == 0 && !enemyOne.Unconscious)
 										{
 											enemyOne.Unconscious = true;
-											plusExperience(enemyOne);
+											PlusExperience(enemyOne);
 										}
 									}
 								}
@@ -2445,6 +2472,53 @@ namespace Lore
 							mBattleEvent = 3;
 							StartBattle();
 						}
+						else if (mSpecialEvent == 19) {
+							AppendText(new string[] { $"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]" }, true);
+
+							ShowCharacterMenu(MenuMode.ChooseGoldShield2);
+
+							mSpecialEvent = 0;
+						}
+						else if (mSpecialEvent == 20)
+						{
+							AppendText(new string[] { $"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]" }, true);
+
+							ShowCharacterMenu(MenuMode.ChooseGoldArmor);
+
+							mSpecialEvent = 0;
+						}
+						else if (mSpecialEvent == 21) {
+							mEncounterEnemyList.Clear();
+							for (var i = 0; i < 2; i++)
+							{
+								var enemy = JoinEnemy(35);
+								enemy.Name = $"Zombie";
+							}
+
+							var majorMummy = JoinEnemy(41);
+							majorMummy.Name = "ArchiGagoyle";
+
+							mSpecialEvent = 0;
+							mBattleEvent = 4;
+
+							HideMap();
+							DisplayEnemy();
+
+							StartBattle();
+						}
+						else if (mSpecialEvent == 22) {
+							mEncounterEnemyList.Clear();
+							for (var i = 0; i < 3 - mParty.Etc[36]; i++)
+								JoinEnemy(42);
+
+							mSpecialEvent = 0;
+							mBattleEvent = 5;
+
+							HideMap();
+							DisplayEnemy();
+
+							StartBattle();
+						}
 					}
 
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -2463,6 +2537,9 @@ namespace Lore
 
 					if (mSpecialEvent > 0)
 						await InvokeSpecialEventLaterPart();
+					else if (mPenetration == true) {
+						mPenetration = false;
+					}
 					else if (mTalkMode > 0)
 					{
 						if (mSpecialEvent == 0)
@@ -2478,7 +2555,7 @@ namespace Lore
 					}
 					else if (mBattleTurn == BattleTurn.RunAway || mBattleTurn == BattleTurn.Win || mBattleTurn == BattleTurn.Lose)
 					{
-						EndBattle();
+						await EndBattle();
 					}
 					else if (mWeaponShopEnd)
 					{
@@ -3308,7 +3385,8 @@ namespace Lore
 										ShowNotEnoughESP();
 									else
 									{
-										// 투시 구현 필요
+										mPenetration = true;
+										Talk($"[color={RGB.White}]일행은 주위를 투시하고 있다.[/color]");
 									}
 								}
 								else if (mMenuFocusID == 1)
@@ -4496,6 +4574,27 @@ namespace Lore
 
 										await RefreshGame();
 									}
+									else if (mParty.Map == 15) {
+										mParty.Map = 2;
+										mParty.XAxis = 81;
+										mParty.YAxis = 47;
+
+										await RefreshGame();
+									}
+									else if (mParty.Map == 16) {
+										mParty.Map = 2;
+										mParty.XAxis = 43;
+										mParty.YAxis = 7;
+
+										await RefreshGame();
+									}
+									else if (mParty.Map == 17) {
+										mParty.Map = 3;
+										mParty.XAxis = 22;
+										mParty.YAxis = 62;
+
+										await RefreshGame();
+									}
 								}
 								else
 								{
@@ -4547,7 +4646,7 @@ namespace Lore
 									if (avgLuck > avgAgility)
 									{
 										mBattleTurn = BattleTurn.RunAway;
-										EndBattle();
+										await EndBattle();
 									}
 									else
 										StartBattle();
@@ -5128,6 +5227,44 @@ namespace Lore
 								mParty.Etc[30] |= 1 << 1;
 								mSpecialEvent = 0;
 							}
+							else if (mMenuMode == MenuMode.ChooseGoldShield2) {
+								mMenuMode = MenuMode.None;
+
+								var player = mPlayerList[mMenuFocusID];
+								player.Shield = 5;
+								player.ShiPower = 5;
+								player.AC = player.ShiPower + player.ArmPower;
+
+								if (player.Class == 1)
+									player.AC++;
+
+								if (player.AC > 10)
+									player.AC = 10;
+
+								AppendText(new string[] { $"[color={RGB.White}]{player.Name}(이)가 황금의 방패를 장착했다.[/color]" });
+
+								DisplayPlayerInfo();
+
+								mParty.Etc[35] |= 1 << 2;
+							}
+							else if (mMenuMode == MenuMode.ChooseGoldArmor) {
+								var player = mPlayerList[mMenuFocusID];
+								player.Armor = 5;
+								player.ArmPower = 5;
+								player.AC = player.ShiPower + player.ArmPower;
+
+								if (player.Class == 1)
+									player.AC++;
+
+								if (player.AC > 10)
+									player.AC = 10;
+
+								AppendText(new string[] { $"[color={RGB.White}]{player.Name}(이)가 황금의 갑옷을 장착했다.[/color]" });
+
+								DisplayPlayerInfo();
+
+								mParty.Etc[35] |= 1 << 3;
+							}
 						}
 					}
 				}
@@ -5683,6 +5820,92 @@ namespace Lore
 					});
 
 					ShowCharacterMenu(MenuMode.ChooseGoldShield);
+				}
+			}
+			else if (mParty.Map == 15) {
+				if (mParty.YAxis == 70)
+					ShowExitMenu();
+				else if (mParty.YAxis == 17 && (mParty.XAxis == 9 || mParty.XAxis == 10 || mParty.XAxis == 39 || mParty.XAxis == 40)) {
+					if ((mParty.Etc[35] & (1 << 1)) == 0) {
+						if ((mParty.Etc[35] & 1) == 0) {
+							mParty.Etc[35] |= 1;
+							FindGold(6000);
+						}
+						else {
+							mParty.Etc[35] |= 1 << 1;
+							FindGold(4000);
+						}
+
+						mMapLayer[mParty.XAxis + mMapWidth * 47] = 44;
+						mMapLayer[mParty.XAxis + mMapWidth * 46] = 44;
+					}
+				}
+				else if (mParty.XAxis == 13 && mParty.YAxis == 6 && (mParty.Etc[36] & (1 << 2)) == 0) {
+					Talk($"[color={RGB.White}]당신은 황금의 방패를 발견했다.[/color]");
+
+					mSpecialEvent = 19;
+				}
+				else if (mParty.XAxis == 44 && mParty.YAxis == 18 && (mParty.Etc[36] & (1 << 3)) == 0) {
+					Talk($"[color={RGB.White}]당신은 황금의 갑옷을 발견했다.[/color]");
+
+					mSpecialEvent = 20;
+				}
+				else if (mParty.YAxis == 26 && mParty.Etc[13] == 4) {
+					Talk($"[color={RGB.LightCyan}]당신은 ArchiGagoyle과 두마리의 Zombie를 발견했다.[/color]");
+
+					mSpecialEvent = 21;
+				}
+			}
+			else if (mParty.Map == 16) {
+				if (mParty.YAxis == 35)
+					ShowExitMenu();
+				else if (mParty.YAxis == 9)
+				{
+					if (mParty.Etc[36] < 3)
+					{
+						string wivernCountStr;
+						switch (mParty.Etc[36])
+						{
+							case 2:
+								wivernCountStr = "한";
+								break;
+							case 1:
+								wivernCountStr = "두";
+								break;
+							default:
+								wivernCountStr = "세";
+								break;
+						}
+
+						Talk($"[color={RGB.LightCyan}]당신은 {wivernCountStr}마리의 Wivern과 마주쳤다.[/color]");
+						mSpecialEvent = 22;
+					}
+					else
+						AppendText(new string[] { $"[color={RGB.White}]여기에는 Wivern의 시체만이 있다.[/color]" });
+				}
+			}
+			else if (mParty.Map == 17) {
+				if (mParty.YAxis == 94)
+					ShowExitMenu();
+				else if (mParty.YAxis == 79)
+					mParty.YAxis = 5;
+				else if (mParty.YAxis == 43) {
+					for (var x = 66; x < 69; x++) {
+						mMapLayer[x + mMapWidth * 43] = 44;
+						mMapLayer[x + mMapWidth * 37] = 52;
+					}
+				}
+				else if (mParty.XAxis == 74 && mParty.YAxis == 51) {
+					if ((mParty.Etc[37] & (1 << 1)) == 1)
+						return;
+					else if ((mParty.Etc[37] & 1) == 1 && mParty.Etc[4] > 0) {
+						AppendText(new string[] {
+							" 다시 생각해보니 나도 직접 Necromancer에 도전하고픈 마음이 생겼소.  비록 육체적인 힘은 전혀없는 영이지만 당신들과 같이 모험을 하고 싶소." + 
+							" 당신들의 생각은 어떻소."
+						});
+
+						ShowMenu(MenuMode.JoinRedAntares, )
+					}
 				}
 			}
 		}
@@ -7002,7 +7225,7 @@ namespace Lore
 
 					byte tileIdx = layer[index];
 
-					if (tileIdx == 0) {
+					if (tileIdx == 0 && !mPenetration) {
 						switch (mParty.Map) {
 							case 1:
 								tileIdx = 2;
@@ -8027,7 +8250,9 @@ namespace Lore
 			JoinDraconian,
 			ChooseOedipusSpear,
 			JoinLoreHunter,
-			JoinRigel
+			JoinRigel,
+			ChooseGoldShield2,
+			ChooseGoldArmor
 		}
 
 		private enum CureMenuState
