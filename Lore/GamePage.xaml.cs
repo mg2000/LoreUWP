@@ -558,7 +558,7 @@ namespace Lore
 									MovePlayer(x, y);
 								mTriggeredDownEvent = true;
 							}
-							else if (mMapLayer[x + mMapWidth * y] == 48)
+							else if (mMapLayer[x + mMapWidth * y] == 49)
 							{
 								EnterSwamp();
 								MovePlayer(x, y);
@@ -4483,7 +4483,7 @@ namespace Lore
 										}
 									}
 									else if (mParty.Map == 12) {
-										mParty.Map = 7;
+										mParty.Map = 8;
 										mParty.XAxis = 38;
 										mParty.YAxis = 6;
 
@@ -5738,7 +5738,7 @@ namespace Lore
 				if (mParty.Etc[5] == 0)
 					ShowCureResult($"{whomPlayer.Name}(은)는 독에 걸리지 않았습니다.", cureResult);
 			}
-			else if (whomPlayer.SP < 15)
+			else if (player.SP < 15)
 			{
 				if (mParty.Etc[5] == 0)
 					ShowNotEnoughSP();
@@ -6783,7 +6783,7 @@ namespace Lore
 					{
 						Talk(new string[] {
 							" 그러나, 이 대륙에는 아직 위험한 장소가  많이 있소.",
-							$" 여기로부터 북동쪽에 '[color={RGB.LightCyan}]QUAKE[/color]라고 불리는 동굴이있소. 만약 QUAKE 마저 무너뜨리면, 이 대륙은 다시 평화롭게 될것이오.",
+							$" 여기로부터 북동쪽에 '[color={RGB.LightCyan}]QUAKE[/color]'라고 불리는 동굴이있소. 만약 QUAKE 마저 무너뜨리면, 이 대륙은 다시 평화롭게 될것이오.",
 							$" [color={RGB.LightCyan}]QUAKE[/color]로 가서 보스인 ArchiGagoyle과 Zombie들을 물리쳐 주십시오."
 						});
 						mParty.Etc[13]++;
@@ -7825,7 +7825,7 @@ namespace Lore
 			{
 				if (x == 30 && y == 43)
 					AppendText(new string[] { $"          [color={RGB.White}]WIVERN 가는길[/color]" }, true);
-				else if ((x == 28 && y == 49) || (x == 34 && x == 71))
+				else if ((x == 28 && y == 49) || (x == 34 && y == 71))
 				{
 
 					AppendText(new string[] { $"  [color={RGB.White}]북쪽 :[/color]",
@@ -7898,7 +7898,9 @@ namespace Lore
 				if (x == 23 && y == 67)
 					AppendText(new string[] { $"               [color={RGB.White}]X 는 7[/color]" }, true);
 				else if (x == 26 && y == 67)
-					AppendText(new string[] { $"               [color={RGB.White}]Y 는 9v[/color]" }, true);
+					AppendText(new string[] { $"               [color={RGB.White}]Y 는 9[/color]" }, true);
+				else if (x == 24 && y == 62)
+					AppendText(new string[] { $"       [color={RGB.White}]바른 문의 번호는 X + Y[/color]" }, true);
 				else if (y == 55)
 				{
 					var j = ((x + 1) - 6) / 7 + 12;
