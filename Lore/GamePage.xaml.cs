@@ -1065,7 +1065,7 @@ namespace Lore
 							HideMap();
 							DisplayEnemy();
 
-							StartBattle();
+							StartBattle(false);
 						}
 						else if (mSpecialEvent == 17) {
 							AppendText(new string[] {
@@ -1083,7 +1083,7 @@ namespace Lore
 						}
 						else if (mSpecialEvent == 18) {
 							mBattleEvent = 3;
-							StartBattle();
+							StartBattle(false);
 						}
 						else if (mSpecialEvent == 19) {
 							AppendText(new string[] { $"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]" }, true);
@@ -1117,7 +1117,7 @@ namespace Lore
 							HideMap();
 							DisplayEnemy();
 
-							StartBattle();
+							StartBattle(false);
 						}
 						else if (mSpecialEvent == 22) {
 							mEncounterEnemyList.Clear();
@@ -1130,7 +1130,7 @@ namespace Lore
 							HideMap();
 							DisplayEnemy();
 
-							StartBattle();
+							StartBattle(false);
 						}
 						else if (mSpecialEvent == 23) {
 							Talk(new string[] {
@@ -1183,7 +1183,7 @@ namespace Lore
 							HideMap();
 							DisplayEnemy();
 
-							StartBattle(true);
+							StartBattle();
 						}
 						else if (mSpecialEvent == 27) {
 							mParty.XAxis = 55;
@@ -1201,7 +1201,7 @@ namespace Lore
 							HideMap();
 							DisplayEnemy();
 
-							StartBattle();
+							StartBattle(false);
 						}
 						else if (mSpecialEvent == 29) {
 							Talk(new string[] {
@@ -1237,15 +1237,15 @@ namespace Lore
 							HideMap();
 							DisplayEnemy();
 
-							StartBattle();
+							StartBattle(false);
 						}
 						else if (mSpecialEvent == 31) {
 							mSpecialEvent = 0;
 							mBattleEvent = 10;
 
-							StartBattle();
+							StartBattle(false);
 						}
-						else if (mSpecialEvent == 31)
+						else if (mSpecialEvent == 32)
 						{
 							mEncounterEnemyList.Clear();
 							JoinEnemy(52);
@@ -1256,7 +1256,7 @@ namespace Lore
 							HideMap();
 							DisplayEnemy();
 
-							StartBattle();
+							StartBattle(false);
 						}
 					}
 
@@ -3390,26 +3390,33 @@ namespace Lore
 								});
 								avgLuck /= mPlayerList.Count;
 
-								var avgAgility = 0;
+								var avgEnemyAgility = 0;
 								mEncounterEnemyList.ForEach(delegate (BattleEnemyData enemy)
 								{
-									avgAgility += enemy.Agility;
+									avgEnemyAgility += enemy.Agility;
 								});
-								avgAgility /= mEncounterEnemyList.Count;
+								avgEnemyAgility /= mEncounterEnemyList.Count;
 
 								if (mMenuFocusID == 0)
 								{
-									StartBattle();
+									var avgAgility = 0;
+									foreach (var player in mPlayerList) {
+										avgAgility += player.Agility;
+									}
+									avgAgility /= mPlayerList.Count;
+
+									if (avgAgility > avgEnemyAgility)
+										StartBattle(false);
 								}
 								else if (mMenuFocusID == 1)
 								{
-									if (avgLuck > avgAgility)
+									if (avgLuck > avgEnemyAgility)
 									{
 										mBattleTurn = BattleTurn.RunAway;
 										await EndBattle();
 									}
 									else
-										StartBattle();
+										StartBattle(false);
 								}
 							}
 							else if (mMenuMode == MenuMode.BattleCommand)
@@ -4130,16 +4137,11 @@ namespace Lore
 			Window.Current.CoreWindow.KeyUp += gamePageKeyUpEvent;
 		}
 
-		private void StartBattle(bool assult = false)
+		private void StartBattle(bool assult = true)
 		{
 			mParty.Etc[5] = 1;
 
 			if (assult)
-			{
-				mBattleTurn = BattleTurn.Player;
-				ExecuteBattle();
-			}
-			else
 			{
 				mBattleTurn = BattleTurn.Player;
 
@@ -4155,6 +4157,11 @@ namespace Lore
 				mBattleCommandQueue.Clear();
 
 				BattleMode();
+			}
+			else
+			{
+				mBattleTurn = BattleTurn.Player;
+				ExecuteBattle();
 			}
 		}
 
@@ -5897,7 +5904,7 @@ namespace Lore
 						}
 
 						if (!hasMadJoe)
-							StartBattle();
+							StartBattle(false);
 					}
 				}
 				else if (mParty.XAxis == 40 && mParty.YAxis == 78)
@@ -6449,7 +6456,7 @@ namespace Lore
 					HideMap();
 					DisplayEnemy();
 
-					StartBattle(true);
+					StartBattle(false);
 				}
 				else if (mParty.YAxis == 5 && mParty.Etc[39] % 2 == 0) {
 					mMapLayer[mParty.XAxis + mMapWidth * (mParty.YAxis - 1)] = 49;
