@@ -104,6 +104,7 @@ namespace Lore
 		// 29 - 스피카와의 만난 이벤트
 		// 30 - 거대 드래곤과의 전투 이벤트
 		// 31 - 크랩 갓과의 전투 이벤트
+		// 32 - 미노타우루스 전투 이벤트2
 		private int mSpecialEvent = 0;
 
 		// 전투 이벤트
@@ -117,6 +118,7 @@ namespace Lore
 		// 8 - 거대 드래곤 전투
 		// 9 - 이블 갓 전투
 		// 10 - 크랩 갓 전투
+		// 11 - 미노타우루스 전투2
 		private int mBattleEvent = 0;
 
 		private volatile bool mMoveEvent = false;
@@ -145,6 +147,9 @@ namespace Lore
 		private byte mMemberLeftTile = 0;
 
 		private bool mPenetration = false;
+
+		// 동굴 질문 번호
+		private int mQuestionID = 0;
 
 		public GamePage()
 		{
@@ -687,13 +692,6 @@ namespace Lore
 					});
 				}
 
-				async Task RefreshGame()
-				{
-					AppendText(new string[] { "" });
-					await LoadMapData();
-					InitializeMap();
-				}
-
 				async Task ExitCastleLore()
 				{
 					mParty.XAxis = 19;
@@ -820,6 +818,8 @@ namespace Lore
 
 							mParty.Etc[39] |= 1;
 						}
+						else if (mBattleEvent == 11)
+							mParty.Etc[40] |= 1 << 3;
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1242,6 +1242,19 @@ namespace Lore
 						else if (mSpecialEvent == 31) {
 							mSpecialEvent = 0;
 							mBattleEvent = 10;
+
+							StartBattle();
+						}
+						else if (mSpecialEvent == 31)
+						{
+							mEncounterEnemyList.Clear();
+							JoinEnemy(52);
+
+							mSpecialEvent = 0;
+							mBattleEvent = 11;
+
+							HideMap();
+							DisplayEnemy();
 
 							StartBattle();
 						}
@@ -3335,6 +3348,13 @@ namespace Lore
 
 										await RefreshGame();
 									}
+									else if (mParty.Map == 20) {
+										mParty.Map = 4;
+										mParty.XAxis = 81;
+										mParty.YAxis = 16;
+
+										await RefreshGame();
+									}
 								}
 								else
 								{
@@ -3986,6 +4006,8 @@ namespace Lore
 								mParty.Etc[35] |= 1 << 2;
 							}
 							else if (mMenuMode == MenuMode.ChooseGoldArmor) {
+								mMenuMode = MenuMode.None;
+
 								var player = mPlayerList[mMenuFocusID];
 								player.Armor = 5;
 								player.ArmPower = 5;
@@ -4004,6 +4026,8 @@ namespace Lore
 								mParty.Etc[35] |= 1 << 3;
 							}
 							else if (mMenuMode == MenuMode.JoinRedAntares) {
+								mMenuMode = MenuMode.None;
+
 								if (mMenuFocusID == 0)
 								{
 									var player = GetMemberFromEnemy(54);
@@ -4028,6 +4052,8 @@ namespace Lore
 								mParty.Etc[37] |= 1 << 1;
 							}
 							else if (mMenuMode == MenuMode.JoinSpica) {
+								mMenuMode = MenuMode.None;
+
 								if (mMenuFocusID == 0)
 								{
 									var player = GetMemberFromEnemy(42);
@@ -4068,6 +4094,29 @@ namespace Lore
 
 								mParty.Etc[38] |= 1 << 1;
 							}
+							else if (mMenuMode == MenuMode.QnA) {
+								mMenuMode = MenuMode.None;
+
+								for (var x = 22; x < 25; x++)
+									mMapLayer[x + mMapWidth * mParty.YAxis] = 44;
+
+								if ((mMenuFocusID == 0 && mQuestionID > 3) || (mMenuFocusID == 1 && mQuestionID < 4)) {
+									for (var y = 48; y < 52; y++) {
+										mMapLayer[21 + mMapWidth * y] = 25;
+										mMapLayer[25 + mMapWidth * y] = 25;
+
+										for (var x = 22; x < 25; x++)
+											mMapLayer[x + mMapWidth * y] = 44;
+									}
+								}
+								else {
+									mParty.Map = 4;
+									mParty.XAxis = 81;
+									mParty.YAxis = 16;
+
+									await RefreshGame();
+								}
+							}
 						}
 					}
 				}
@@ -4107,6 +4156,13 @@ namespace Lore
 
 				BattleMode();
 			}
+		}
+
+		private async Task RefreshGame()
+		{
+			AppendText(new string[] { "" });
+			await LoadMapData();
+			InitializeMap();
 		}
 
 		private void ExecuteBattle()
@@ -5717,7 +5773,7 @@ namespace Lore
 			});
 		}
 
-		private void InvokeSpecialEvent(int prevX, int prevY) {
+		private async void InvokeSpecialEvent(int prevX, int prevY) {
 			void FindGold(int gold) {
 				AppendText(new string[] { $"당신은 금화 {gold}개를 발견했다." });
 
@@ -6419,6 +6475,210 @@ namespace Lore
 						Talk("나는 EVIL GOD의 봉인을 지키고 있는 CRAB GOD의 왕이다. CRAB GOD 족의 명예를 걸고 절대로 너희 같은 자들에게 봉인을 넘겨주지 않겠다!!");
 						mSpecialEvent = 31;
 					}
+				}
+			}
+			else if (mParty.Map == 20) {
+				if (mParty.YAxis == 95)
+					ShowExitMenu();
+				else if (mParty.YAxis == 87)
+				{
+					if (mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] == 0)
+						mParty.YAxis = 79;
+					else
+					{
+						mParty.Map = 4;
+						mParty.XAxis = 81;
+						mParty.YAxis = 16;
+
+						await RefreshGame();
+					}
+				}
+				else if (mParty.YAxis == 70)
+				{
+					if (mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] == 0)
+						mParty.YAxis = 62;
+					else
+					{
+						mParty.Map = 4;
+						mParty.XAxis = 81;
+						mParty.YAxis = 16;
+
+						await RefreshGame();
+					}
+				}
+				else if (mParty.YAxis == 90)
+				{
+					AppendText(new string[] {
+						$" [color={RGB.White}]다음 물음이 맞다면 왼쪽길로, 아니면 오른쪽길로 가시오.[/color]",
+						""
+					});
+
+					var question = mRand.Next(8);
+					switch (question)
+					{
+						case 0:
+							AppendText(new string[] { "문> CONFIG.SYS가 없으면 부팅이 안된다" });
+							break;
+						case 1:
+							AppendText(new string[] { "문> Quick-BASIC은 인터프리터어 이다" });
+							break;
+						case 2:
+							AppendText(new string[] { "문> Super VGA는 호환이 잘된다" });
+							break;
+						case 3:
+							AppendText(new string[] { "문> 8-bit APPLE의 CPU는 Z - 80 이다" });
+							break;
+						case 4:
+							AppendText(new string[] { "문> COMMAND.COM 안에 도스 명령이 들어있다" });
+							break;
+						case 5:
+							AppendText(new string[] { "문> AdLib 카드는 9 채널이다" });
+							break;
+						case 6:
+							AppendText(new string[] { "문> Ultima의 제작자는 리차드 게리오트이다" });
+							break;
+						case 7:
+							AppendText(new string[] { "문> 당신의 컴퓨터는 IBM 계열이다" });
+							break;
+					}
+
+					for (var x = 22; x < 26; x++)
+						mMapLayer[x + mMapWidth * mParty.YAxis] = 44;
+
+					if (question < 4)
+					{
+						mMapLayer[7 + mMapWidth * 87] = 52;
+						mMapLayer[42 + mMapWidth * 87] = 0;
+					}
+					else
+					{
+						mMapLayer[7 + mMapWidth * 87] = 0;
+						mMapLayer[42 + mMapWidth * 87] = 52;
+					}
+
+					ContinueText.Visibility = Visibility.Visible;
+				}
+				else if (mParty.YAxis == 74)
+				{
+					AppendText(new string[] {
+						$" [color={RGB.White}]다음 물음이 맞다면 왼쪽길로, 아니면 오른쪽길로 가시오.[/color]",
+						""
+					});
+
+					var question = mRand.Next(8);
+					switch (question)
+					{
+						case 0:
+							AppendText(new string[] { "문> 태양계의 제 4 혹성은 지구이다" });
+							break;
+						case 1:
+							AppendText(new string[] { "문> 북극성이 가장 밝은 별이다" });
+							break;
+						case 2:
+							AppendText(new string[] { "문> 1월의 수호성좌는 1월에 볼수있다" });
+							break;
+						case 3:
+							AppendText(new string[] { "문> 빛보다 빠른 입자는 실험상 없었다" });
+							break;
+						case 4:
+							AppendText(new string[] { "문> 달이 지구보다 먼저 생겨났다" });
+							break;
+						case 5:
+							AppendText(new string[] { "문> 시그너스 X1은 블랙홀이다" });
+							break;
+						case 6:
+							AppendText(new string[] { "문> 과거로의 타임머신은 불가능하다" });
+							break;
+						case 7:
+							AppendText(new string[] { "문> 북극성은 주기적으로 달라진다" });
+							break;
+					}
+
+					for (var x = 22; x < 26; x++)
+						mMapLayer[x + mMapWidth * mParty.YAxis] = 44;
+
+					if (question < 4)
+					{
+						mMapLayer[7 + mMapWidth * 70] = 52;
+						mMapLayer[42 + mMapWidth * 70] = 0;
+					}
+					else
+					{
+						mMapLayer[7 + mMapWidth * 70] = 0;
+						mMapLayer[42 + mMapWidth * 70] = 52;
+					}
+
+					ContinueText.Visibility = Visibility.Visible;
+				}
+				else if (mParty.YAxis == 74)
+				{
+					AppendText(new string[] {
+						$" [color={RGB.White}]<< 다음의 옳고 그름을 가리시오 >>[/color]",
+						""
+					});
+
+					mQuestionID = mRand.Next(8);
+					switch (mQuestionID)
+					{
+						case 0:
+							AppendText(new string[] { "문> 이 게임의 배경은 4개의 대륙이다" });
+							break;
+						case 1:
+							AppendText(new string[] { "문> Ancient Evil은 응징되어야 한다" });
+							break;
+						case 2:
+							AppendText(new string[] { "문> Lord Ahn만이 유일한 Semi-God이다" });
+							break;
+						case 3:
+							AppendText(new string[] { "문> 이 세계의 모든 악은 응징되어야 한다" });
+							break;
+						case 4:
+							AppendText(new string[] { "문> 이 게임의 제작자는 안 영기이다" });
+							break;
+						case 5:
+							AppendText(new string[] { "문> 게임속의 인물은 거의 별의 이름을 가졌다" });
+							break;
+						case 6:
+							AppendText(new string[] { "문> 네크로맨서는 신의 경지에 이르렀다" });
+							break;
+						case 7:
+							AppendText(new string[] { "문> 네크로맨서는 이 세계의 존재가 아니었다" });
+							break;
+					}
+
+					ShowMenu(MenuMode.QnA, new string[] {
+						"위의 말은 옳다",
+						"위의 말은 잘못되었다"
+					});
+				}
+				else if (7 <= mParty.XAxis && mParty.XAxis <= 41 && 18 <= mParty.YAxis && mParty.YAxis <= 42)
+				{
+					if (mParty.Etc[0] > 0)
+						mParty.Etc[0]--;
+
+					ShowMap();
+				}
+				else if (mParty.YAxis == 17)
+				{
+					mParty.Etc[0] = 1;
+					ShowMap();
+				}
+				else if (mParty.YAxis == 47 && (mParty.Etc[40] & (1 << 3)) == 0) {
+					if (mParty.Etc[0] == 0)
+					{
+						mParty.Etc[0] = 1;
+						ShowMap();
+					}
+
+					AppendText(new string[] { $"[color={RGB.LightCyan}]미로속에서 소를 닮은 괴물이 나타났다[/color]" });
+
+					// 미노타우루스 등장 애니메이션
+
+					ContinueText.Visibility = Visibility.Visible;
+					mSpecialEvent = 29;
+				}
+				else if (mParty.YAxis == 12) {
+					// 구현 필요
 				}
 			}
 		}
@@ -8767,7 +9027,8 @@ namespace Lore
 			ChooseGoldShield2,
 			ChooseGoldArmor,
 			JoinRedAntares,
-			JoinSpica
+			JoinSpica,
+			QnA
 		}
 
 		private enum CureMenuState
