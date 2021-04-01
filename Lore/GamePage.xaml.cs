@@ -114,6 +114,9 @@ namespace Lore
 		// 39 - 가짜 네크로맨서 환영과의 전투 도망 실패 이벤트
 		// 40 - 가짜 네크로맨서 전투 이벤트
 		// 41 - 가짜 네크로맨서 전투 승리 이벤트
+		// 42 - 팬저 바이퍼 전투 이벤트
+		// 43 - 팬저 바이퍼 전투 승리 이벤트
+		// 44 - 네크로맨서 전투 이벤트
 		private int mSpecialEvent = 0;
 
 		// 전투 이벤트
@@ -139,6 +142,8 @@ namespace Lore
 		// 20 - 던전 오브 이블 전투2
 		// 21 - 가짜 네크로맨서 환영과의 전투
 		// 22 - 가짜 네크로맨서 전투
+		// 23 - 팬저 바이퍼 전투
+		// 24 - 네크로맨서 전투
 		private int mBattleEvent = 0;
 
 		private volatile bool mMoveEvent = false;
@@ -834,6 +839,8 @@ namespace Lore
 										$"[color={RGB.LightCyan}]그리고 당신은 이 임무에 성공했다.[/color]"
 									}, true);
 
+									ContinueText.Visibility = Visibility.Visible;
+
 									mParty.Etc[12]++;
 								}
 							}
@@ -851,6 +858,9 @@ namespace Lore
 						else if (mBattleEvent == 4)
 						{
 							AppendText(new string[] { $"[color={RGB.White}]당신은 ArchiGagoyle을 물리쳤다.[/color]" }, true);
+
+							ContinueText.Visibility = Visibility.Visible;
+
 							mParty.Etc[13]++;
 						}
 						else if (mBattleEvent == 5)
@@ -865,6 +875,8 @@ namespace Lore
 								$"[color={RGB.White}]다시 WATER FIELD 의 군주에게로 돌아가라.[/color]",
 							}, true);
 
+							ContinueText.Visibility = Visibility.Visible;
+
 							mParty.Etc[14] = 2;
 							mSpecialEvent = 27;
 						}
@@ -878,6 +890,8 @@ namespace Lore
 								$"[color={RGB.White}]다시 WATER FIELD 의 군주에게로 돌아가라.[/color]",
 							}, true);
 
+							ContinueText.Visibility = Visibility.Visible;
+
 							mParty.Etc[14] = 4;
 						}
 						else if (mBattleEvent == 9)
@@ -887,6 +901,8 @@ namespace Lore
 						else if (mBattleEvent == 10)
 						{
 							AppendText(new string[] { " 당신은 이 동굴에 보관되어 있는 봉인을 발견했다.  그리고는 봉쇄 되었던 봉인을 풀어버렸다." }, true);
+
+							ContinueText.Visibility = Visibility.Visible;
 
 							mParty.Etc[39] |= 1;
 						}
@@ -934,6 +950,8 @@ namespace Lore
 								$"[color={RGB.LightMagenta}] 하지만 진짜 적은 바로 나다. 받아라 !![/color]"
 							}, true);
 
+							ContinueText.Visibility = Visibility.Visible;
+
 							mBattleEvent = 0;
 							mSpecialEvent = 40;
 							return;
@@ -942,7 +960,19 @@ namespace Lore
 							AppendText(new string[] { $"[color={RGB.LightMagenta}] 욱! 너의 힘은 대단하구나. 나는 너에게 졌다고 인정하겠다.  흐흐, 그러나 사실 나는 너희 찾던 네크로맨서님이 아니다.  만약 그분이라 이렇게 쉽게 당하지는 않았을게니까." +
 							"  내 생명이 얼마 안남았구나. 네크로맨서님 만세 !![/color]" }, true);
 
+							ContinueText.Visibility = Visibility.Visible;
+
 							mSpecialEvent = 41;
+						}
+						else if (mBattleEvent == 23) {
+							for (var x = 23; x < 27; x++)
+								mMapLayer[x + mMapWidth * mParty.YAxis] = 41;
+
+							AppendText(new string[] { " 당신이 적을 물리치자 조금후에 이상하리만큼 편안한 기운이 일행을 감쌌다." }, true);
+
+							ContinueText.Visibility = Visibility.Visible;
+
+							mSpecialEvent = 43;
 						}
 
 						mEncounterEnemyList.Clear();
@@ -1002,6 +1032,8 @@ namespace Lore
 							return;
 						}
 						else if (mBattleEvent == 22)
+							mParty.YAxis++;
+						else if (mBattleEvent == 23)
 							mParty.YAxis++;
 
 						mEncounterEnemyList.Clear();
@@ -1486,6 +1518,38 @@ namespace Lore
 							for (var y = 24; y < 27; y++) {
 								for (var x = 23; x < 27; x++)
 									mMapLayer[x + mMapWidth * y] = 46;
+							}
+						}
+						else if (mSpecialEvent == 42) {
+							mEncounterEnemyList.Clear();
+							for (var i = 0; i < 4; i++)
+								JoinEnemy(65);
+							JoinEnemy(70);
+
+							mBattleEvent = 23;
+
+							HideMap();
+							DisplayEnemy();
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 43) {
+							mEncounterEnemyList.Clear();
+							JoinEnemy(67);
+							JoinEnemy(66);
+
+							HideMap();
+							DisplayEnemy();
+
+							Talk(new string[] {
+								$" 매우 수고하시는군요. {mPlayerList[0].Name}",
+								" 당신이 네크로맨서에게 가기전에 한 가지 일러 두고자 하오.",
+								" 이곳에는 비밀스런 문이 두군데 있소. 지금은 보이지가 않지만 양쪽의 벽을 살피다 보면  숨겨진 문 안에 레버가 각각 하나씩 있소." +
+								"  그걸 모두 작동시키면 용암의 중앙에서 네크로맨서의 방으로 통하는 입구가 보일 것이오. 여기까지만 내가 알려줄 수가 있는 부분이오. 마지막으로 당신의 건투를 빌겠소."
+							});
+
+							foreach (var player in mPlayerList) {
+								player.Class = 10;
 							}
 						}
 
@@ -3645,6 +3709,14 @@ namespace Lore
 										await RefreshGame();
 									}
 									else if (mParty.Map == 24) {
+										mParty.Map = 22;
+										mParty.XAxis = 24;
+										mParty.YAxis = 23;
+
+										await RefreshGame();
+									}
+									else if (mParty.Map == 25)
+									{
 										mParty.Map = 23;
 										mParty.XAxis = 24;
 										mParty.YAxis = 44;
@@ -7118,6 +7190,101 @@ namespace Lore
 			else if (mParty.Map == 24) {
 				if (mParty.YAxis == 45)
 					ShowExitMenu();
+			}
+			else if (mParty.Map == 25) {
+				if (mParty.YAxis == 45)
+					ShowExitMenu();
+				else if (mParty.YAxis == 43) {
+					if (mParty.Etc[0] == 0)
+					{
+						mParty.Etc[0] = 1;
+						ShowMap();
+					}
+
+					AppendText(new string[] { $" [color={RGB.White}]금속으로된 어떤 적이 나타났다.[/color]" });
+
+					// 팬저 바이퍼 등장 이벤트
+
+					Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]");
+
+					mSpecialEvent = 42;
+				}
+				else if (mParty.XAxis == 14 && mParty.YAxis == 33) {
+					mMapLayer[14 + mMapWidth * 33] = 41;
+					for (var x = 10; x < 14; x++) {
+						mMapLayer[x + mMapWidth * 32] = 24;
+						mMapLayer[x + mMapWidth * 34] = 26;
+						mMapLayer[x + mMapWidth * 33] = 42;
+					}
+					mMapLayer[13 + mMapWidth * 32] = 17;
+					mMapLayer[13 + mMapWidth * 34] = 18;
+				}
+				else if (mParty.XAxis == 35 && mParty.YAxis == 33)
+				{
+					mMapLayer[35 + mMapWidth * 33] = 41;
+					for (var x = 36; x < 14; x++)
+					{
+						mMapLayer[x + mMapWidth * 32] = 24;
+						mMapLayer[x + mMapWidth * 34] = 26;
+						mMapLayer[x + mMapWidth * 33] = 42;
+					}
+					mMapLayer[36 + mMapWidth * 32] = 19;
+					mMapLayer[36 + mMapWidth * 34] = 22;
+				}
+				else if (mParty.XAxis == 4 && mParty.YAxis == 33) {
+					mParty.Etc[44] |= 1 << 6;
+
+					string[] message;
+					if ((mParty.Etc[44] & (1 << 6)) > 0 && (mParty.Etc[44] & (1 << 7)) > 0)
+					{
+						mMapLayer[24 + mMapWidth * 26] = 54;
+						mMapLayer[25 + mMapWidth * 26] = 54;
+
+						message = new string[2];
+						message[1] = " 곧 이어 기계 작동하는 큰 소리가 들렸다.";
+					}
+					else
+						message = new string[1];
+
+					message[0] = " 당신이 레버를 당기자  철컥하는 소리가 동굴에 울려 퍼졌다.";
+
+					Talk(message);
+				}
+				else if (mParty.XAxis == 45 && mParty.YAxis == 33) {
+					mParty.Etc[44] |= 1 << 7;
+
+					string[] message;
+					if ((mParty.Etc[44] & (1 << 6)) > 0 && (mParty.Etc[44] & (1 << 7)) > 0)
+					{
+						mMapLayer[24 + mMapWidth * 26] = 54;
+						mMapLayer[25 + mMapWidth * 26] = 54;
+
+						message = new string[2];
+						message[1] = " 곧 이어 기계 작동하는 큰 소리가 들렸다.";
+					}
+					else
+						message = new string[1];
+
+					message[0] = " 당신이 레버를 당기자  철컥하는 소리가 동굴에 울려 퍼졌다.";
+
+					Talk(message);
+				}
+			}
+			else if (mParty.Map == 26) {
+				// 네크로맨서 등장 이벤트
+
+				Talk(new string[] {
+					" 당신들이 나를 없에겠다고 온자들인가?",
+					" 그럼 예의를 갖추고 소개를 하지.  당신의 오른쪽의 사람은  ArchiMonk라고 하며 맨손을 사용하는 무예의 일인자로 통하지." +
+					"  그리고 당신의 정면의 사람은 ArchiMage 라고 하는 마법사 중의 마법사이라네.  당신들은 우리 셋 보다도 숫자가 많군." +
+					" 그렇다면 나도 그것에 대비를 해야겠지.  내가 여기서 약간의 인원을 늘인다고 너무 섭섭하게 생각말게.  그렇다면 이제 서로의 실력을 겨뤄볼 시간이 다 되었나보군." +
+					" 당신의 행운을 빌겠네."
+				});
+
+				mSpecialEvent = 44;
+			}
+			else if (mParty.Map == 27) {
+				ShowExitMenu();
 			}
 		}
 
