@@ -105,6 +105,15 @@ namespace Lore
 		// 30 - 거대 드래곤과의 전투 이벤트
 		// 31 - 크랩 갓과의 전투 이벤트
 		// 32 - 미노타우루스 전투 이벤트2
+		// 33 - 드래곤 3마리 전투 이벤트
+		// 34 - 아스트랄 머드 전투 이벤트
+		// 35 - 던전 오브 이블 나가기 전투 이벤트
+		// 36 - 죽음의 기사 전투 이벤트
+		// 37 - 가짜 네크로멘서 조우 이벤트
+		// 38 - 가짜 네크로맨서 환영과의 전투 이벤트
+		// 39 - 가짜 네크로맨서 환영과의 전투 도망 실패 이벤트
+		// 40 - 가짜 네크로맨서 전투 이벤트
+		// 41 - 가짜 네크로맨서 전투 승리 이벤트
 		private int mSpecialEvent = 0;
 
 		// 전투 이벤트
@@ -119,6 +128,17 @@ namespace Lore
 		// 9 - 이블 갓 전투
 		// 10 - 크랩 갓 전투
 		// 11 - 미노타우루스 전투2
+		// 12 - 드래곤 3마리 전투
+		// 13 - 머드맨 전투
+		// 14 - 아스트랄 머드 전투
+		// 15 - 스왐프 킵 나가기 전투
+		// 16 - 스왐프 킵 던전 전투
+		// 17 - 던전 오브 이블 나가기 전투 
+		// 18 - 죽음의 기사 전투
+		// 19 - 던전 오브 이블 전투
+		// 20 - 던전 오브 이블 전투2
+		// 21 - 가짜 네크로맨서 환영과의 전투
+		// 22 - 가짜 네크로맨서 전투
 		private int mBattleEvent = 0;
 
 		private volatile bool mMoveEvent = false;
@@ -703,6 +723,57 @@ namespace Lore
 
 				async Task EndBattle()
 				{
+					async Task DefeatAstralMud() {
+						Talk(" 당신은 이 동굴에 보관되어 있는 봉인을 발견했다.  그리고는 봉쇄 되었던 봉인을 풀어버렸다.");
+
+						mParty.Etc[40] |= 1;
+
+						mParty.Map = 4;
+						mParty.XAxis = 81;
+						mParty.YAxis = 16;
+
+						await RefreshGame();
+					}
+					
+					async Task CheckPassSwampKeepExitEvent() {
+						if (mEncounterEnemyList[0].Dead)
+							mParty.Etc[41] |= 1 << 2;
+
+						if (mEncounterEnemyList[1].Dead)
+							mParty.Etc[41] |= 1 << 3;
+
+						if (mEncounterEnemyList[0].Dead && mEncounterEnemyList[1].Dead)
+							mParty.Etc[41] |= 1;
+
+						mParty.Map = 4;
+						mParty.XAxis = 47;
+						mParty.YAxis = 35;
+
+						await RefreshGame();
+					}
+
+					void SwampKeepBattleEvent()
+					{
+						if (mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] == 0)
+							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 40;
+						else
+							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 46;
+					}
+
+					async Task DefeatDungeonOfEvilKeeper() {
+						if (mEncounterEnemyList[6].Dead)
+							mParty.Etc[42] |= 1 << 2;
+
+						mParty.Map = 5;
+						mParty.XAxis = 14;
+						mParty.YAxis = 31;
+
+						await RefreshGame();
+					}
+
+					mBattleCommandQueue.Clear();
+					mBatteEnemyQueue.Clear();
+
 					if (mBattleTurn == BattleTurn.Win) {
 						
 						var endMessage = "";
@@ -731,7 +802,7 @@ namespace Lore
 
 							endMessage = $"일행은 {goldPlus}개의 금을 얻었다.";
 
-							AppendText(new string[] { endMessage });
+							AppendText(new string[] { endMessage, "" });
 						}
 
 						if (mBattleEvent == 1)
@@ -751,8 +822,6 @@ namespace Lore
 									mMapLayer[52 + mMapWidth * 10] = 44;
 								}
 							}
-
-							mBattleEvent = 0;
 						}
 						else if (mBattleEvent == 2)
 						{
@@ -760,10 +829,10 @@ namespace Lore
 							{
 								if (mParty.Etc[5] == 0)
 								{
-									Talk(new string[] {
+									AppendText(new string[] {
 										$"[color={RGB.White}]당신들은 Major Mummy 물리쳤다.[/color]",
 										$"[color={RGB.LightCyan}]그리고 당신은 이 임무에 성공했다.[/color]"
-									});
+									}, true);
 
 									mParty.Etc[12]++;
 								}
@@ -781,7 +850,7 @@ namespace Lore
 						}
 						else if (mBattleEvent == 4)
 						{
-							Talk($"[color={RGB.White}]당신은 ArchiGagoyle을 물리쳤다.[/color]");
+							AppendText(new string[] { $"[color={RGB.White}]당신은 ArchiGagoyle을 물리쳤다.[/color]" }, true);
 							mParty.Etc[13]++;
 						}
 						else if (mBattleEvent == 5)
@@ -790,41 +859,97 @@ namespace Lore
 						}
 						else if (mBattleEvent == 6)
 						{
-							Talk(new string[] {
+							AppendText(new string[] {
 								$"[color={RGB.White}]당신들은 Hidra를 물리쳤다.[/color]",
 								$"[color={RGB.LightCyan}]그리고 당신은 이 임무에 성공했다.[/color]",
 								$"[color={RGB.White}]다시 WATER FIELD 의 군주에게로 돌아가라.[/color]",
-							});
+							}, true);
 
 							mParty.Etc[14] = 2;
 							mSpecialEvent = 27;
 						}
 						else if (mBattleEvent == 7)
 							mParty.Etc[38] |= 1 << 2;
-						else if (mBattleEvent == 8) {
-							Talk(new string[] {
+						else if (mBattleEvent == 8)
+						{
+							AppendText(new string[] {
 								$"[color={RGB.White}]당신들은 Huge Dragon을 물리쳤다.[/color]",
 								$"[color={RGB.LightCyan}]그리고 당신은 이 임무에 성공했다.[/color]",
 								$"[color={RGB.White}]다시 WATER FIELD 의 군주에게로 돌아가라.[/color]",
-							});
+							}, true);
 
 							mParty.Etc[14] = 4;
 						}
-						else if (mBattleEvent == 9) {
+						else if (mBattleEvent == 9)
+						{
 							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 49;
 						}
-						else if (mBattleEvent == 10) {
-							Talk(" 당신은 이 동굴에 보관되어 있는 봉인을 발견했다.  그리고는 봉쇄 되었던 봉인을 풀어버렸다.");
+						else if (mBattleEvent == 10)
+						{
+							AppendText(new string[] { " 당신은 이 동굴에 보관되어 있는 봉인을 발견했다.  그리고는 봉쇄 되었던 봉인을 풀어버렸다." }, true);
 
 							mParty.Etc[39] |= 1;
 						}
 						else if (mBattleEvent == 11)
 							mParty.Etc[40] |= 1 << 3;
+						else if (mBattleEvent == 12)
+						{
+							mParty.Etc[40] |= 1 << 1;
+							CheckMuddyFinalBattle();
+						}
+						else if (mBattleEvent == 13)
+						{
+							mParty.Etc[40] |= 1 << 2;
+							CheckMuddyFinalBattle();
+						}
+						else if (mBattleEvent == 14)
+						{
+							await DefeatAstralMud();
+						}
+						else if (mBattleEvent == 15)
+							await CheckPassSwampKeepExitEvent();
+						else if (mBattleEvent == 16)
+							SwampKeepBattleEvent();
+						else if (mBattleEvent == 17)
+							await DefeatDungeonOfEvilKeeper();
+						else if (mBattleEvent == 18)
+							mParty.Etc[42] |= 1 << 1;
+						else if (mBattleEvent == 19)
+							mParty.Etc[42] |= 1;
+						else if (mBattleEvent == 20)
+							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 40;
+						else if (mBattleEvent == 21) {
+							mBattleTurn = BattleTurn.None;
+
+							mEncounterEnemyList.Clear();
+
+							var enemy = JoinEnemy(60);
+							enemy.Name = "Necromancer";
+							enemy.ENumber = 0;
+
+							DisplayEnemy();
+
+							AppendText(new string[] {
+								$"[color={RGB.LightMagenta}] 환상에서 벗어나다니 대단한 의지력이군.[/color]",
+								$"[color={RGB.LightMagenta}] 하지만 진짜 적은 바로 나다. 받아라 !![/color]"
+							}, true);
+
+							mBattleEvent = 0;
+							mSpecialEvent = 40;
+							return;
+						}
+						else if (mBattleEvent == 22) {
+							AppendText(new string[] { $"[color={RGB.LightMagenta}] 욱! 너의 힘은 대단하구나. 나는 너에게 졌다고 인정하겠다.  흐흐, 그러나 사실 나는 너희 찾던 네크로맨서님이 아니다.  만약 그분이라 이렇게 쉽게 당하지는 않았을게니까." +
+							"  내 생명이 얼마 안남았구나. 네크로맨서님 만세 !![/color]" }, true);
+
+							mSpecialEvent = 41;
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
 
 						ShowMap();
+
 					}
 					else if (mBattleTurn == BattleTurn.RunAway) {
 						AppendText(new string[] { "" });
@@ -851,9 +976,35 @@ namespace Lore
 						}
 						else if (mBattleEvent == 10)
 							mParty.YAxis++;
+						else if (mBattleEvent == 12)
+							mParty.YAxis++;
+						else if (mBattleEvent == 13)
+							mParty.YAxis++;
+						else if (mBattleEvent == 14)
+						{
+							if (mEncounterEnemyList[6].Dead)
+								await DefeatAstralMud();
+							else
+								mParty.YAxis++;
+						}
+						else if (mBattleEvent == 15)
+							await CheckPassSwampKeepExitEvent();
+						else if (mBattleEvent == 16)
+							SwampKeepBattleEvent();
+						else if (mBattleEvent == 17)
+							await DefeatDungeonOfEvilKeeper();
+						else if (mBattleEvent == 20)
+							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 40;
+						else if (mBattleEvent == 21) {
+							Talk(" 하지만 당신은 환상에서 벗어나지 못했다.");
+							mSpecialEvent = 39;
+							
+							return;
+						}
+						else if (mBattleEvent == 22)
+							mParty.YAxis++;
 
 						mEncounterEnemyList.Clear();
-
 						ShowMap();
 					}
 					else if (mBattleTurn == BattleTurn.Lose) {
@@ -1258,6 +1409,87 @@ namespace Lore
 
 							StartBattle(false);
 						}
+						else if (mSpecialEvent == 33) {
+							mEncounterEnemyList.Clear();
+							for (var i = 0; i < 3; i++)
+								JoinEnemy(53);
+
+							mSpecialEvent = 0;
+							mBattleEvent = 12;
+
+							HideMap();
+							DisplayEnemy();
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 34) {
+							mSpecialEvent = 0;
+							mBattleEvent = 14;
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 35){
+							mSpecialEvent = 0;
+							mBattleEvent = 17;
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 36)
+						{
+							mSpecialEvent = 0;
+							mBattleEvent = 18;
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 37) {
+							Talk(new string[] {
+								$" [color={RGB.LightMagenta}]너희들은 곧 환상에 빠져들게 될 것이다.[/color]",
+								$"  [color={RGB.LightMagenta}]나는 벌써 너희들의 약점을 파악 했지.  너희 일행들은 항상 자신을  너무 신뢰하고 믿고 있더군. 그러나 그 착각은 곧 깨어질 것이다.[/color]",
+								$"  [color={RGB.White}]어둠의 신이여, 당신의 힘으로 이들을 환상에 빠져 들게 하소서. 인 쿠아스 젠 ~~[/color]"
+							});
+
+							mEncounterEnemyList.Clear();
+
+							for (var i = 0; i < 6; i++) {
+								BattleEnemyData enemy;
+								if (mPlayerList.Count < i)
+									enemy = JoinEnemy(59);
+								else
+									enemy = TurnMind(mPlayerList[i]);
+								enemy.ENumber = 1;
+							}
+
+							mSpecialEvent = 38;
+						}
+						else if (mSpecialEvent == 38) {
+							mSpecialEvent = 0;
+							mBattleEvent = 21;
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 39)
+						{
+							mBattleEvent = 21;
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 40) {
+							mBattleEvent = 22;
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 41) {
+							Talk(" 그는 숨이 끊어졌고 주위의 기둥도 그와 함께 사라져 버렸다.");
+
+							mMapLayer[28 + mMapWidth * 26] = 53;
+
+							for (var y = 24; y < 27; y++) {
+								for (var x = 23; x < 27; x++)
+									mMapLayer[x + mMapWidth * y] = 46;
+							}
+						}
+
+						mSpecialEvent = 0;
 					}
 
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -1727,8 +1959,8 @@ namespace Lore
 							{
 								mMenuMode = MenuMode.None;
 
-								var shieldStr = mPlayerList[mMenuFocusID].Shield != 0 ? $"[color={RGB.Green}]방패 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Weapon)}[/color]" : "";
-								var armorStr = mPlayerList[mMenuFocusID].Armor != 0 ? $"[color={RGB.Green}갑옷 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Weapon)}[/color]" : "";
+								var shieldStr = mPlayerList[mMenuFocusID].Shield != 0 ? $"[color={RGB.Green}]방패 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Shield)}[/color]" : "";
+								var armorStr = mPlayerList[mMenuFocusID].Armor != 0 ? $"[color={RGB.Green}갑옷 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Armor)}[/color]" : "";
 
 								AppendText(new string[] { $"# 이름 : {mPlayerList[mMenuFocusID].Name}",
 								$"# 성별 : {mPlayerList[mMenuFocusID].GenderName}",
@@ -2698,7 +2930,7 @@ namespace Lore
 								if (player.AC > 10)
 									player.AC = 10;
 
-								mParty.Gold -= GetWeaponPrice(mBuyWeaponID);
+								mParty.Gold -= GetShieldPrice(mBuyWeaponID);
 
 								GoWeaponShop();
 							}
@@ -2738,7 +2970,7 @@ namespace Lore
 								if (player.AC > 10)
 									player.AC = 10;
 
-								mParty.Gold -= GetWeaponPrice(mBuyWeaponID);
+								mParty.Gold -= GetArmorPrice(mBuyWeaponID);
 
 								GoWeaponShop();
 							}
@@ -3355,6 +3587,70 @@ namespace Lore
 
 										await RefreshGame();
 									}
+									else if (mParty.Map == 21) {
+										if ((mParty.Etc[41] & 1) == 0) {
+											mEncounterEnemyList.Clear();
+											if ((mParty.Etc[41] & (1 << 2)) == 0)
+												JoinEnemy(54);
+
+											if ((mParty.Etc[41] & (1 << 3)) == 0)
+												JoinEnemy(55);
+
+											if  (mEncounterEnemyList.Count == 0) {
+												mParty.Etc[41] |= 1;
+												return;
+											}
+
+											for (var i = 0; i < 4; i++) {
+												JoinEnemy(34);
+											}
+
+											HideMap();
+											DisplayEnemy();
+
+											mBattleEvent = 15;
+
+											StartBattle(false);
+										}
+									}
+									else if (mParty.Map == 23) {
+										if ((mParty.Etc[42] & (1 << 2)) == 0)
+										{
+											mEncounterEnemyList.Clear();
+
+											var enemyID = mRand.Next(5) + 41;
+											if (enemyID == 41)
+												enemyID = 34;
+
+											for (var i = 0; i < 6; i++)
+											{
+												JoinEnemy(enemyID);
+											}
+
+											JoinEnemy(65);
+
+											HideMap();
+											DisplayEnemy();
+
+											Talk($"[color={RGB.LightCyan}]{mPlayerList[0].Name}, 나의 힘을 보여주겠다.");
+
+											mSpecialEvent = 35;
+										}
+									}
+									else if (mParty.Map == 23) {
+										mParty.Map = 5;
+										mParty.XAxis = 33;
+										mParty.YAxis = 14;
+
+										await RefreshGame();
+									}
+									else if (mParty.Map == 24) {
+										mParty.Map = 23;
+										mParty.XAxis = 24;
+										mParty.YAxis = 44;
+
+										await RefreshGame();
+									}
 								}
 								else
 								{
@@ -3407,6 +3703,8 @@ namespace Lore
 
 									if (avgAgility > avgEnemyAgility)
 										StartBattle(false);
+									else
+										StartBattle(true);
 								}
 								else if (mMenuFocusID == 1)
 								{
@@ -4137,11 +4435,14 @@ namespace Lore
 			Window.Current.CoreWindow.KeyUp += gamePageKeyUpEvent;
 		}
 
-		private void StartBattle(bool assult = true)
+		private void StartBattle(bool assualt = true)
 		{
 			mParty.Etc[5] = 1;
 
-			if (assult)
+			DialogText.TextHighlighters.Clear();
+			DialogText.Blocks.Clear();
+
+			if (assualt)
 			{
 				mBattleTurn = BattleTurn.Player;
 
@@ -6682,11 +6983,184 @@ namespace Lore
 					// 미노타우루스 등장 애니메이션
 
 					ContinueText.Visibility = Visibility.Visible;
-					mSpecialEvent = 29;
+					mSpecialEvent = 32;
 				}
 				else if (mParty.YAxis == 12) {
-					// 구현 필요
+					CheckMuddyFinalBattle();
 				}
+			}
+			else if (mParty.Map == 21) {
+				if (mParty.YAxis == 45)
+					ShowExitMenu();
+				else if (mParty.XAxis == 24 && mParty.YAxis == 19) {
+					if (mParty.Etc[39] % 2 == 0 || mParty.Etc[40] % 2 == 0)
+					{
+						Talk(new string[] {
+							$"[color={RGB.LightCyan}] 당신은 아직 라바 게이트를 열수가 없다",
+							"",
+							"아직 당신은 이 대륙의 동굴속에  존재하 는 2개의 봉인을 풀지 못했기 때문이다."
+						});
+
+						mParty.YAxis++;
+					}
+				}
+				else {
+					mEncounterEnemyList.Clear();
+
+					var enemyCount = mRand.Next(4) + 3;
+					for (var i = 0; i < enemyCount; i++)
+						JoinEnemy(57);
+
+					HideMap();
+					DisplayEnemy();
+
+					mBattleEvent = 16;
+
+					StartBattle(false);
+				}
+			}
+			else if (mParty.Map == 22) {
+				if (mParty.YAxis == 45)
+					ShowExitMenu();
+				else if (mParty.XAxis == 24 && mParty.YAxis == 17) {
+					if ((mParty.Etc[42] & (1 << 1)) == 0) {
+						var boss = false;
+						for (var i = 0; i < 6; i++) {
+							if (!boss)
+							{
+								if (mRand.Next(2) == 0)
+								{
+									JoinEnemy(62);
+									boss = true;
+								}
+							}
+							else
+								JoinEnemy(59);
+						}
+
+						HideMap();
+						DisplayEnemy();
+
+						Talk($"[color={RGB.LightCyan}] 나는 이 요새의 Wraith를 조종하는 죽음의 기사 Death Knight이다. 나에게 도전하다니 가소로운 것들. 으하하....");
+
+						mSpecialEvent = 36;
+					}
+				}
+				else if (mParty.YAxis == 24 && 23 <= mParty.XAxis && mParty.XAxis <= 25) {
+					if ((mParty.Etc[42] & 1) == 0) {
+						mEncounterEnemyList.Clear();
+
+						JoinEnemy(60);
+						JoinEnemy(57);
+						JoinEnemy(55);
+						JoinEnemy(54);
+						JoinEnemy(59);
+
+						mBattleEvent = 19;
+
+						HideMap();
+						DisplayEnemy();
+
+						StartBattle(false);
+					}
+				}
+				else if ((mParty.Etc[42] & (1 << 1)) == 0) {
+					for (var i = 0; i < 5; i++)
+						JoinEnemy(59);
+
+					mBattleEvent = 20;
+
+					HideMap();
+					DisplayEnemy();
+
+					StartBattle(false);
+				}
+			}
+			else if (mParty.Map == 23) {
+				if (mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] == 0)
+					return;
+				else if (mParty.YAxis == 45)
+					ShowExitMenu();
+				else if (mParty.YAxis == 25) {
+					mEncounterEnemyList.Clear();
+
+					var enemy = JoinEnemy(69);
+					enemy.Name = "Necromancer";
+					enemy.ENumber = 0;
+
+					HideMap();
+					DisplayEnemy();
+
+					Talk(new string[] {
+						$"[color={RGB.LightCyan}] 잘도 여기까지 찾아왔구나 {mPlayerList[0].Name}.",
+						$"[color={RGB.LightCyan}] 네가 찾던 그 네크로맨서가 바로 나다. 드디어 너의 실력을 보게 되겠구나. 하지만 분명히 나보다는 떨어지겠지만. 으하하하."
+					});
+
+					mSpecialEvent = 37;
+				}
+				else if (mParty.XAxis == 24 && mParty.YAxis == 26) {
+					mMapLayer[24 + mMapWidth * 26] = 46;
+					mMapLayer[28 + mMapWidth * 42] = 44;
+
+					for (var y = 6; y < 34; y++) {
+						for (var x = 11; x < 39; x++) {
+							if (mMapLayer[x + mMapWidth * y] == 0)
+								mMapLayer[x + mMapWidth * y] = 39;
+						}
+					}
+
+					for (var x = 24; x < 26; x++)
+						mMapLayer[x + mMapWidth * 11] = 53;
+
+					Talk(" 푯말에 쓰여 있는 대로 이 곳의 레버를 당겼 더니 굉음과 함께 감추어져 있었던 성이 지하 로부터 떠 올랐다.'");
+				}
+			}
+			else if (mParty.Map == 24) {
+				if (mParty.YAxis == 45)
+					ShowExitMenu();
+			}
+		}
+
+		private void CheckMuddyFinalBattle() {
+			if (mParty.Etc[0] == 0)
+			{
+				mParty.Etc[0] = 1;
+				ShowMap();
+			}
+
+			if ((mParty.Etc[40] & (1 << 1)) == 0)
+			{
+				// 드래곤 3마리 등장 애니메이션
+				ContinueText.Visibility = Visibility.Visible;
+
+				mSpecialEvent = 33;
+			}
+			else if ((mParty.Etc[40] & (1 << 2)) == 0)
+			{
+				mEncounterEnemyList.Clear();
+
+				for (var i = 0; i < 7; i++)
+					JoinEnemy(30);
+
+				HideMap();
+				DisplayEnemy();
+
+				mBattleEvent = 13;
+
+				StartBattle(false);
+			}
+			else if ((mParty.Etc[40] & 1) == 0) {
+				// 아스트랄 머드 등장 이벤트
+
+				Talk($" [color={RGB.LightMagenta}]나는 Necromacer 와 함께 다른 차원에서 내려온 Astral Mud 이다. 여기는 그가 세운 최고의 동굴이자 너가 마지막으로 거칠 동굴이다." +
+				"  나를 만만하게 보지마라.  다른 차원의 능력들을 너가 맛볼 기회를 가진다는 것에 대해  고맙게 생각하기 바란다. 하하하 ...");
+
+				mSpecialEvent = 34;
+			}
+			else {
+				mParty.Map = 4;
+				mParty.XAxis = 81;
+				mParty.YAxis = 16;
 			}
 		}
 
