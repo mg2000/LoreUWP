@@ -27,16 +27,16 @@ namespace Lore
         //yellow    = 14;
         //white     = 15;
 
-        public const string Green = "00ff00";
-        public const string Cyan = "00ffff";
-        public const string Magenta = "ff00ff";
-        public const string LightGreen = "90ee90";
+        public const string Green = "00a800";
+        public const string Cyan = "00a8a8";
+        public const string Magenta = "a800a8";
+        public const string LightGreen = "55ff55";
         public const string White = "ffffff";
-        public const string LightMagenta = "8c408c";
-        public const string Red = "ff0000";
-        public const string LightRed = "fb6363";
-        public const string LightCyan = "62e4f2";
-        public const string Yellow = "ffff00";
-        public const string LightGray = "d3d3d3";
+        public const string LightMagenta = "ff55ff";
+        public const string Red = "a80000";
+        public const string LightRed = "ff5555";
+        public const string LightCyan = "55ffff";
+        public const string Yellow = "a8a800";
+        public const string LightGray = "a8a8a8";
     }
 }

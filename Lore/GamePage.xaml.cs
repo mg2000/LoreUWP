@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
@@ -40,7 +39,6 @@ namespace Lore
 		private readonly object mapLock = new object();
 
 		bool ClampToSourceRect = true;
-		string InterpolationMode = CanvasImageInterpolation.Linear.ToString();
 
 		private LorePlayer mParty;
 		private List<Lore> mPlayerList;
@@ -117,6 +115,17 @@ namespace Lore
 		// 42 - 팬저 바이퍼 전투 이벤트
 		// 43 - 팬저 바이퍼 전투 승리 이벤트
 		// 44 - 네크로맨서 전투 이벤트
+		// 45 - 네크로맨서 전투 탈출 실패 이벤트
+		// 46 - 엔딩
+		// 47 - 라스트 쉘터 안영기 이벤트
+		// 48 - 지식의 성전 만남 이벤트
+		// 49 - 지식의 성전 만남 종료 이벤트
+		// 50~55 - 지식의 성전 유골 이벤트
+		// 56~58 - 지식의 성전 유골 이벤트2
+		// 59~60 - 지식의 성전 유골 이벤트3
+		// 61~62 - 지식의 성전 유골 이벤트4
+		// 63~64 - 지식의 성전 유골 이벤트5
+		// 65 - 지식의 성전 스크롤 이벤트
 		private int mSpecialEvent = 0;
 
 		// 전투 이벤트
@@ -145,6 +154,9 @@ namespace Lore
 		// 23 - 팬저 바이퍼 전투
 		// 24 - 네크로맨서 전투
 		private int mBattleEvent = 0;
+
+		// 2 - 지식의 성전 유골 안식
+		private volatile int mAnimationEvent = 0;
 
 		private volatile bool mMoveEvent = false;
 
@@ -776,6 +788,19 @@ namespace Lore
 						await RefreshGame();
 					}
 
+					void WinNecromancer() {
+						Talk(new string[] {
+							$" [color={RGB.LightMagenta}욱!!! 역시 너희들의 능력으로 여기까지 뚫고 들어왔다는게 믿어지는구나. 대단한 힘이다.[/color]",
+							$" [color={RGB.LightMagenta}내가 졌다는걸 인정하마. 하지만 나는 완전히 너에게 진것은 아니야.  나에게는 탈출할 수단이 있기 때문이지. 안심해라." +
+							" 그렇지만 다시는 나와 만날 인연은 없으니까.  블랙홀이 생기기 시작하는구나.  다음 공간에서 또다시 힘을 길러야 겠군." +
+							" 내가 이 블랙홀로 들어간다면 다시 이 공간으로 올 확률이 거의 제로이지. 흠, 멋진 나의 도전자여 안녕.  나는 이런 공간의 패러독스를 운명적으로 반복하는 생명체로  태어난 내가 참으로 비참하지." +
+							" 무한히 많은 3 차원의 공간중에서 내가 여기로 온것도  이 공간의 생명이 끝날때까지도 한번 있을까 말까한 희귀한 일이었다고 기억해다오." +
+							"  이제 블랙홀이 완전히 생겼군. 자! 나의 멋진 도전자 친구여 영원히 안녕 ! !'[/color]",
+						});
+
+						mSpecialEvent = 46;
+					}
+
 					mBattleCommandQueue.Clear();
 					mBatteEnemyQueue.Clear();
 
@@ -974,6 +999,8 @@ namespace Lore
 
 							mSpecialEvent = 43;
 						}
+						else if (mBattleEvent == 24)
+							WinNecromancer();
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1025,16 +1052,29 @@ namespace Lore
 							await DefeatDungeonOfEvilKeeper();
 						else if (mBattleEvent == 20)
 							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 40;
-						else if (mBattleEvent == 21) {
+						else if (mBattleEvent == 21)
+						{
 							Talk(" 하지만 당신은 환상에서 벗어나지 못했다.");
 							mSpecialEvent = 39;
-							
+
 							return;
 						}
 						else if (mBattleEvent == 22)
 							mParty.YAxis++;
 						else if (mBattleEvent == 23)
 							mParty.YAxis++;
+						else if (mBattleEvent == 24)
+						{
+							if (!mEncounterEnemyList[6].Dead)
+							{
+								Talk($" [color={RGB.LightMagenta}]하지만 나에게 도전한 이상 도주는 허용할 수 없다는 점이 안타깝군.[/color]");
+
+								mSpecialEvent = 39;
+								return;
+							}
+							else
+								WinNecromancer();
+						}
 
 						mEncounterEnemyList.Clear();
 						ShowMap();
@@ -1552,6 +1592,195 @@ namespace Lore
 								player.Class = 10;
 							}
 						}
+						else if (mSpecialEvent == 45) {
+							mEncounterEnemyList.Clear();
+							for (var i = 0; i < 7; i++) {
+								JoinEnemy(67 + i);
+							}
+
+							mBattleEvent = 24;
+
+							HideMap();
+							DisplayEnemy();
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 45)
+						{
+							mBattleEvent = 24;
+
+							StartBattle(false);
+						}
+						else if (mSpecialEvent == 46) {
+
+						}
+						else if (mSpecialEvent == 47) {
+							mParty.Etc[42] |= 1 << 3;
+							mMapLayer[32 + mMapWidth * 9] = 47;
+						}
+						else if (mSpecialEvent == 48) {
+							Talk(new string[] {
+								" 당신과는 초면이 아니지요? LORE 성에서도 봤으니까 말이죠." +
+								" 당신은 나의 정체가 어떨지 궁금하기도 하겠지만 나중에 밝혀질 일이이까 천천히 알아보기로 하고  먼저 이 피라밋에 대해서 말하기로 하지요.",
+								" 이 피라밋은 네크로맨서와 함께 저편의 공간에서 퉁겨져 나왔지요. 이곳은 육신은 죽고 의지만 남은 사람들의 안식처라고도 할수 있죠.",
+								" 여기의 '의지'들 중에서  당신과 관계가 없는 의지는 모두 재가 되어버릴 거요." +
+								" 여기서 얻은 정보는 모두 당신의 운명을 더욱 더 모질게 만들어 버릴 것들이지만, 만약 당신이 알지 못한다면 더더욱 더 당신을 힘겹게 하는 것들만 있지요." +
+								"  당신의 현명한 판단에 모든걸 맡기도록 하지요." });
+
+							mSpecialEvent = 49;
+						}
+						else if (mSpecialEvent == 49) {
+							mMapLayer[14 + mMapWidth * 5] = 52;
+						}
+						else if (mSpecialEvent == 50) {
+							Talk(new string[] {
+								" 오! 당신이 나의 잠을 깨웠나 ?",
+								$" 실로 몇 천년 만에 보는 세상이군. 나는 당신의 운명적인 만남을 관장하는 [color={RGB.LightRed}]데네브의 의지[/color]라고 불리우고 있지." +
+								" 당신이 만나게 될 사람들은 이미 자네가 세상에 나기 전부터  정해져 있었다네." +
+								"  만약 그 사람들을 만나지 않고  지나쳐 버린다거나 못 만나는 경우가 생긴다면 절대로 네크로맨서 를 물리치지 못할걸세.  그렇다면 당신이 꼭 만나야 할 사람들을 말해 보겠네."
+							});
+
+							mSpecialEvent = 51;
+						}
+						else if (mSpecialEvent == 51) {
+							Talk(new string[] {
+								$"[color={RGB.White}] Red Antares[/color]",
+								" 그는 이미 죽은지가 수 천년이 지났지만 그의 의지는 아직 NOTICE란 동굴속에 잠들어 있네.",
+								" 그는 과거 최강의 마법사로서 이 땅을 통치하였고 다시 세계가 혼미스러울때 새로이 나타나겠노라고 말하며  홀로 그 동굴에서 살다가 죽었지." +
+								" 하지만 지금이 그가 말한때라는 걸 그의 영혼이 알수있게만 한다면,  그는 다시금 최강의 마법사로 부활해서 당신들을 도와주게 되는 사람이지."
+							});
+
+							mSpecialEvent = 52;
+						}
+						else if (mSpecialEvent == 52) {
+							Talk(new string[] {
+								$"[color={RGB.White}] Spica[/color]",
+								" 지금  초자연력에 대해 알고있고 사용할수 있는 사람은 몇명되지 않는데, 그중의 한 사람이 네크로맨서 이고 또 지금 말하는 Spica 라네.",
+								" 자네가 이 기술을 그녀에게 배우지 않는 다면 네크로맨서 를 만나기 위한 도중에 무릎을 꿇고 말것이며 설령 그와 대결하게 된다 해도 자네들은 참패를 하게 될걸세." +
+								" 이 기술로 자연을 조작하고 인간의 마음을 읽으며 시공간을 넘겨 볼수만 있다면  분명 당신은 세계 최강의 전사가 되어있을 걸세." +
+								"  그리고, 그녀가 있는 곳은 바로 물로 덮인 대륙의 Dragon 이 사는 동굴의 어느 깊숙한 곳이라네."
+							});
+
+							mSpecialEvent = 53;
+						}
+						else if (mSpecialEvent == 53) {
+							Talk(new string[] {
+								$"[color={RGB.White}] Ancient Evil[/color]",
+								" 그는 지금, 늪의 대륙의 서쪽 바다 건너 작은 섬에 살고 있다네." +
+								"  그가 사는 섬을 찾기는 무척 어렵겠지만 초자연력으로 공간을 넘겨 보아 위치를 파악한후 텔리포트 마법을 통해 이동하면 다다를수 있을 걸세." +
+								"  그는  당신의 미래를 쉽게 풀어주고, 또 새로운 만남을 이어주게 될걸세."
+							});
+
+							mSpecialEvent = 54;
+						}
+						else if (mSpecialEvent == 54) {
+							Talk(new string[] {
+								$" 이 외에도 Polaris, Jr.Antares, Lore Hunter, Rigel 등등의 사람들을 수도 없이 만나게 되겠지만 반드시 당신에게 도움을 주지만은 않을 것이며," +
+								"만약 당신이 남을 도와 준다면 반드시 그도  당신에게 보이지 않는 도움을 주게 될거라는 말을 끝으로  나는 다시 몇천년의 잠으로 빠져들어야 겠네. 그럼 안녕히 ..."
+							});
+
+							mSpecialEvent = 55;
+						}
+						else if (mSpecialEvent == 55) {
+							mAnimationEvent = 2;
+							InvokeAnimation();
+						}
+						else if (mSpecialEvent == 56) {
+							Talk(new string[] {
+								" 당신과 나의 만남은 어렇듯 운명적이네. 나는 당신이 이때쯤 나를 찾아오리라고 내가 잠들기 전 몇 천년 전에 이미 알고 있었다네.",
+								$" 소개하지. 나는 당신의 순회적 운명을 관장하는 [color={RGB.LightRed}]시리우스의 의지[/color]라고 하네." +
+								" 당신은 나를 처음  봤겠지만 나는 원래 당신의 또다른 분신으로서 당신은 결코 나에게는 낯 설지가 않다네." +
+								"당신은 어느 순간에도 당신이  단지 이 세계에서만 당신의 삶이 존재한다고 생각하는가 ? 분명 지금 현재로서는 그렇게 밖에  생각을 못하지만 실제는 그렇지 않지." +
+								"  당신은 분명 이 순간에도 다른 공간에서는 또 다른 삶을 살고 있다네. 하지만 ... '또 다른 삶'이라고 내가 말했지만  결국은 한 운명을 가지고 계속 윤회하는 것일뿐이지." +
+								"  나는 이렇게 당신이 찾아오는 것만도 헤아릴수 없이 겪었지.  언제나 당신은 정해진 운명 때문에 어쩔수 없이 나를 계속 찾아오게 되는 거라네." +
+								"  이해가 가지 않을거라고 나도 생각하면서도 달리 설명할 방도가 없어서 이런 애매한 말만 되풀이 할 뿐이네."
+							});
+
+							mSpecialEvent = 57;
+						}
+						else if (mSpecialEvent == 57) {
+							Talk(new string[] {
+								" 더 자세한 운명을 알고 싶다면 스왐프 게이트에 있는 피라밋의 예언서를 읽어 보게나. 그러면 더 이해가 빠를걸세.",
+								" 그래도 잘 이해가 안된다면 '늪의 대륙'의 외딴 섬에 은둔하고 있는 Draconian을 만나 보도록 하게." + 
+								" 그는 네크로맨서가 이전의 공간에서 이 공간으로 온 이유를 알고 있기 때문이라네.",
+								" 그럼 우리의 만남은  다음 공간의 또 다른 운명에 의해 다시 시작될걸세. 그럼 그때까지 안녕히!"
+							});
+
+							mSpecialEvent = 58;
+						}
+						else if (mSpecialEvent == 58)
+						{
+							mAnimationEvent = 3;
+							InvokeAnimation();
+						}
+						else if (mSpecialEvent == 59) {
+							Talk(new string[] {
+								$" 나는 이 세계의 운명을 담당하는 [color={RGB.LightRed}]알비레오의 의지[/color]라고 하오." +
+								" 나는 이 세상이 생기면서 부터 늘 이런 모습으로 여기서 지내왔소. 나는 이제껏 세상의 많은 위기들을 보아왔소." +
+								" 하지만 지금과 같은 공간을 뛰어 넘은 침입자에 의한 위기는 처음이라고 기억되오.  나는 이 곳에서도 이 세상 모든것을 볼수있소." +
+								" 그리고 여태껏 당신의 자라온 모습과 여기에 서 있는 이유도 알고 있소. 또한 네크로맨서가 이 세상에 온 이후로 부터의 그의 행동도 보아왔소." +
+								" 그리고 결국은 ... ... 당신과 그의 미래도 나에게는 보여지고 있소.  나는 이 자리에서  미래의 일을 말할수는 없소." +
+								" 당신이 그 결말을 알고 싶다면 '늪의 대륙'에 있는 Draconian 을 만나 보는게 좋을거요. 그전에 Ancient Evil도 역시 만나게 될것이오. 그리고 한가지를 명심하시오.",
+								$" [color={RGB.White}]당신이 옳다고 생각하는게 항상 옳은 것은 아니오. 남들이 증오하는 것이 항상 당신에게 그릇되게 작용하지는 않을 것이오." +
+								" 또한, 현재의 증오가 미래의 증오가 되지도 않을 것이오. 그리고 결국에는 네크로맨서를 용서하시오."
+							});
+
+							mSpecialEvent = 60;
+						}
+						else if (mSpecialEvent == 60)
+						{
+							mAnimationEvent = 4;
+							InvokeAnimation();
+						}
+						else if (mSpecialEvent == 61) {
+							Talk(new string[] {
+								$" 안녕하시오. 나는 네크로맨서 의 운명을 관장하고 있는 [color={RGB.LightRed}]카노푸스의 의지[/color]라고 하오." +
+								"  이 공간뿐만 아니라 다른 공간에서 존재하고 있는 Necromancer의 운명 또한 내가 담당하는 범주에 들어간다오." +
+								"  하지만 그는 그의 운명을 따르는 존재일뿐 그 이상의 의미는 없소.  그는 수도없는 저편의 공간에서 지워진 운명을 다해갔소." +
+								" 그리고 또 여기서  다시 그의 운명을 시작하려 하고 있소. 이 공간 하나 밖에 인식하지 못하는 인간의 사고로는 별 가치가 없는 일이지만," +
+								"  운명을 따르기 위해 다음 공간에서도 같은 운명을 반복해야 한다는 그 금단의 이치는  분명 그도 따르고 싶지 않았을 것이오." +
+								" 하지만 그는 그 자신도 그것이 절대 바뀔수 없는  패러독스라는걸 알고 있을게요.  네크로맨서 그 자신은 정말 불행한 존재라오." +
+								"  스스로의 운명을 등에 지고  힘겹게 차원을 쫓기어 다니는 힘없는 짐승일 뿐이오.",
+								" 당신이  마지막의 그에게  받을수 있는 느낌은 진정한 마음에서 우러나오는 동정일것이오.  당신은  저번 공간에서도 역시 그것을 느꼈소." +
+								" 하지만 그때의 기억은  당신이 이 세계에 그를 물리치려는 운명을 지니고 다시 태어났을때  이미 사라져 버렸소. 당신은 내말을 이해하지 못하겠지만 그것은 사실이오." +
+								"  지금은  그를 증오로서 맞이하려 하겠지만 그 증오는 다시 다음 공간으로 이어지려하오.  당신이 그를 물리 친다고 하여도 다시 다음 공간에서도 지금과 같은 대립을 반복할 뿐이오." +
+								"  당신과 그와의 대립은 이 우주가 생기기 시작할때 부터 지금까지 수도없이 반복했고 그 이후로도 이 우주가 사라질때까지 영원히 반복될 것이오.  그리고  마지막으로 내가 하고 싶은 말은 이런것이오.",
+								$"[color={RGB.White}] 당신은 결국 네크로맨서를 동정 할지 모르오. 하지만 결코 그만이 동정의 대상이 아니오.  결국은  그와 연관되어 운명이 결정지워진 당신도 예외가 될수는 없소.[/color]"
+							});
+
+							mSpecialEvent = 62;
+						}
+						else if (mSpecialEvent == 62)
+						{
+							mAnimationEvent = 5;
+							InvokeAnimation();
+						}
+						else if (mSpecialEvent == 63) {
+							Talk(new string[] {
+								$" 당신 앞의 유골은 바로 나의것이오. 나를 소개 하자면 [color={RGB.LightRed}]아크투루스의 의지[/color]라고 불리우는 존재로 서 Ancient Evil의 운명을 관장하고 있소." +
+								" 이름에서 알수있듯이  그를 수호하는 의지는 목자의 성격을 갖고있소. 하지만 그의 이름이나 평판으로 볼때는  전혀 그런 성격을 알지 못하게 되고 마는게 보통이오." +
+								" 그는 로드 안과 대립하는 운명을 지니고 세상에 존재하게 되었소.  마치 당신과 네크로맨서와 같이 말이오." +
+								" 로드 안과의 대립 관계란 운명 때문에  그는 그의 모든 성격을 포기한채 로드 안을 위하여 악의 편에 서게 되었던 것이오." +
+								" 그때, 둘중에 누구 하나가 악의 대표가 되지 않으면 안되었고  로드 안은 결코 세인의 지탄을 받는 악을 대표하려고 하지 않음으로 해서  그가 직접 악의 대표가 되기로 하였던 것이오." +
+								" 하지만 원래 그의 마음은 극도의 선에 있었기 때문에  결국 그의 악이란 악의 대표 정도 밖에는 될수없었던 것이오." +
+								" 하지만 반대로 로드 안의 입장에서는  그를 계속 비판하며 사람들에게  선의 개념을 심어주려 하였으므로 결국은 그에 대한 철저한 조작으로 위장해서 그를 비하 시키고 자신을 부각 시켜," +
+								" 어릴때 부터 선과 악의 개념을 구분 시키고  악을 배척하는 생활을 하여 사회를 순탄하게 이끌어 나가려고 하였소. 물론 로드 안의 생각이 틀렸다고는 할수 없소." +
+								"  그게 로드 안의 운명이라 할수 있기 때문이오. 항상 로드 안의 마음도 편하지 않다는 걸 알고 있소. 절친한 동반자인 그를 적으로 돌려 버린것도  그의 운명을 벗어날 수 없었기 때문이오." +
+								" 그리고 그들의 경지는 반신 반인이라는 최고의 경지에 올랐소.  당신 역시 네크로맨서에게 도전하고자 한다면 그 경지에 다다라야 하오. 분명 그들 둘의 능력으로는 당신과 당신 일행들을 반신 반인으로 만들어 줄수 있을것이오."
+							});
+
+							mSpecialEvent = 64;
+						}
+						else if (mSpecialEvent == 64)
+						{
+							mAnimationEvent = 6;
+							InvokeAnimation();
+						}
+						else if (mSpecialEvent == 65) {
+							mAnimationEvent = 7;
+							InvokeAnimation();
+						}
+
 
 						mSpecialEvent = 0;
 					}
@@ -3723,11 +3952,22 @@ namespace Lore
 
 										await RefreshGame();
 									}
+									else if (mParty.Map == 27) {
+										mParty.Map = 1;
+										mParty.XAxis = 19;
+										mParty.YAxis = 7;
+
+										await RefreshGame();
+									}
 								}
 								else
 								{
 									AppendText(new string[] { "" });
-									mParty.YAxis--;
+
+									if (mParty.Map == 27 && mParty.YAxis < 24)
+										mParty.YAxis++;
+									else
+										mParty.YAxis--;
 								}
 							}
 							else if (mMenuMode == MenuMode.JoinSkeleton)
@@ -4493,6 +4733,24 @@ namespace Lore
 
 									await RefreshGame();
 								}
+							}
+							else if (mMenuMode == MenuMode.ReadScroll) {
+								mMenuMode = MenuMode.None;
+
+								Talk(new string[] {
+									$"[Color={RGB.White}] Durant l''estoille cheuelue apparente,[/color]",
+									" 머리를 푼 별이 나타날때",
+									$"[Color={RGB.White}] Les trois grand princes seront faits ennemies,[/color]",
+									" 거대한 세 왕자가 서로를 적대한다",
+									$"[Color={RGB.White}] Frappez du ciel paix terre trembulente,[/color]",
+									" 평화는 하늘에서 당하고 대지는 요동한다",
+									$"[Color={RGB.White}] En son haut auge de l''exaltation,[/color]",
+									" 그 찬미해야 할 높은 오류 속에서",
+									$"[Color={RGB.White}] Neromancer sur le bord mis.[/color]",
+									" 네크로맨서 는 해안으로 밀려나리라."
+								});
+
+								mSpecialEvent = 65;
 							}
 						}
 					}
@@ -7205,7 +7463,7 @@ namespace Lore
 
 					// 팬저 바이퍼 등장 이벤트
 
-					Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]");
+					Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]" });
 
 					mSpecialEvent = 42;
 				}
@@ -7639,6 +7897,11 @@ namespace Lore
 			}
 		}
 
+
+		private void AppendText(string text, bool append = false) {
+			AppendText(new string[] { text }, append);
+		}
+
 		private void AppendText(string[] text, bool append = false)
 		{
 			var totalLen = 0;
@@ -7685,7 +7948,7 @@ namespace Lore
 					paragraph.Inlines.Add(preRun);
 					DialogText.TextHighlighters.Add(new TextHighlighter()
 					{
-						Foreground = new SolidColorBrush(Colors.LightGray),
+						Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(RGB.LightGray.Substring(0, 2), 16), Convert.ToByte(RGB.LightGray.Substring(2, 2), 16), Convert.ToByte(RGB.LightGray.Substring(4, 2), 16))),
 						Background = new SolidColorBrush(Colors.Transparent),
 						Ranges = { new TextRange()
 							{
@@ -8546,6 +8809,125 @@ namespace Lore
 					}
 				}
 			}
+			else if (mParty.Map == 24) {
+				if ((moveX == 10 && moveY == 21) || (moveX == 13 && moveY == 23))
+					GoTrainingCenter();
+				else if ((moveX == 32 && moveY == 34) || (moveX == 34 && moveY == 36))
+					GoGrocery();
+				else if ((moveX == 32 && moveY == 20) || (moveX == 36 && moveY == 23) || (moveX == 39 && moveY == 22))
+					GoWeaponShop();
+				else if ((moveX == 14 && moveY == 35) || (moveX == 10 && moveY == 37) || (moveX == 13 && moveY == 39))
+					GoHospital();
+				else if (moveX == 10 && moveY == 21)
+					Talk(" Ancient Evil은 우리의 구세주였습니다.");
+				else if (moveX == 17 && moveY == 9)
+					Talk(" 이 세상을 이렇게 불행하게 한자는 바로 안 영기라는 프로그래머입니다.");
+				else if (moveX == 19 && moveY == 12)
+					Talk(" 우리는 여태껏 당신들이 오기를 기다렸습니다.");
+				else if (moveX == 26 && moveY == 7)
+					Talk(" Ancient Evil은 결코 평판과 같이 나쁜 존재가 아닙니다.");
+				else if (moveX == 30 && moveY == 12)
+					Talk(" 당신들은 분명히 우리들을 밖으로 나가게 해줄것입니다.");
+				else if (moveX == 32 && moveY == 9) {
+					// 안영기 등장 이벤트
+					Talk(new string[] {
+						" 이 사람들은 잘 모르겠지만  사실 나는 이 게임의 제작자인 안 영기요.",
+						" 나는 여태껏 계속 당신들이 가는 도시마다 주민으로 가장한채 당신들을 지켜 보았소. 이 게임의 버그를 찾거나 난이도를 조절하기 위해서 말이요." +
+						" 만약 당신들이 네크로맨서 를 물리친다면 내가 마지막으로 당신앞에 나타나겠소.",
+						" 그럼, 이만 나는 가보겠소."
+					});
+
+					mSpecialEvent = 47;
+				}
+			}
+			else if (mParty.Map == 27) {
+				if (moveX == 14 && moveY == 5)
+				{
+					mSpecialEvent = 48;
+
+					Talk(" 당신 앞의 사람이 갑자기 어떤 남자로 변하였다.");
+				}
+				else if (moveX == 9 && moveY == 13)
+				{
+					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
+
+					mSpecialEvent = 50;
+				}
+				else if (moveX == 9 && moveY == 17)
+				{
+					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
+
+					mSpecialEvent = 56;
+				}
+				else if (moveX == 9 && moveY == 29)
+				{
+					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
+
+					mSpecialEvent = 59;
+				}
+				else if (moveX == 20 && moveY == 31)
+				{
+					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
+
+					mSpecialEvent = 61;
+				}
+				else if (moveX == 20 && moveY == 21)
+				{
+					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
+
+					mSpecialEvent = 63;
+				}
+				else if (moveX == 20 && moveY == 11)
+				{
+					AppendText(" 당신 앞에 있는 유골의 손에는 어떤 두루마리가 쥐어져 있었다.");
+
+					ShowMenu(MenuMode.ReadScroll, new string[] {
+						"그 문서를 읽어 보고 싶다",
+						"그냥 지나 가겠다"
+					});
+				}
+				else
+				{
+					AppendText(" 당신이 유골에 다가가자 재로 변하였다.");
+					mAnimationEvent = 8;
+					InvokeAnimation(moveX, moveY);
+				}
+			}
+		}
+
+		private async void InvokeAnimation(int aniX = 0, int aniY = 0) {
+			void RestRemains(int x, int y) {
+				for (var i = 1; i <= 30; i++) {
+					Task.Delay(i * 2).Wait();
+					mMapLayer[x + mMapWidth * y] = 48;
+					Task.Delay((31 - i) * 2).Wait();
+					mMapLayer[x + mMapWidth * y] = 35;
+				}
+
+				mMapLayer[x + mMapWidth * y] = 35;
+			}
+
+			var animationTask = Task.Run(() =>
+			{
+				if (mAnimationEvent == 2)
+					RestRemains(9, 13);
+				else if (mAnimationEvent == 3)
+					RestRemains(9, 17);
+				else if (mAnimationEvent == 4)
+					RestRemains(9, 29);
+				else if (mAnimationEvent == 5)
+					RestRemains(20, 31);
+				else if (mAnimationEvent == 6)
+					RestRemains(20, 21);
+				else if (mAnimationEvent == 7)
+					RestRemains(20, 11);
+				else if (mAnimationEvent == 8)
+					RestRemains(aniX, aniY)
+			});
+
+			await animationTask;
+
+			mAnimationEvent = 0;
 		}
 
 		private void canvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
@@ -8610,6 +8992,8 @@ namespace Lore
 
 					if (mSpecialEvent == 1)
 						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(50, 71), Vector4.One);
+					else if (48 <= mSpecialEvent && mSpecialEvent <= 49)
+						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(14, 5), Vector4.One);
 				}
 			}
 		}
@@ -8632,6 +9016,8 @@ namespace Lore
 			if (mMapTiles != null)
 			{
 				if (mSpecialEvent == 1 && (index == 50 + mMapWidth * 71))
+					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				else if (48 <= mSpecialEvent && mSpecialEvent <= 49 && (index == 15 + mMapWidth * 6))
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				else
 				{
@@ -9676,7 +10062,8 @@ namespace Lore
 			ChooseGoldArmor,
 			JoinRedAntares,
 			JoinSpica,
-			QnA
+			QnA,
+			ReadScroll
 		}
 
 		private enum CureMenuState
