@@ -9977,8 +9977,12 @@ namespace Lore
 				else if (x == 50 && y == 29)
 				{
 					AppendText(new string[] { "", $"       [color={RGB.White}]오른쪽 : Hidra 의 보물창고[/color]",
-						$"         [color={RGB.White}]위쪽이 진짜 보물창고임[/color]" }, true);
+						$"         [color={RGB.White}]왼  쪽 : Hidra 가 있는 방[/color]" }, true);
 				}
+				else if (x == 65 && y == 12)
+					AppendText($"     [color={RGB.White}]일찌감치 이 곳 탐험을 포기해라[/color]", true);
+				else if (x == 8 && y == 27)
+					AppendText($"[color={RGB.White}]         위쪽이 진짜 보물창고임[/color]", true);
 			}
 			else if (mParty.Map == 19)
 			{
