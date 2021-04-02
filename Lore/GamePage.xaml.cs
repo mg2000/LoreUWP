@@ -159,6 +159,8 @@ namespace Lore
 		private volatile AnimationType mAnimationEvent = AnimationType.None;
 		private int mAnimationFrame = 0;
 
+		private bool mCureBattle = false;
+
 		private volatile bool mMoveEvent = false;
 
 		private Random mRand = new Random();
@@ -1098,6 +1100,43 @@ namespace Lore
 					await RefreshGame();
 				}
 
+				void AddBattleCommand(bool skip = false)
+				{
+					mMenuMode = MenuMode.None;
+
+					if (!skip)
+					{
+						mBattleCommandQueue.Enqueue(new BattleCommand()
+						{
+							Player = mPlayerList[mBattlePlayerID],
+							FriendID = mBattleFriendID,
+							Method = mBattleCommandID,
+							Tool = mBattleToolID,
+							EnemyID = mEnemyFocusID
+						});
+
+						if (mEnemyFocusID >= 0)
+							mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
+					}
+
+					do
+					{
+						mBattlePlayerID++;
+					} while (mBattlePlayerID < mPlayerList.Count && !mPlayerList[mBattlePlayerID].IsAvailable);
+
+					if (mBattlePlayerID < mPlayerList.Count)
+						BattleMode();
+					else
+					{
+						DialogText.TextHighlighters.Clear();
+						DialogText.Blocks.Clear();
+
+						mBattleTurn = BattleTurn.Player;
+
+						ExecuteBattle();
+					}
+				}
+
 				Debug.WriteLine($"키보드 Up 테스트: {args.VirtualKey}, " + mTriggeredDownEvent);
 
 				if (mMoveEvent || mLoading || (mAnimationEvent != AnimationType.None && ContinueText.Visibility != Visibility.Visible) || mTriggeredDownEvent)
@@ -1891,6 +1930,10 @@ namespace Lore
 
 					if (mSpecialEvent > 0)
 						await InvokeSpecialEventLaterPart();
+					else if (mCureBattle) {
+						mCureBattle = false;
+						AddBattleCommand(true);
+					}
 					else if (mPenetration == true)
 					{
 						mPenetration = false;
@@ -2174,40 +2217,6 @@ namespace Lore
 							mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.LightGray);
 						}
 
-						void AddBattleCommand()
-						{
-							mMenuMode = MenuMode.None;
-
-							mBattleCommandQueue.Enqueue(new BattleCommand()
-							{
-								Player = mPlayerList[mBattlePlayerID],
-								FriendID = mBattleFriendID,
-								Method = mBattleCommandID,
-								Tool = mBattleToolID,
-								EnemyID = mEnemyFocusID
-							});
-
-							if (mEnemyFocusID >= 0)
-								mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.Transparent);
-
-							do
-							{
-								mBattlePlayerID++;
-							} while (mBattlePlayerID < mPlayerList.Count && !mPlayerList[mBattlePlayerID].IsAvailable);
-
-							if (mBattlePlayerID < mPlayerList.Count)
-								BattleMode();
-							else
-							{
-								DialogText.TextHighlighters.Clear();
-								DialogText.Blocks.Clear();
-
-								mBattleTurn = BattleTurn.Player;
-
-								ExecuteBattle();
-							}
-						}
-
 						async Task LoadGame()
 						{
 							await LoadFile();
@@ -2446,9 +2455,10 @@ namespace Lore
 							{
 								mMenuMode = MenuMode.None;
 
-								mBattleFriendID = mMenuFocusID;
+								if (mMenuFocusID < mPlayerList.Count)
+									mMagicWhomPlayer = mPlayerList[mMenuFocusID];
 
-								ShowCureSpellMenu(mPlayerList[mBattlePlayerID], mMenuFocusID, MenuMode.ApplyBattleCureSpell, MenuMode.ApplyBattleCureSpell);
+								ShowCureSpellMenu(mPlayerList[mBattlePlayerID], mMenuFocusID, MenuMode.ApplyBattleCureSpell, MenuMode.ApplyBattleCureAllSpell);
 							}
 							else if (mMenuMode == MenuMode.ApplyCureMagic)
 							{
@@ -3888,9 +3898,7 @@ namespace Lore
 									{
 										if ((mParty.Etc[30] & 1) == 0)
 										{
-											AppendText(new string[] {
-												" 당신이 로어 성을 떠나려는 순간 누군가가 당신을 불렀다."
-											});
+											AppendText(" 당신이 로어 성을 떠나려는 순간 누군가가 당신을 불렀다.");
 
 											mTalkMode = 1;
 											mTalkX = mParty.XAxis;
@@ -4105,7 +4113,7 @@ namespace Lore
 								}
 								else
 								{
-									AppendText(new string[] { "" });
+									AppendText("");
 
 									if (mParty.Map == 27 && mParty.YAxis < 24)
 										mParty.YAxis++;
@@ -4321,9 +4329,27 @@ namespace Lore
 							{
 								mMenuMode = MenuMode.None;
 
-								mBattleToolID = mMenuFocusID;
+								DialogText.TextHighlighters.Clear();
+								DialogText.Blocks.Clear();
 
-								AddBattleCommand();
+								CureSpell(mPlayerList[mBattlePlayerID], mMagicWhomPlayer, mMenuFocusID);
+
+								ContinueText.Visibility = Visibility.Visible;
+
+								mCureBattle = true;
+							}
+							else if (mMenuMode == MenuMode.ApplyBattleCureAllSpell)
+							{
+								mMenuMode = MenuMode.None;
+
+								DialogText.TextHighlighters.Clear();
+								DialogText.Blocks.Clear();
+
+								CureAllSpell(mPlayerList[mBattlePlayerID], mMenuFocusID);
+
+								ContinueText.Visibility = Visibility.Visible;
+
+								mCureBattle = true;
 							}
 							else if (mMenuMode == MenuMode.BattleLose)
 							{
@@ -7174,51 +7200,51 @@ namespace Lore
 						ContinueText.Visibility = Visibility.Visible;
 						mSpecialEvent = 28;
 					}
-					else if (mParty.XAxis == 36 && mParty.YAxis == 30)
+				}
+				else if (mParty.XAxis == 36 && mParty.YAxis == 30)
+				{
+					if ((mParty.Etc[38] & (1 << 1)) == 0)
+						return;
+					else if ((mParty.Etc[38] & 1) > 0)
 					{
-						if ((mParty.Etc[38] & (1 << 1)) == 0)
-							return;
-						else if ((mParty.Etc[38] & 1) > 0)
+						if (mParty.Etc[4] > 0)
 						{
-							if (mParty.Etc[4] > 0)
+							var espLevel = 0;
+							foreach (var player in mPlayerList)
 							{
-								var espLevel = 0;
-								foreach (var player in mPlayerList)
-								{
-									if (player.Level[2] > espLevel)
-										espLevel = player.Level[2];
-								}
+								if (player.Level[2] > espLevel)
+									espLevel = player.Level[2];
+							}
 
-								if (espLevel < 5)
-									Talk(" 당신이 나의 마음을 읽으려 하지만 아직 당신의 능력으로는 나의 마음을 끌어낼수는 없습니다.");
-								else
-								{
-									AppendText(new string[] { " 갑자기 네크로맨서에게 대항 하고픈  결의가 생기는 군요. 나도 당신들을 도와 그를 무찌르겠습니다." });
+							if (espLevel < 5)
+								Talk(" 당신이 나의 마음을 읽으려 하지만 아직 당신의 능력으로는 나의 마음을 끌어낼수는 없습니다.");
+							else
+							{
+								AppendText(new string[] { " 갑자기 네크로맨서에게 대항 하고픈  결의가 생기는 군요. 나도 당신들을 도와 그를 무찌르겠습니다." });
 
-									ShowMenu(MenuMode.JoinSpica, new string[] {
+								ShowMenu(MenuMode.JoinSpica, new string[] {
 									"저도 원했던 바입니다",
 									"말씀은 고맙지만 사양하겠습니다"
 								});
-								}
-							}
-							else
-							{
-								Talk(" 지체할 시간이 없습니다. 신속히 행동을 취하십시오.");
 							}
 						}
-						else if ((mParty.Etc[38] & 1) == 0)
+						else
 						{
-							Talk($"[color={RGB.LightCyan}]여기에는 어떤 여자가 수도하고 있었다[/color]");
-							mSpecialEvent = 29;
+							Talk(" 지체할 시간이 없습니다. 신속히 행동을 취하십시오.");
 						}
 					}
-					else if (mParty.XAxis == 30 && mParty.Etc[14] < 4)
+					else if ((mParty.Etc[38] & 1) == 0)
 					{
-						AppendText(new string[] { "당신은 여기가 Huge Dragon의 거처임을 느꼈다" });
-
-						ContinueText.Visibility = Visibility.Visible;
-						mSpecialEvent = 30;
+						Talk($"[color={RGB.LightCyan}]여기에는 어떤 여자가 수도하고 있었다[/color]");
+						mSpecialEvent = 29;
 					}
+				}
+				else if (mParty.XAxis == 30 && mParty.Etc[14] < 4)
+				{
+					AppendText(new string[] { "당신은 여기가 Huge Dragon의 거처임을 느꼈다" });
+
+					ContinueText.Visibility = Visibility.Visible;
+					mSpecialEvent = 30;
 				}
 			}
 			else if (mParty.Map == 19)
@@ -10292,6 +10318,7 @@ namespace Lore
 			CastSpecial,
 			ChooseBattleCureSpell,
 			ApplyBattleCureSpell,
+			ApplyBattleCureAllSpell,
 			CastESP,
 			BattleLose,
 			AskEnter,
