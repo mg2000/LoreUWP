@@ -8922,7 +8922,7 @@ namespace Lore
 				else if (mAnimationEvent == 7)
 					RestRemains(20, 11);
 				else if (mAnimationEvent == 8)
-					RestRemains(aniX, aniY)
+					RestRemains(aniX, aniY);
 			});
 
 			await animationTask;
