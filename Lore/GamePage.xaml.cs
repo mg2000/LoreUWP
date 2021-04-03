@@ -126,7 +126,7 @@ namespace Lore
 		// 61~62 - 지식의 성전 유골 이벤트4
 		// 63~64 - 지식의 성전 유골 이벤트5
 		// 65 - 지식의 성전 스크롤 이벤트
-		private int mSpecialEvent = 0;
+		private SpecialEventType mSpecialEvent = SpecialEventType.None;
 
 		// 전투 이벤트
 		// 1 - 로어성 경비병과의 전투
@@ -303,7 +303,7 @@ namespace Lore
 
 			TypedEventHandler <CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
 			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
-			gamePageKeyDownEvent = async (sender, args) =>
+			gamePageKeyDownEvent = (sender, args) =>
 			{
 
 				Debug.WriteLine($"키보드 Down 테스트: {args.VirtualKey}");
@@ -801,7 +801,7 @@ namespace Lore
 							"  이제 블랙홀이 완전히 생겼군. 자! 나의 멋진 도전자 친구여 영원히 안녕 ! !'[/color]",
 						});
 
-						mSpecialEvent = 46;
+						mSpecialEvent = SpecialEventType.Ending;
 					}
 
 					mBattleCommandQueue.Clear();
@@ -906,7 +906,7 @@ namespace Lore
 							ContinueText.Visibility = Visibility.Visible;
 
 							mParty.Etc[14] = 2;
-							mSpecialEvent = 27;
+							mSpecialEvent = SpecialEventType.AfterBattleHydra;
 						}
 						else if (mBattleEvent == 7)
 							mParty.Etc[38] |= 1 << 2;
@@ -981,7 +981,7 @@ namespace Lore
 							ContinueText.Visibility = Visibility.Visible;
 
 							mBattleEvent = 0;
-							mSpecialEvent = 40;
+							mSpecialEvent = SpecialEventType.BattleFackNecromancer;
 							return;
 						}
 						else if (mBattleEvent == 22) {
@@ -990,7 +990,7 @@ namespace Lore
 
 							ContinueText.Visibility = Visibility.Visible;
 
-							mSpecialEvent = 41;
+							mSpecialEvent = SpecialEventType.AfterBattleFakeNecromancer;
 						}
 						else if (mBattleEvent == 23) {
 							for (var x = 23; x < 27; x++)
@@ -1000,7 +1000,7 @@ namespace Lore
 
 							ContinueText.Visibility = Visibility.Visible;
 
-							mSpecialEvent = 43;
+							mSpecialEvent = SpecialEventType.AfterBattlePanzerViper;
 						}
 						else if (mBattleEvent == 24)
 							WinNecromancer();
@@ -1058,7 +1058,7 @@ namespace Lore
 						else if (mBattleEvent == 21)
 						{
 							Talk(" 하지만 당신은 환상에서 벗어나지 못했다.");
-							mSpecialEvent = 39;
+							mSpecialEvent = SpecialEventType.FailRunawayBattleFakeNecromancer;
 
 							return;
 						}
@@ -1072,7 +1072,7 @@ namespace Lore
 							{
 								Talk($" [color={RGB.LightMagenta}]하지만 나에게 도전한 이상 도주는 허용할 수 없다는 점이 안타깝군.[/color]");
 
-								mSpecialEvent = 39;
+								mSpecialEvent = SpecialEventType.FailRunawayBattleNecromancer;
 								return;
 							}
 							else
@@ -1144,13 +1144,13 @@ namespace Lore
 					mTriggeredDownEvent = false;
 					return;
 				}
-				else if (mSpecialEvent == 3)
+				else if (mSpecialEvent == SpecialEventType.RefuseJoinSkeleton)
 				{
-					mSpecialEvent = 0;
+					mSpecialEvent = SpecialEventType.None;
 
 					await ExitCastleLore();
 				}
-				else if (mSpecialEvent == 4)
+				else if (mSpecialEvent == SpecialEventType.StartGame)
 				{
 					TalkMode(mTalkX, mTalkY, args.VirtualKey);
 				}
@@ -1158,12 +1158,12 @@ namespace Lore
 				{
 					async Task InvokeSpecialEventLaterPart()
 					{
-						if (mSpecialEvent == 1)
+						if (mSpecialEvent == SpecialEventType.MeetLoreSolider)
 						{
 							mParty.Etc[49] |= 1 << 4;
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 2)
+						else if (mSpecialEvent == SpecialEventType.MeetSkeleton)
 						{
 							mMoveEvent = true;
 							for (var y = mParty.YAxis - 4; y < mParty.YAxis; y++)
@@ -1175,15 +1175,15 @@ namespace Lore
 							mMoveEvent = false;
 
 							TalkMode(mTalkX, mTalkY, args.VirtualKey);
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 5)
+						else if (mSpecialEvent == SpecialEventType.MeetDraconian)
 						{
 							if ((mParty.Etc[15] & (1 << 1)) > 0)
 							{
 								AppendText(new string[] { "그러나, 아무도 살고 있지 않았다." });
 
-								mSpecialEvent = 0;
+								mSpecialEvent = SpecialEventType.None;
 							}
 							else if (mParty.Etc[4] == 0)
 							{
@@ -1198,7 +1198,7 @@ namespace Lore
 									" 당신은 시그너스 X1과 같은 블랙홀에 대해서 알고있을 것이오. 이런 물리학적인 파라독스에 의해 그는 생겨났던것이오."
 								});
 
-								mSpecialEvent = 6;
+								mSpecialEvent = SpecialEventType.MeetDraconian2;
 							}
 							else
 							{
@@ -1210,10 +1210,10 @@ namespace Lore
 									"별로 좋지는 않군요"
 								});
 
-								mSpecialEvent = 0;
+								mSpecialEvent = SpecialEventType.None;
 							}
 						}
-						else if (mSpecialEvent == 6)
+						else if (mSpecialEvent == SpecialEventType.MeetDraconian2)
 						{
 							Talk(new string[] {
 								" 지금 우리가 있는 3차원 위에 또 다른 차원이 있다고 생각하오?  생각은 하더라도 눈으로 확인은 못해봤을것이오. 우리는 2차원을 인식 할 수가 있소." +
@@ -1232,9 +1232,9 @@ namespace Lore
 								" 당신들의 건투를 빌어주겠소."
 							});
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 7)
+						else if (mSpecialEvent == SpecialEventType.MeetAncientEvil)
 						{
 							mParty.XAxis = 47;
 							mParty.YAxis = 56;
@@ -1242,9 +1242,9 @@ namespace Lore
 							Talk(" 여기는 EVIL GOD 라는 동굴이오. 여기의 보스는 Crab God인데 적 자체는 별거 아니지만  떼를 지어서 다니기 때문에 약간의 애를 먹을 것이오." +
 							" 7갈래의 길중에서 한곳에 봉인이 숨겨져 있을 것이오.");
 
-							mSpecialEvent = 8;
+							mSpecialEvent = SpecialEventType.MeetAncientEvil2;
 						}
-						else if (mSpecialEvent == 8)
+						else if (mSpecialEvent == SpecialEventType.MeetAncientEvil2)
 						{
 							mParty.XAxis = 81;
 							mParty.YAxis = 15;
@@ -1253,9 +1253,9 @@ namespace Lore
 							" 다만 동굴 자체가 어려운 미로라는 것과 시야가 좁아지는 불편등은 감수해야만 할 것이오." +
 							" 그리고 마지막에 3마리의 Dragon과 7마리의 Mud-Man을 거쳐야만 그가 나타나기 때문에 약간 까다로울 것이오.");
 
-							mSpecialEvent = 9;
+							mSpecialEvent = SpecialEventType.MeetAncientEvil3;
 						}
-						else if (mSpecialEvent == 9)
+						else if (mSpecialEvent == SpecialEventType.MeetAncientEvil3)
 						{
 							mParty.XAxis = 15;
 							mParty.YAxis = 14;
@@ -1263,9 +1263,9 @@ namespace Lore
 							Talk(" 여기는 이 대륙의 외진곳이오. 여기서는 어떤 만남이 기다리고 있을 것이오.");
 
 							mParty.Etc[15] |= 1;
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 10)
+						else if (mSpecialEvent == SpecialEventType.EnterSwampGate)
 						{
 							Talk(new string[] {
 								$" 나는 LORE 성의 성주 [color={RGB.LightCyan}]Lord Ahn[/color]이오.",
@@ -1273,16 +1273,16 @@ namespace Lore
 								" 그래서 나도 직접적인 도움은 못 주더라도 여러가지 조언을 해주겠소."
 							});
 
-							mSpecialEvent = 11;
+							mSpecialEvent = SpecialEventType.EnterSwampGate2;
 						}
-						else if (mSpecialEvent == 11)
+						else if (mSpecialEvent == SpecialEventType.EnterSwampGate2)
 						{
 							Talk(" 당신들은 식량을 많이 가지고 있소?  이 식량은 당신들을 회복시키기  위해  필요한 것이니 절대 바닥나게 해서는 안되오." +
 							" 왜냐하면 이 이후에 전개되는 모험에서는 식량을 파는곳이 거의 없다고 생각해도 될만큼 식량이 귀중하므로 낭패를 보는일이 없도록 하시오.");
 
-							mSpecialEvent = 12;
+							mSpecialEvent = SpecialEventType.EnterSwampGate3;
 						}
-						else if (mSpecialEvent == 12)
+						else if (mSpecialEvent == SpecialEventType.EnterSwampGate3)
 						{
 							Talk(new string[] {
 								" SWAMP의 대륙에서의 할일을 요약하면 이렇소.",
@@ -1292,16 +1292,16 @@ namespace Lore
 								" 그때까지 건투를 비는 바이오."
 							});
 
-							mParty.Etc[34] |= (1 << 5);
-							mSpecialEvent = 13;
+							mParty.Etc[34] |= 1 << 5;
+							mSpecialEvent = SpecialEventType.EnterSwampGate4;
 						}
-						else if (mSpecialEvent == 13)
+						else if (mSpecialEvent == SpecialEventType.EnterSwampGate4)
 						{
 							await EnterSwampGate();
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 14)
+						else if (mSpecialEvent == SpecialEventType.FindOedipusSpear)
 						{
 							Talk(new string[] {
 								"그 창의 손잡이에 쓰인 문구를 따르면..",
@@ -1310,17 +1310,17 @@ namespace Lore
 								$"   [color={RGB.LightCyan}]이것으로 전에 Sphinx 를 무찌르다[/color]"
 							});
 
-							mSpecialEvent = 15;
+							mSpecialEvent = SpecialEventType.FindOedipusSpear2;
 						}
-						else if (mSpecialEvent == 15)
+						else if (mSpecialEvent == SpecialEventType.FindOedipusSpear2)
 						{
-							AppendText(new string[] { $"[color={RGB.LightCyan}]누가 오이디푸스의 창을 다루겠습니까 ?[/color]" });
+							AppendText($"[color={RGB.LightCyan}]누가 오이디푸스의 창을 다루겠습니까 ?[/color]");
 
 							ShowCharacterMenu(MenuMode.ChooseOedipusSpear);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 16)
+						else if (mSpecialEvent == SpecialEventType.MajorMummyRoom)
 						{
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 2; i++)
@@ -1336,7 +1336,7 @@ namespace Lore
 							majorMummy.Name = "Major Mummy";
 							majorMummy.AC = 1;
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 2;
 
 							HideMap();
@@ -1344,7 +1344,7 @@ namespace Lore
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 17)
+						else if (mSpecialEvent == SpecialEventType.MeetRigel)
 						{
 							AppendText(new string[] {
 							$" 나는 VALIANT PEOPLES 의 용사였던 [color={RGB.LightCyan}]Rigel[/color]이오." +
@@ -1359,28 +1359,28 @@ namespace Lore
 								"당신을 도와줄 시간이 없소"
 							});
 						}
-						else if (mSpecialEvent == 18)
+						else if (mSpecialEvent == SpecialEventType.EnterEvilConcentration)
 						{
 							mBattleEvent = 3;
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 19)
+						else if (mSpecialEvent == SpecialEventType.FindGoldenShield)
 						{
-							AppendText(new string[] { $"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]" }, true);
+							AppendText($"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]", true);
 
 							ShowCharacterMenu(MenuMode.ChooseGoldShield2);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 20)
+						else if (mSpecialEvent == SpecialEventType.FindGoldenArmor)
 						{
-							AppendText(new string[] { $"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]" }, true);
+							AppendText($"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]", true);
 
 							ShowCharacterMenu(MenuMode.ChooseGoldArmor);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 21)
+						else if (mSpecialEvent == SpecialEventType.BattleArchiGagoyle)
 						{
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 2; i++)
@@ -1392,7 +1392,7 @@ namespace Lore
 							var majorMummy = JoinEnemy(41);
 							majorMummy.Name = "ArchiGagoyle";
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 4;
 
 							HideMap();
@@ -1400,13 +1400,13 @@ namespace Lore
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 22)
+						else if (mSpecialEvent == SpecialEventType.BattleWivern)
 						{
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 3 - mParty.Etc[36]; i++)
 								JoinEnemy(42);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 5;
 
 							HideMap();
@@ -1414,7 +1414,7 @@ namespace Lore
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 23)
+						else if (mSpecialEvent == SpecialEventType.MeetRedAntares)
 						{
 							Talk(new string[] {
 								$"나는 고대의 강력한 마법사 였던 [color={RGB.LightCyan}]Red Antares[/color]의 영이오.",
@@ -1424,9 +1424,9 @@ namespace Lore
 								" 만약 당신들의 마법 능력이 도달한다면  다음의 마법을 사용할수 있을 것이오."
 							});
 
-							mSpecialEvent = 24;
+							mSpecialEvent = SpecialEventType.MeetRedAntares2;
 						}
-						else if (mSpecialEvent == 24)
+						else if (mSpecialEvent == SpecialEventType.MeetRedAntares2)
 						{
 							Talk(new string[] {
 								$"[color={RGB.White}]1.     독      - 적을 중독 시킴[/color]",
@@ -1437,9 +1437,9 @@ namespace Lore
 								$"[color={RGB.White}]6. 탈   초인화 - 적의 초자연력 제거[/color]"
 							});
 
-							mSpecialEvent = 25;
+							mSpecialEvent = SpecialEventType.MeetRedAntares3;
 						}
-						else if (mSpecialEvent == 25)
+						else if (mSpecialEvent == SpecialEventType.MeetRedAntares3)
 						{
 							Talk(new string[] {
 								" 이 여섯가지의 마법은 사용하기 까다롭고  직접적인 공격은 아니지만 큰 도움을 줄것이오.",
@@ -1447,9 +1447,9 @@ namespace Lore
 							});
 
 							mParty.Etc[37] |= 1;
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 26)
+						else if (mSpecialEvent == SpecialEventType.BattleHydra)
 						{
 							mAnimationEvent = AnimationType.None;
 							mAnimationFrame = 0;
@@ -1466,7 +1466,7 @@ namespace Lore
 							mEncounterEnemyList[2].Level = 10;
 							mEncounterEnemyList[2].ENumber = 38;
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 6;
 
 							HideMap();
@@ -1474,19 +1474,22 @@ namespace Lore
 
 							StartBattle();
 						}
-						else if (mSpecialEvent == 27)
+						else if (mSpecialEvent == SpecialEventType.AfterBattleHydra)
 						{
 							mParty.XAxis = 55;
 							mParty.YAxis = 92;
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 28)
+						else if (mSpecialEvent == SpecialEventType.BattleMinotaur)
 						{
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
 							mEncounterEnemyList.Clear();
 							JoinEnemy(52);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 7;
 
 							HideMap();
@@ -1494,7 +1497,7 @@ namespace Lore
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 29)
+						else if (mSpecialEvent == SpecialEventType.MeetSpica)
 						{
 							Talk(new string[] {
 								" 나는 이곳 LOCKUP이 적들에게 점령되기전  부터 여기서 수도하고 있는 Spica란 사람입니다",
@@ -1510,10 +1513,13 @@ namespace Lore
 							});
 
 							mParty.Etc[38] |= 1;
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 30)
+						else if (mSpecialEvent == SpecialEventType.BattleHugeDragon)
 						{
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
 							mEncounterEnemyList.Clear();
 							var enemy = JoinEnemy(53);
 							enemy.Name = "Huge Dragon";
@@ -1524,7 +1530,7 @@ namespace Lore
 								JoinEnemy(mRand.Next(3) + 29);
 							}
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 8;
 
 							HideMap();
@@ -1532,19 +1538,19 @@ namespace Lore
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 31)
+						else if (mSpecialEvent == SpecialEventType.BattleCrabGod)
 						{
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 10;
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 32)
+						else if (mSpecialEvent == SpecialEventType.BattleMinotaur2)
 						{
 							mEncounterEnemyList.Clear();
 							JoinEnemy(52);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 11;
 
 							HideMap();
@@ -1552,13 +1558,13 @@ namespace Lore
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 33)
+						else if (mSpecialEvent == SpecialEventType.BattleThreeDragon)
 						{
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 3; i++)
 								JoinEnemy(53);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 12;
 
 							HideMap();
@@ -1566,28 +1572,28 @@ namespace Lore
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 34)
+						else if (mSpecialEvent == SpecialEventType.BattleAstralMud)
 						{
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 14;
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 35)
+						else if (mSpecialEvent == SpecialEventType.ExitDungeonOfEvil)
 						{
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 17;
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 36)
+						else if (mSpecialEvent == SpecialEventType.BattleDeathKnight)
 						{
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 18;
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == 37)
+						else if (mSpecialEvent == SpecialEventType.MeetFaceNecromancer)
 						{
 							Talk(new string[] {
 								$" [color={RGB.LightMagenta}]너희들은 곧 환상에 빠져들게 될 것이다.[/color]",
@@ -1607,33 +1613,33 @@ namespace Lore
 								enemy.ENumber = 1;
 							}
 
-							mSpecialEvent = 38;
+							mSpecialEvent = SpecialEventType.BattleDual;
 						}
-						else if (mSpecialEvent == 38)
+						else if (mSpecialEvent == SpecialEventType.BattleDual)
 						{
 							mBattleEvent = 21;
 
 							StartBattle(false);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 39)
+						else if (mSpecialEvent == SpecialEventType.FailRunawayBattleFakeNecromancer)
 						{
 							mBattleEvent = 21;
 
 							StartBattle(false);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 40)
+						else if (mSpecialEvent == SpecialEventType.BattleFackNecromancer)
 						{
 							mBattleEvent = 22;
 
 							StartBattle(false);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 41)
+						else if (mSpecialEvent == SpecialEventType.AfterBattleFakeNecromancer)
 						{
 							Talk(" 그는 숨이 끊어졌고 주위의 기둥도 그와 함께 사라져 버렸다.");
 
@@ -1645,9 +1651,9 @@ namespace Lore
 									mMapLayer[x + mMapWidth * y] = 46;
 							}
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 42)
+						else if (mSpecialEvent == SpecialEventType.BattlePanzerViper)
 						{
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 4; i++)
@@ -1661,9 +1667,9 @@ namespace Lore
 
 							StartBattle(false);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 43)
+						else if (mSpecialEvent == SpecialEventType.AfterBattlePanzerViper)
 						{
 							mEncounterEnemyList.Clear();
 							JoinEnemy(67);
@@ -1684,9 +1690,9 @@ namespace Lore
 								player.Class = 10;
 							}
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 45)
+						else if (mSpecialEvent == SpecialEventType.BattleNecromancer)
 						{
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 7; i++)
@@ -1701,28 +1707,28 @@ namespace Lore
 
 							StartBattle(false);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 45)
+						else if (mSpecialEvent == SpecialEventType.FailRunawayBattleNecromancer)
 						{
 							mBattleEvent = 24;
 
 							StartBattle(false);
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 46)
+						else if (mSpecialEvent == SpecialEventType.Ending)
 						{
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 47)
+						else if (mSpecialEvent == SpecialEventType.MeetAhnInLastShelter)
 						{
 							mParty.Etc[42] |= 1 << 3;
 							mMapLayer[32 + mMapWidth * 9] = 47;
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 48)
+						else if (mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore)
 						{
 							Talk(new string[] {
 								" 당신과는 초면이 아니지요? LORE 성에서도 봤으니까 말이죠." +
@@ -1732,15 +1738,15 @@ namespace Lore
 								" 여기서 얻은 정보는 모두 당신의 운명을 더욱 더 모질게 만들어 버릴 것들이지만, 만약 당신이 알지 못한다면 더더욱 더 당신을 힘겹게 하는 것들만 있지요." +
 								"  당신의 현명한 판단에 모든걸 맡기도록 하지요." });
 
-							mSpecialEvent = 49;
+							mSpecialEvent = SpecialEventType.MeetAhnInAnotherLore2;
 						}
-						else if (mSpecialEvent == 49)
+						else if (mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore2)
 						{
 							mMapLayer[14 + mMapWidth * 5] = 52;
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 50)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfDeneb)
 						{
 							Talk(new string[] {
 								" 오! 당신이 나의 잠을 깨웠나 ?",
@@ -1749,9 +1755,9 @@ namespace Lore
 								"  만약 그 사람들을 만나지 않고  지나쳐 버린다거나 못 만나는 경우가 생긴다면 절대로 네크로맨서 를 물리치지 못할걸세.  그렇다면 당신이 꼭 만나야 할 사람들을 말해 보겠네."
 							});
 
-							mSpecialEvent = 51;
+							mSpecialEvent = SpecialEventType.MeetWillOfDeneb2;
 						}
-						else if (mSpecialEvent == 51)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfDeneb2)
 						{
 							Talk(new string[] {
 								$"[color={RGB.White}] Red Antares[/color]",
@@ -1760,9 +1766,9 @@ namespace Lore
 								" 하지만 지금이 그가 말한때라는 걸 그의 영혼이 알수있게만 한다면,  그는 다시금 최강의 마법사로 부활해서 당신들을 도와주게 되는 사람이지."
 							});
 
-							mSpecialEvent = 52;
+							mSpecialEvent = SpecialEventType.MeetWillOfDeneb3;
 						}
-						else if (mSpecialEvent == 52)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfDeneb3)
 						{
 							Talk(new string[] {
 								$"[color={RGB.White}] Spica[/color]",
@@ -1772,9 +1778,9 @@ namespace Lore
 								"  그리고, 그녀가 있는 곳은 바로 물로 덮인 대륙의 Dragon 이 사는 동굴의 어느 깊숙한 곳이라네."
 							});
 
-							mSpecialEvent = 53;
+							mSpecialEvent = SpecialEventType.MeetWillOfDeneb4;
 						}
-						else if (mSpecialEvent == 53)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfDeneb4)
 						{
 							Talk(new string[] {
 								$"[color={RGB.White}] Ancient Evil[/color]",
@@ -1783,25 +1789,25 @@ namespace Lore
 								"  그는  당신의 미래를 쉽게 풀어주고, 또 새로운 만남을 이어주게 될걸세."
 							});
 
-							mSpecialEvent = 54;
+							mSpecialEvent = SpecialEventType.MeetWillOfDeneb5;
 						}
-						else if (mSpecialEvent == 54)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfDeneb5)
 						{
 							Talk(new string[] {
 								$" 이 외에도 Polaris, Jr.Antares, Lore Hunter, Rigel 등등의 사람들을 수도 없이 만나게 되겠지만 반드시 당신에게 도움을 주지만은 않을 것이며," +
 								"만약 당신이 남을 도와 준다면 반드시 그도  당신에게 보이지 않는 도움을 주게 될거라는 말을 끝으로  나는 다시 몇천년의 잠으로 빠져들어야 겠네. 그럼 안녕히 ..."
 							});
 
-							mSpecialEvent = 55;
+							mSpecialEvent = SpecialEventType.MeetWillOfDeneb6;
 						}
-						else if (mSpecialEvent == 55)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfDeneb6)
 						{
 							mAnimationEvent = AnimationType.Remains1;
 							InvokeAnimation();
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 56)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfSirius)
 						{
 							Talk(new string[] {
 								" 당신과 나의 만남은 어렇듯 운명적이네. 나는 당신이 이때쯤 나를 찾아오리라고 내가 잠들기 전 몇 천년 전에 이미 알고 있었다네.",
@@ -1813,9 +1819,9 @@ namespace Lore
 								"  이해가 가지 않을거라고 나도 생각하면서도 달리 설명할 방도가 없어서 이런 애매한 말만 되풀이 할 뿐이네."
 							});
 
-							mSpecialEvent = 57;
+							mSpecialEvent = SpecialEventType.MeetWillOfSirius2;
 						}
-						else if (mSpecialEvent == 57)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfSirius2)
 						{
 							Talk(new string[] {
 								" 더 자세한 운명을 알고 싶다면 스왐프 게이트에 있는 피라밋의 예언서를 읽어 보게나. 그러면 더 이해가 빠를걸세.",
@@ -1824,16 +1830,16 @@ namespace Lore
 								" 그럼 우리의 만남은  다음 공간의 또 다른 운명에 의해 다시 시작될걸세. 그럼 그때까지 안녕히!"
 							});
 
-							mSpecialEvent = 58;
+							mSpecialEvent = SpecialEventType.MeetWillOfSirius3;
 						}
-						else if (mSpecialEvent == 58)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfSirius3)
 						{
 							mAnimationEvent = AnimationType.Remains2;
 							InvokeAnimation();
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 59)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfAlbireo)
 						{
 							Talk(new string[] {
 								$" 나는 이 세계의 운명을 담당하는 [color={RGB.LightRed}]알비레오의 의지[/color]라고 하오." +
@@ -1846,16 +1852,16 @@ namespace Lore
 								" 또한, 현재의 증오가 미래의 증오가 되지도 않을 것이오. 그리고 결국에는 네크로맨서를 용서하시오."
 							});
 
-							mSpecialEvent = 60;
+							mSpecialEvent = SpecialEventType.MeetWillOfAlbireo2;
 						}
-						else if (mSpecialEvent == 60)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfAlbireo2)
 						{
 							mAnimationEvent = AnimationType.Remains3;
 							InvokeAnimation();
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 61)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfCanopus)
 						{
 							Talk(new string[] {
 								$" 안녕하시오. 나는 네크로맨서 의 운명을 관장하고 있는 [color={RGB.LightRed}]카노푸스의 의지[/color]라고 하오." +
@@ -1864,7 +1870,14 @@ namespace Lore
 								" 그리고 또 여기서  다시 그의 운명을 시작하려 하고 있소. 이 공간 하나 밖에 인식하지 못하는 인간의 사고로는 별 가치가 없는 일이지만," +
 								"  운명을 따르기 위해 다음 공간에서도 같은 운명을 반복해야 한다는 그 금단의 이치는  분명 그도 따르고 싶지 않았을 것이오." +
 								" 하지만 그는 그 자신도 그것이 절대 바뀔수 없는  패러독스라는걸 알고 있을게요.  네크로맨서 그 자신은 정말 불행한 존재라오." +
-								"  스스로의 운명을 등에 지고  힘겹게 차원을 쫓기어 다니는 힘없는 짐승일 뿐이오.",
+								"  스스로의 운명을 등에 지고  힘겹게 차원을 쫓기어 다니는 힘없는 짐승일 뿐이오."
+							});
+
+							mSpecialEvent = SpecialEventType.MeetWillOfCanopus2;
+						}
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfCanopus2)
+						{
+							Talk(new string[] {
 								" 당신이  마지막의 그에게  받을수 있는 느낌은 진정한 마음에서 우러나오는 동정일것이오.  당신은  저번 공간에서도 역시 그것을 느꼈소." +
 								" 하지만 그때의 기억은  당신이 이 세계에 그를 물리치려는 운명을 지니고 다시 태어났을때  이미 사라져 버렸소. 당신은 내말을 이해하지 못하겠지만 그것은 사실이오." +
 								"  지금은  그를 증오로서 맞이하려 하겠지만 그 증오는 다시 다음 공간으로 이어지려하오.  당신이 그를 물리 친다고 하여도 다시 다음 공간에서도 지금과 같은 대립을 반복할 뿐이오." +
@@ -1872,16 +1885,16 @@ namespace Lore
 								$"[color={RGB.White}] 당신은 결국 네크로맨서를 동정 할지 모르오. 하지만 결코 그만이 동정의 대상이 아니오.  결국은  그와 연관되어 운명이 결정지워진 당신도 예외가 될수는 없소.[/color]"
 							});
 
-							mSpecialEvent = 62;
+							mSpecialEvent = SpecialEventType.MeetWillOfCanopus3;
 						}
-						else if (mSpecialEvent == 62)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfCanopus3)
 						{
 							mAnimationEvent = AnimationType.Remains4;
 							InvokeAnimation();
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 63)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfArcturus)
 						{
 							Talk(new string[] {
 								$" 당신 앞의 유골은 바로 나의것이오. 나를 소개 하자면 [color={RGB.LightRed}]아크투루스의 의지[/color]라고 불리우는 존재로 서 Ancient Evil의 운명을 관장하고 있소." +
@@ -1889,28 +1902,35 @@ namespace Lore
 								" 그는 로드 안과 대립하는 운명을 지니고 세상에 존재하게 되었소.  마치 당신과 네크로맨서와 같이 말이오." +
 								" 로드 안과의 대립 관계란 운명 때문에  그는 그의 모든 성격을 포기한채 로드 안을 위하여 악의 편에 서게 되었던 것이오." +
 								" 그때, 둘중에 누구 하나가 악의 대표가 되지 않으면 안되었고  로드 안은 결코 세인의 지탄을 받는 악을 대표하려고 하지 않음으로 해서  그가 직접 악의 대표가 되기로 하였던 것이오." +
-								" 하지만 원래 그의 마음은 극도의 선에 있었기 때문에  결국 그의 악이란 악의 대표 정도 밖에는 될수없었던 것이오." +
-								" 하지만 반대로 로드 안의 입장에서는  그를 계속 비판하며 사람들에게  선의 개념을 심어주려 하였으므로 결국은 그에 대한 철저한 조작으로 위장해서 그를 비하 시키고 자신을 부각 시켜," +
+								" 하지만 원래 그의 마음은 극도의 선에 있었기 때문에  결국 그의 악이란 악의 대표 정도 밖에는 될수없었던 것이오."
+							});
+
+							mSpecialEvent = SpecialEventType.MeetWillOfArcturus2;
+						}
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfArcturus2)
+						{
+							Talk(new string[] {
+							" 하지만 반대로 로드 안의 입장에서는  그를 계속 비판하며 사람들에게  선의 개념을 심어주려 하였으므로 결국은 그에 대한 철저한 조작으로 위장해서 그를 비하 시키고 자신을 부각 시켜," +
 								" 어릴때 부터 선과 악의 개념을 구분 시키고  악을 배척하는 생활을 하여 사회를 순탄하게 이끌어 나가려고 하였소. 물론 로드 안의 생각이 틀렸다고는 할수 없소." +
 								"  그게 로드 안의 운명이라 할수 있기 때문이오. 항상 로드 안의 마음도 편하지 않다는 걸 알고 있소. 절친한 동반자인 그를 적으로 돌려 버린것도  그의 운명을 벗어날 수 없었기 때문이오." +
 								" 그리고 그들의 경지는 반신 반인이라는 최고의 경지에 올랐소.  당신 역시 네크로맨서에게 도전하고자 한다면 그 경지에 다다라야 하오. 분명 그들 둘의 능력으로는 당신과 당신 일행들을 반신 반인으로 만들어 줄수 있을것이오."
 							});
 
-							mSpecialEvent = 64;
+							mSpecialEvent = SpecialEventType.MeetWillOfArcturus3;
 						}
-						else if (mSpecialEvent == 64)
+						else if (mSpecialEvent == SpecialEventType.MeetWillOfArcturus3)
 						{
 							mAnimationEvent = AnimationType.Remains5;
 							InvokeAnimation();
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
-						else if (mSpecialEvent == 65)
+						else if (mSpecialEvent == SpecialEventType.ReadScroll)
 						{
 							mAnimationEvent = AnimationType.Remains6;
 							InvokeAnimation();
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 						}
 					}
 
@@ -2232,7 +2252,7 @@ namespace Lore
 							mBatteEnemyQueue.Clear();
 							mBattleTurn = BattleTurn.None;
 
-							mSpecialEvent = 0;
+							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 0;
 
 							ShowMap();
@@ -3060,7 +3080,7 @@ namespace Lore
 								}
 								else if (mMenuFocusID == 3)
 								{
-									LoadGame();
+									await LoadGame();
 								}
 								else if (mMenuFocusID == 4)
 								{
@@ -3903,7 +3923,7 @@ namespace Lore
 											mTalkMode = 1;
 											mTalkX = mParty.XAxis;
 											mTalkY = mParty.YAxis;
-											mSpecialEvent = 2;
+											mSpecialEvent = SpecialEventType.MeetSkeleton;
 
 											ContinueText.Visibility = Visibility.Visible;
 										}
@@ -4075,7 +4095,7 @@ namespace Lore
 
 											Talk($"[color={RGB.LightCyan}]{mPlayerList[0].Name}, 나의 힘을 보여주겠다.");
 
-											mSpecialEvent = 35;
+											mSpecialEvent = SpecialEventType.ExitDungeonOfEvil;
 										}
 									}
 									else if (mParty.Map == 23)
@@ -4135,7 +4155,7 @@ namespace Lore
 								else if (mMenuFocusID == 1)
 								{
 									ShowNoThanks();
-									mSpecialEvent = 3;
+									mSpecialEvent = SpecialEventType.RefuseJoinSkeleton;
 								}
 							}
 							else if (mMenuMode == MenuMode.BattleStart)
@@ -4467,7 +4487,7 @@ namespace Lore
 												if ((mParty.Etc[34] & (1 << 5)) == 0)
 												{
 													Talk($"[color={RGB.White}] SWAMP GATE 로 들어가고 있는 당신에게  허공에서 갑자가 누군가가 말을 꺼낸다[/color]");
-													mSpecialEvent = 10;
+													mSpecialEvent = SpecialEventType.EnterSwampGate;
 												}
 												else
 													await EnterSwampGate();
@@ -4621,7 +4641,7 @@ namespace Lore
 
 												Talk("나는 EVIL CONCENTRATION 성의 입구를 지키는 임무를 맡고 있는 Frost Dragon이다.  내가 지키고 있는한  너희들은 한 발자국도  들여놓지 않을것이다.");
 
-												mSpecialEvent = 18;
+												mSpecialEvent = SpecialEventType.EnterEvilConcentration;
 											}
 											else
 											{
@@ -4817,7 +4837,7 @@ namespace Lore
 								}
 
 								mParty.Etc[30] |= 1 << 1;
-								mSpecialEvent = 0;
+								mSpecialEvent = SpecialEventType.None;
 							}
 							else if (mMenuMode == MenuMode.ChooseGoldShield2)
 							{
@@ -4976,7 +4996,7 @@ namespace Lore
 									" 네크로맨서 는 해안으로 밀려나리라."
 								});
 
-								mSpecialEvent = 65;
+								mSpecialEvent = SpecialEventType.ReadScroll;
 							}
 						}
 					}
@@ -6677,7 +6697,7 @@ namespace Lore
 				else if (mParty.XAxis == 25 && mParty.YAxis == 15)
 				{
 					Talk(" 여기는 인간과 드래곤의 중간 종족이며  혼란스런 세상을 피해 은둔하고있는 Draconian이란자가 살고있는 피라밋이었다.");
-					mSpecialEvent = 5;
+					mSpecialEvent = SpecialEventType.MeetDraconian;
 				}
 				else if (mParty.XAxis == 19 && mParty.YAxis == 38)
 				{
@@ -6695,7 +6715,7 @@ namespace Lore
 							" 사실이야 어떻든 당신에게 이 대륙에서의  할 일을 말해 주겠소."
 						});
 
-						mSpecialEvent = 7;
+						mSpecialEvent = SpecialEventType.MeetAncientEvil;
 					}
 				}
 			}
@@ -6912,7 +6932,7 @@ namespace Lore
 				else if (mParty.YAxis == 43 && (mParty.Etc[32] & (1 << 7)) == 0)
 				{
 					Talk("당신은 어떤 창을 발견했다.");
-					mSpecialEvent = 14;
+					mSpecialEvent = SpecialEventType.FindOedipusSpear;
 				}
 				else if (mParty.YAxis == 45)
 				{
@@ -6922,7 +6942,7 @@ namespace Lore
 				{
 					Talk($"[color={RGB.LightCyan}]당신은 미이라의 방을 발견했다.[/color]");
 
-					mSpecialEvent = 16;
+					mSpecialEvent = SpecialEventType.MajorMummyRoom;
 				}
 			}
 			else if (mParty.Map == 12)
@@ -6966,11 +6986,11 @@ namespace Lore
 				{
 					Talk(" 일행들은 심한 부상 때문에 거의 몸을 가누지 못하는 한 남자와 마주쳤다.");
 
-					mSpecialEvent = 17;
+					mSpecialEvent = SpecialEventType.MeetRigel;
 				}
 				else if (mParty.Etc[3] == 0 && !(mParty.XAxis == 11 && mParty.YAxis == 47))
 				{
-					AppendText(new string[] { "일행들은 절벽으로 떨어질뻔 했다." });
+					AppendText("일행들은 절벽으로 떨어질뻔 했다.");
 
 					mParty.XAxis = prevX;
 					mParty.YAxis = prevY;
@@ -7061,19 +7081,19 @@ namespace Lore
 				{
 					Talk($"[color={RGB.White}]당신은 황금의 방패를 발견했다.[/color]");
 
-					mSpecialEvent = 19;
+					mSpecialEvent = SpecialEventType.FindGoldenShield;
 				}
 				else if (mParty.XAxis == 44 && mParty.YAxis == 18 && (mParty.Etc[36] & (1 << 3)) == 0)
 				{
 					Talk($"[color={RGB.White}]당신은 황금의 갑옷을 발견했다.[/color]");
 
-					mSpecialEvent = 20;
+					mSpecialEvent = SpecialEventType.FindGoldenArmor;
 				}
 				else if (mParty.YAxis == 26 && mParty.Etc[13] == 4)
 				{
 					Talk($"[color={RGB.LightCyan}]당신은 ArchiGagoyle과 두마리의 Zombie를 발견했다.[/color]");
 
-					mSpecialEvent = 21;
+					mSpecialEvent = SpecialEventType.BattleArchiGagoyle;
 				}
 			}
 			else if (mParty.Map == 16)
@@ -7099,7 +7119,7 @@ namespace Lore
 						}
 
 						Talk($"[color={RGB.LightCyan}]당신은 {wivernCountStr}마리의 Wivern과 마주쳤다.[/color]");
-						mSpecialEvent = 22;
+						mSpecialEvent = SpecialEventType.BattleWivern;
 					}
 					else
 						AppendText(new string[] { $"[color={RGB.White}]여기에는 Wivern의 시체만이 있다.[/color]" });
@@ -7148,7 +7168,7 @@ namespace Lore
 							}
 
 							Talk("갑자기 주위가 용암으로 변하면서 한 영혼이 당신앞에 나타났다.");
-							mSpecialEvent = 23;
+							mSpecialEvent = SpecialEventType.MeetRedAntares;
 						}
 					}
 				}
@@ -7192,7 +7212,8 @@ namespace Lore
 				{
 					mMapLayer[21 + mMapWidth * 40] = 44;
 					mMapLayer[20 + mMapWidth * 40] = 52;
-
+				}
+				else if (mParty.XAxis == 20 && mParty.YAxis == 40) { 
 					if ((mParty.Etc[38] & (1 << 2)) == 0)
 					{
 						if (mParty.Etc[0] == 0)
@@ -7201,17 +7222,15 @@ namespace Lore
 							ShowMap();
 						}
 
-						AppendText(new string[] { $"[color={RGB.LightCyan}]미로속에서 소를 닮은 괴물이 나타났다[/color]" });
+						AppendText($"[color={RGB.LightCyan}]미로속에서 소를 닮은 괴물이 나타났다[/color]");
 
-						// 미노타우루스 등장 애니메이션
-
-						ContinueText.Visibility = Visibility.Visible;
-						mSpecialEvent = 28;
+						mAnimationEvent = AnimationType.Minotaur;
+						InvokeAnimation();
 					}
 				}
 				else if (mParty.XAxis == 36 && mParty.YAxis == 30)
 				{
-					if ((mParty.Etc[38] & (1 << 1)) == 0)
+					if ((mParty.Etc[38] & (1 << 1)) > 0)
 						return;
 					else if ((mParty.Etc[38] & 1) > 0)
 					{
@@ -7244,15 +7263,15 @@ namespace Lore
 					else if ((mParty.Etc[38] & 1) == 0)
 					{
 						Talk($"[color={RGB.LightCyan}]여기에는 어떤 여자가 수도하고 있었다[/color]");
-						mSpecialEvent = 29;
+						mSpecialEvent = SpecialEventType.MeetSpica;
 					}
 				}
 				else if (mParty.XAxis == 30 && mParty.Etc[14] < 4)
 				{
 					AppendText(new string[] { "당신은 여기가 Huge Dragon의 거처임을 느꼈다" });
 
-					ContinueText.Visibility = Visibility.Visible;
-					mSpecialEvent = 30;
+					mAnimationEvent = AnimationType.HugeDragon;
+					InvokeAnimation();
 				}
 			}
 			else if (mParty.Map == 19)
@@ -7337,7 +7356,7 @@ namespace Lore
 						DisplayEnemy();
 
 						Talk("나는 EVIL GOD의 봉인을 지키고 있는 CRAB GOD의 왕이다. CRAB GOD 족의 명예를 걸고 절대로 너희 같은 자들에게 봉인을 넘겨주지 않겠다!!");
-						mSpecialEvent = 31;
+						mSpecialEvent = SpecialEventType.BattleCrabGod;
 					}
 				}
 			}
@@ -7539,7 +7558,7 @@ namespace Lore
 					// 미노타우루스 등장 애니메이션
 
 					ContinueText.Visibility = Visibility.Visible;
-					mSpecialEvent = 32;
+					mSpecialEvent = SpecialEventType.BattleMinotaur2;
 				}
 				else if (mParty.YAxis == 12) {
 					CheckMuddyFinalBattle();
@@ -7599,7 +7618,7 @@ namespace Lore
 
 						Talk($"[color={RGB.LightCyan}] 나는 이 요새의 Wraith를 조종하는 죽음의 기사 Death Knight이다. 나에게 도전하다니 가소로운 것들. 으하하....");
 
-						mSpecialEvent = 36;
+						mSpecialEvent = SpecialEventType.BattleDeathKnight;
 					}
 				}
 				else if (mParty.YAxis == 24 && 23 <= mParty.XAxis && mParty.XAxis <= 25) {
@@ -7652,7 +7671,7 @@ namespace Lore
 						$"[color={RGB.LightCyan}] 네가 찾던 그 네크로맨서가 바로 나다. 드디어 너의 실력을 보게 되겠구나. 하지만 분명히 나보다는 떨어지겠지만. 으하하하."
 					});
 
-					mSpecialEvent = 37;
+					mSpecialEvent = SpecialEventType.MeetFaceNecromancer;
 				}
 				else if (mParty.XAxis == 24 && mParty.YAxis == 26) {
 					mMapLayer[24 + mMapWidth * 26] = 46;
@@ -7691,7 +7710,7 @@ namespace Lore
 
 					Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]" });
 
-					mSpecialEvent = 42;
+					mSpecialEvent = SpecialEventType.BattlePanzerViper;
 				}
 				else if (mParty.XAxis == 14 && mParty.YAxis == 33) {
 					mMapLayer[14 + mMapWidth * 33] = 41;
@@ -7765,7 +7784,7 @@ namespace Lore
 					" 당신의 행운을 빌겠네."
 				});
 
-				mSpecialEvent = 44;
+				mSpecialEvent = SpecialEventType.BattleNecromancer;
 			}
 			else if (mParty.Map == 27) {
 				ShowExitMenu();
@@ -7784,7 +7803,7 @@ namespace Lore
 				// 드래곤 3마리 등장 애니메이션
 				ContinueText.Visibility = Visibility.Visible;
 
-				mSpecialEvent = 33;
+				mSpecialEvent = SpecialEventType.BattleThreeDragon;
 			}
 			else if ((mParty.Etc[40] & (1 << 2)) == 0)
 			{
@@ -7806,7 +7825,7 @@ namespace Lore
 				Talk($" [color={RGB.LightMagenta}]나는 Necromacer 와 함께 다른 차원에서 내려온 Astral Mud 이다. 여기는 그가 세운 최고의 동굴이자 너가 마지막으로 거칠 동굴이다." +
 				"  나를 만만하게 보지마라.  다른 차원의 능력들을 너가 맛볼 기회를 가진다는 것에 대해  고맙게 생각하기 바란다. 하하하 ...");
 
-				mSpecialEvent = 34;
+				mSpecialEvent = SpecialEventType.BattleAstralMud;
 			}
 			else {
 				mParty.Map = 4;
@@ -8301,7 +8320,7 @@ namespace Lore
 							$"그 곳은 네크로맨서와 동시에 바다에서 떠오른 [color={RGB.LightCyan}]또다른 지식의 성전[/color]이기 때문이오." +
 							" 당신이 어느 수준이 되어 그 곳에 들어간다면 진정한 이 세계의 진실을 알수 있을것이오." });
 
-						mSpecialEvent = 1;
+						mSpecialEvent = SpecialEventType.MeetLoreSolider;
 						ContinueText.Visibility = Visibility.Visible;
 					}
 					else
@@ -8588,7 +8607,7 @@ namespace Lore
 							mTalkX = moveX;
 							mTalkY = moveY;
 
-							mSpecialEvent = 4;
+							mSpecialEvent = SpecialEventType.StartGame;
 						}
 					}
 					else if (mTalkMode == 1 && (key == VirtualKey.Y || key == VirtualKey.GamepadA))
@@ -8613,7 +8632,7 @@ namespace Lore
 						mParty.Etc[29] |= 1;
 
 						mTalkMode = 0;
-						mSpecialEvent = 0;
+						mSpecialEvent = SpecialEventType.None;
 					}
 					else if (mTalkMode == 1 && (key == VirtualKey.N || key == VirtualKey.GamepadB))
 					{
@@ -8624,7 +8643,7 @@ namespace Lore
 
 						ContinueText.Visibility = Visibility.Visible;
 						mTalkMode = 0;
-						mSpecialEvent = 0;
+						mSpecialEvent = SpecialEventType.None;
 					}
 				}
 				else if (moveX == 50 && moveY == 86)
@@ -9064,13 +9083,13 @@ namespace Lore
 						" 그럼, 이만 나는 가보겠소."
 					});
 
-					mSpecialEvent = 47;
+					mSpecialEvent = SpecialEventType.MeetAhnInLastShelter;
 				}
 			}
 			else if (mParty.Map == 27) {
 				if (moveX == 14 && moveY == 5)
 				{
-					mSpecialEvent = 48;
+					mSpecialEvent = SpecialEventType.MeetAhnInAnotherLore;
 
 					Talk(" 당신 앞의 사람이 갑자기 어떤 남자로 변하였다.");
 				}
@@ -9078,31 +9097,31 @@ namespace Lore
 				{
 					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
 
-					mSpecialEvent = 50;
+					mSpecialEvent = SpecialEventType.MeetWillOfDeneb;
 				}
 				else if (moveX == 9 && moveY == 17)
 				{
 					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
 
-					mSpecialEvent = 56;
+					mSpecialEvent = SpecialEventType.MeetWillOfSirius;
 				}
 				else if (moveX == 9 && moveY == 29)
 				{
 					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
 
-					mSpecialEvent = 59;
+					mSpecialEvent = SpecialEventType.MeetWillOfAlbireo;
 				}
 				else if (moveX == 20 && moveY == 31)
 				{
 					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
 
-					mSpecialEvent = 61;
+					mSpecialEvent = SpecialEventType.MeetWillOfCanopus;
 				}
 				else if (moveX == 20 && moveY == 21)
 				{
 					Talk(" 당신이 유골에 다가서자  어디선가 소리가 들려왔다.");
 
-					mSpecialEvent = 63;
+					mSpecialEvent = SpecialEventType.MeetWillOfArcturus;
 				}
 				else if (moveX == 20 && moveY == 11)
 				{
@@ -9166,13 +9185,43 @@ namespace Lore
 
 					mAnimationFrame = 6;
 				}
+				else if (mAnimationEvent == AnimationType.Minotaur) {
+					for (var i = 1; i <= 4; i++) {
+						mAnimationFrame = i;
+						Task.Delay(1000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.HugeDragon) {
+					mFace = 6;
+					for (var x = 0; x < 6; x++) {
+						mParty.XAxis++;
+						Task.Delay(200).Wait();
+					}
+
+					mFace = 4;
+					for (var y = mParty.YAxis + 1; y < 13; y++) {
+						mParty.YAxis = y;
+						Task.Delay(200).Wait();
+					}
+
+					mFace = 5;
+
+				}
 			});
 
 			await animationTask;
 
 			if (mAnimationEvent == AnimationType.Hydra) {
 				ContinueText.Visibility = Visibility.Visible;
-				mSpecialEvent = 26;
+				mSpecialEvent = SpecialEventType.BattleHydra;
+			}
+			else if (mAnimationEvent == AnimationType.Minotaur) {
+				ContinueText.Visibility = Visibility.Visible;
+				mSpecialEvent = SpecialEventType.BattleMinotaur;
+			}
+			else if (mAnimationEvent == AnimationType.HugeDragon) {
+				ContinueText.Visibility = Visibility.Visible;
+				mSpecialEvent = SpecialEventType.BattleHugeDragon;
 			}
 			else {
 				mAnimationEvent = AnimationType.None;
@@ -9239,9 +9288,9 @@ namespace Lore
 				if (mCharacterTiles != null) {
 					mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis), Vector4.One);
 
-					if (mSpecialEvent == 1)
+					if (mSpecialEvent == SpecialEventType.MeetLoreSolider)
 						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(50, 71), Vector4.One);
-					else if (48 <= mSpecialEvent && mSpecialEvent <= 49)
+					else if (mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore || mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore2)
 						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(14, 5), Vector4.One);
 					else if (mAnimationEvent == AnimationType.Hydra) {
 						if (mAnimationFrame > 0)
@@ -9271,6 +9320,10 @@ namespace Lore
 						else
 							Console.WriteLine("히드라 안그리기");
 					}
+					else if (mAnimationEvent == AnimationType.Minotaur) {
+						if (mAnimationFrame > 0)
+							mCharacterTiles.Draw(sb, 9, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+					}
 				}
 			}
 		}
@@ -9292,9 +9345,9 @@ namespace Lore
 
 			if (mMapTiles != null)
 			{
-				if (mSpecialEvent == 1 && (index == 50 + mMapWidth * 71))
+				if (mSpecialEvent == SpecialEventType.MeetLoreSolider && (index == 50 + mMapWidth * 71))
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
-				else if (48 <= mSpecialEvent && mSpecialEvent <= 49 && (index == 15 + mMapWidth * 6))
+				else if ((mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore || mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore2) && (index == 14 + mMapWidth * 5))
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				else
 				{
@@ -10429,7 +10482,80 @@ namespace Lore
 			Remains5,
 			Remains6,
 			Remains7,
-			Hydra
+			Hydra,
+			Minotaur,
+			HugeDragon
+		}
+
+		private enum SpecialEventType {
+			None,
+			StartGame,
+			MeetLoreSolider,
+			MeetSkeleton,
+			RefuseJoinSkeleton,
+			MeetDraconian,
+			MeetDraconian2,
+			MeetAncientEvil,
+			MeetAncientEvil2,
+			MeetAncientEvil3,
+			EnterSwampGate,
+			EnterSwampGate2,
+			EnterSwampGate3,
+			EnterSwampGate4,
+			FindOedipusSpear,
+			FindOedipusSpear2,
+			MajorMummyRoom,
+			MeetRigel,
+			EnterEvilConcentration,
+			FindGoldenShield,
+			FindGoldenArmor,
+			BattleHydra,
+			AfterBattleHydra,
+			BattleArchiGagoyle,
+			MeetRedAntares,
+			MeetRedAntares2,
+			MeetRedAntares3,
+			BattleMinotaur,
+			MeetSpica,
+			BattleHugeDragon,
+			BattleCrabGod,
+			BattleMinotaur2,
+			BattleThreeDragon,
+			BattleAstralMud,
+			ExitDungeonOfEvil,
+			BattleDeathKnight,
+			MeetFaceNecromancer,
+			BattleDual,
+			BattleFackNecromancer,
+			AfterBattleFakeNecromancer,
+			FailRunawayBattleFakeNecromancer,
+			BattlePanzerViper,
+			AfterBattlePanzerViper,
+			FailRunawayBattleNecromancer,
+			BattleNecromancer,
+			MeetAhnInLastShelter,
+			MeetAhnInAnotherLore,
+			MeetAhnInAnotherLore2,
+			MeetWillOfDeneb,
+			MeetWillOfDeneb2,
+			MeetWillOfDeneb3,
+			MeetWillOfDeneb4,
+			MeetWillOfDeneb5,
+			MeetWillOfDeneb6,
+			MeetWillOfSirius,
+			MeetWillOfSirius2,
+			MeetWillOfSirius3,
+			MeetWillOfAlbireo,
+			MeetWillOfAlbireo2,
+			MeetWillOfCanopus,
+			MeetWillOfCanopus2,
+			MeetWillOfCanopus3,
+			MeetWillOfArcturus,
+			MeetWillOfArcturus2,
+			MeetWillOfArcturus3,
+			ReadScroll,
+			BattleWivern,
+			Ending
 		}
 	}
 
