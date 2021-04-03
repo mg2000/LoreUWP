@@ -433,7 +433,7 @@ namespace Lore
 									ShowEnterMenu(EnterType.LastDitch);
 								else if (x == 16 && y == 88)
 									ShowEnterMenu(EnterType.Menace);
-								else if (x == 16 && y == 88)
+								else if (x == 19 && y == 5)
 									ShowEnterMenu(EnterType.AnotherLore);
 							}
 							else if (mParty.Map == 2) {
@@ -2091,7 +2091,7 @@ namespace Lore
 						AppendText(new string[] { "누구에게" });
 						string[] playerList;
 
-						if (player.Level[1] / 2 - 3 < 0)
+						if (player.Level[1] / 2 - 3 <= 0)
 							playerList = new string[mPlayerList.Count];
 						else
 							playerList = new string[mPlayerList.Count + 1];
@@ -2099,7 +2099,7 @@ namespace Lore
 						for (var i = 0; i < mPlayerList.Count; i++)
 							playerList[i] = mPlayerList[i].Name;
 
-						if (player.Level[1] / 2 - 3 >= 0)
+						if (player.Level[1] / 2 - 3 > 0)
 							playerList[playerList.Length - 1] = "모든 사람들에게";
 
 						ShowMenu(menuMode, playerList);
@@ -2963,7 +2963,7 @@ namespace Lore
 
 											AppendText(new string[] { $" 당신은 당신의 미래를 예언한다 ...", "" });
 											if (0 <= predict && predict < predictStr.Length)
-												AppendText(new string[] { $" # 당신은 [color={RGB.LightGreen}]{predict} 것이다[/color]" }, true);
+												AppendText(new string[] { $" # 당신은 [color={RGB.LightGreen}]{predictStr[predict]} 것이다[/color]" }, true);
 											else
 												AppendText(new string[] { $" # [color={RGB.LightGreen}]당신은 어떤 힘에 의해 예언을 방해 받고 있다[/color]" }, true);
 
@@ -4405,6 +4405,14 @@ namespace Lore
 											await RefreshGame();
 
 											break;
+										case EnterType.AnotherLore:
+											mParty.Map = 27;
+											mParty.XAxis = 14;
+											mParty.YAxis = 44;
+
+											await RefreshGame();
+
+											break;
 										case EnterType.LastDitch:
 											mParty.Map = 7;
 											mParty.XAxis = 36;
@@ -4956,15 +4964,15 @@ namespace Lore
 								mMenuMode = MenuMode.None;
 
 								Talk(new string[] {
-									$"[Color={RGB.White}] Durant l''estoille cheuelue apparente,[/color]",
+									$"[color={RGB.White}] Durant l''estoille cheuelue apparente,[/color]",
 									" 머리를 푼 별이 나타날때",
-									$"[Color={RGB.White}] Les trois grand princes seront faits ennemies,[/color]",
+									$"[color={RGB.White}] Les trois grand princes seront faits ennemies,[/color]",
 									" 거대한 세 왕자가 서로를 적대한다",
-									$"[Color={RGB.White}] Frappez du ciel paix terre trembulente,[/color]",
+									$"[color={RGB.White}] Frappez du ciel paix terre trembulente,[/color]",
 									" 평화는 하늘에서 당하고 대지는 요동한다",
-									$"[Color={RGB.White}] En son haut auge de l''exaltation,[/color]",
+									$"[color={RGB.White}] En son haut auge de l''exaltation,[/color]",
 									" 그 찬미해야 할 높은 오류 속에서",
-									$"[Color={RGB.White}] Neromancer sur le bord mis.[/color]",
+									$"[color={RGB.White}] Neromancer sur le bord mis.[/color]",
 									" 네크로맨서 는 해안으로 밀려나리라."
 								});
 
@@ -9124,6 +9132,8 @@ namespace Lore
 				}
 
 				mMapLayer[x + mMapWidth * y] = 35;
+
+
 			}
 
 			var animationTask = Task.Run(() =>
@@ -9161,10 +9171,11 @@ namespace Lore
 			await animationTask;
 
 			if (mAnimationEvent == AnimationType.Hydra) {
-				
-
 				ContinueText.Visibility = Visibility.Visible;
 				mSpecialEvent = 26;
+			}
+			else {
+				mAnimationEvent = AnimationType.None;
 			}
 		}
 

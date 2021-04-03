@@ -173,6 +173,7 @@
     <Content Include="Assets\T_DEN1.MAP" />
     <Content Include="Assets\T_DEN2.MAP" />
     <Content Include="Assets\WATER.MAP" />
+    <Content Include="Assets\PYRAMID1.MAP" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\lore_tile.png" />
     <Content Include="Properties\Default.rd.xml" />
