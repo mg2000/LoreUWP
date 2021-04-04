@@ -421,7 +421,7 @@ namespace Lore
 					if (mParty.Map == 26)
 						mFace += 4;
 
-					if (x > 4 && x < mMapWidth - 3 && y > 4 && y < mMapHeight - 3)
+					if (x > 4 && x < mMapWidth - 3 && y > 3 && y < mMapHeight - 3)
 					{
 						void EnterMap()
 						{
@@ -1090,14 +1090,6 @@ namespace Lore
 					}
 					
 					mBattleTurn = BattleTurn.None;
-				}
-
-				async Task EnterSwampGate() {
-					mParty.Map = 12;
-					mParty.XAxis = 80;
-					mParty.YAxis = 94;
-
-					await RefreshGame();
 				}
 
 				void AddBattleCommand(bool skip = false)
@@ -1932,6 +1924,77 @@ namespace Lore
 
 							mSpecialEvent = SpecialEventType.None;
 						}
+						else if (mSpecialEvent == SpecialEventType.SwampGatePyramid)
+						{
+							mMapLayer[80 + mMapWidth * 75] = 48;
+							Talk($"[color={RGB.LightCyan}] 갑자기 피라밋이 아래로 가라앉기 시작했다[/color]");
+
+							mSpecialEvent = SpecialEventType.SwampGatePyramid2;
+						}
+						else if (mSpecialEvent == SpecialEventType.SwampGatePyramid2)
+						{
+							Talk(new string[] {
+								$"[color={RGB.White}] 그 물속에서 당신은 한 시대의 운명을 바라다 보고있었다[/color]",
+								$"[color={RGB.White}] 당신은 왜 하필이면 당신이 이 세계에 뛰어들어 단신으로 악과 싸워야하는 이유를 아는가 ?[/color]",
+								$"[color={RGB.White}] 여기서 당신은 Lord Ahn, Ancient Evil, Necromancer 의 관계를 기술한 예언서를 발견하여 읽기 시작했다.[/color]"
+							});
+
+							mSpecialEvent = SpecialEventType.SwampGatePyramid3;
+						}
+						else if (mSpecialEvent == SpecialEventType.SwampGatePyramid3)
+						{
+							Talk(new string[] {
+								$"[color={RGB.White}]CHAPTER 1[/color]",
+								$"",
+								" 이 세상에는 두개의 개념이 필요하다.",
+								" 그것은 바로 선과 악이다.",
+								" 전자의 상징은 Lord Ahn 이고, 후자의 상징은 Ancient Evil 이다."
+							});
+
+							mSpecialEvent = SpecialEventType.SwampGatePyramid4;
+						}
+						else if (mSpecialEvent == SpecialEventType.SwampGatePyramid4)
+						{
+							Talk(new string[] {
+								$"[color={RGB.White}]CHAPTER 2[/color]",
+								$"",
+								" 만약 당신이 황야에서 Ancient Evil을 만나더라도 두려워하지 말라. 그는 비록 악의 표상이지만 Necromancer 가 행하는 악과는 다른 표현임을 명심하라." +
+								" 만약 세상이 \"선\"만이 있고 이런 \"악\"은 존재하지 않는다면  누구도 선의 중요성을 인식하지 못한채 보편적인 진리로만 인식되어가는 시대가 올것이며" +
+								" 선으로 둘러 쌓여진 생활에 대한 고마움을 망각하는 시대가  우리 앞에 도래하는 때가 결국 올것이다." +
+								" 그런때가 오기전에 사람들이  이런 선의 소중함을 느끼고 스스로 지키려고 노력하게  만들  하나의 개념이 필요하게 되었는데 이것이 바로 태초에 생겨난 악의 개념이었다." +
+								" 하지만 일부러 뭇 사람들에게 비난을 사면서 까지 악을 대표해줄만한 자는 나타나지 않았다." +
+								" 이에 스스로를 악의 집대성으로 불러주기를 요구하는 한 현자가 있었으니 본명은 알수 없지만 그가 바로 Ancient Evil이라고 칭하는 자였다." +
+								"  선에 의해 보호되어 너무나도 평화로운 생활을 해왔던 사람들은 이제 새로운 마음을 갖고 그에게 대항하는  자세를 취하게 되었다." +
+								" 하지만 그는 실지로 사람들에게 해를 입히지 않았으며  그의 본심은 선에 있다는걸 알아두기 바란다."
+							});
+
+							mSpecialEvent = SpecialEventType.SwampGatePyramid5;
+						}
+						else if (mSpecialEvent == SpecialEventType.SwampGatePyramid5)
+						{
+							Talk(new string[] {
+								$"[color={RGB.White}]CHAPTER 3[/color]",
+								$"",
+								" 위에서 기술한 Ancient Evil이 의미하는 악과는 달리 Neromancer 는 진정한 악의 의미를 알지 못한다. 그것으로 인해 Ancient Evil 은 그를 벌하려 하는 것이다." +
+								" 하지만 육체가 없어진 Ancient Evil의 능력으로는 그에게 대항하기가 어렵다고 단정하고는 그의 강력한 마력으로 미래의 역사를 뒤틀어 운명적으로 Necromancer에" +
+								"대항하여야 하는 한 희생물을 창조해 냈으니..",
+								"..그는 바로 당신인것이다."
+							});
+
+							mSpecialEvent = SpecialEventType.SwampGatePyramid6;
+						}
+						else if (mSpecialEvent == SpecialEventType.SwampGatePyramid6)
+						{
+							Talk(new string[] {
+								$"[color={RGB.White}]CHAPTER 4[/color]",
+								$"",
+								" Necromancer 에게 대항 할 수 있는 단 두명의 존재는 바로 Lord Ahn과 그의 대립자이며 깊은 관계를 가진 Ancient Evil이다.",
+								" 그들은 모두 Semi-God라는 계급의 인물들이며 보통의 사람들은  상대하기조차 어려운 인물들이며 능력또한 인간을 초월하는 것뿐이다." +
+								"  그러므로 만약 당신이 Necromancer를 응징하려고 한다면 먼저 당신 자신이 Semi-God가 되어야만 될것이다."
+							});
+
+							mSpecialEvent = SpecialEventType.None;
+						}
 					}
 
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -2383,7 +2446,7 @@ namespace Lore
 								mMenuMode = MenuMode.None;
 
 								var shieldStr = mPlayerList[mMenuFocusID].Shield != 0 ? $"[color={RGB.Green}]방패 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Shield)}[/color]" : "";
-								var armorStr = mPlayerList[mMenuFocusID].Armor != 0 ? $"[color={RGB.Green}갑옷 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Armor)}[/color]" : "";
+								var armorStr = mPlayerList[mMenuFocusID].Armor != 0 ? $"[color={RGB.Green}]갑옷 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Armor)}[/color]" : "";
 
 								AppendText(new string[] { $"# 이름 : {mPlayerList[mMenuFocusID].Name}",
 								$"# 성별 : {mPlayerList[mMenuFocusID].GenderName}",
@@ -3405,8 +3468,8 @@ namespace Lore
 
 								var player = mPlayerList[mMenuFocusID];
 
-								player.Shield = mBuyWeaponID;
-								player.ShiPower = mBuyWeaponID + 1;
+								player.Armor = mBuyWeaponID;
+								player.ArmPower = mBuyWeaponID + 1;
 								player.AC = player.ShiPower + player.ArmPower;
 
 								if (player.Class == 1)
@@ -3987,6 +4050,13 @@ namespace Lore
 
 										await RefreshGame();
 									}
+									else if (mParty.Map == 13) {
+										mParty.Map = 9;
+										mParty.XAxis = 25;
+										mParty.YAxis = 5;
+
+										await RefreshGame();
+									}
 									else if (mParty.Map == 14)
 									{
 										mParty.Map = 1;
@@ -4483,14 +4553,10 @@ namespace Lore
 										case EnterType.SwampGate:
 											if (mParty.Map == 9)
 											{
-												// 애니메이션 동작 있음
-												if ((mParty.Etc[34] & (1 << 5)) == 0)
-												{
-													Talk($"[color={RGB.White}] SWAMP GATE 로 들어가고 있는 당신에게  허공에서 갑자가 누군가가 말을 꺼낸다[/color]");
-													mSpecialEvent = SpecialEventType.EnterSwampGate;
-												}
-												else
-													await EnterSwampGate();
+												AppendText("");
+
+												mAnimationEvent = AnimationType.EnterSwampGate;
+												InvokeAnimation();
 											}
 											else if (mParty.Map == 21)
 											{
@@ -6996,6 +7062,27 @@ namespace Lore
 					mParty.YAxis = prevY;
 				}
 			}
+			else if (mParty.Map == 13) {
+				if (mParty.YAxis == 95)
+				{
+					ShowExitMenu();
+				}
+				else if (75 <= mParty.XAxis && mParty.YAxis <= 85 && 70 <= mParty.YAxis && mParty.YAxis <= 80) {
+					AppendText($"[color={RGB.White}]알수없는 힘이 당신을 당기는걸 느꼈다[/color]");
+
+					for (var y = 70; y < 81; y++) {
+						for (var x = 75; x < 86; x++) {
+							if (mMapLayer[x + mMapWidth * y] == 52)
+								mMapLayer[x + mMapWidth * y] = 44;
+							else if (mMapLayer[x + mMapWidth * y] == 40 || mMapLayer[x + mMapWidth * y] == 51)
+								mMapLayer[x + mMapWidth * y] = 42;
+						}
+					}
+
+					mAnimationEvent = AnimationType.SwampGatePyramid;
+					InvokeAnimation();
+				}
+			}
 			else if (mParty.Map == 14)
 			{
 				if (mParty.YAxis == 45)
@@ -9140,6 +9227,17 @@ namespace Lore
 				}
 			}
 		}
+		private async Task EnterSwampGate()
+		{
+			mAnimationEvent = AnimationType.None;
+			mAnimationFrame = 0;
+
+			mParty.Map = 13;
+			mParty.XAxis = 80;
+			mParty.YAxis = 94;
+
+			await RefreshGame();
+		}
 
 		private async void InvokeAnimation(int aniX = 0, int aniY = 0) {
 			void RestRemains(int x, int y) {
@@ -9205,7 +9303,47 @@ namespace Lore
 					}
 
 					mFace = 5;
+					for (var i = 1; i <= 4; i++)
+					{
+						mAnimationFrame = i;
+						if (i < 4)
+							Task.Delay(2000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.EnterSwampGate) {
+					for (var i = 1; i < 6; i++) {
+						Task.Delay(1000).Wait();
+						mAnimationFrame = i;
+					}
+				}
+				else if (mAnimationEvent == AnimationType.SwampGatePyramid) {
+					while (mParty.XAxis != 80) {
+						Task.Delay(1500).Wait();
+						if (mParty.XAxis > 80)
+						{
+							mFace = 7;
+							mParty.XAxis--;
+						}
+						else if (mParty.XAxis < 80)
+						{
+							mFace = 6;
+							mParty.XAxis++;
+						}
+					}
 
+					while (mParty.YAxis != 76) {
+						Task.Delay(1500).Wait();
+						if (mParty.YAxis > 76)
+						{
+							mFace = 5;
+							mParty.YAxis--;
+						}
+						else if (mParty.YAxis < 76)
+						{
+							mFace = 4;
+							mParty.YAxis++;
+						}
+					}
 				}
 			});
 
@@ -9222,6 +9360,31 @@ namespace Lore
 			else if (mAnimationEvent == AnimationType.HugeDragon) {
 				ContinueText.Visibility = Visibility.Visible;
 				mSpecialEvent = SpecialEventType.BattleHugeDragon;
+			}
+			else if (mAnimationEvent == AnimationType.EnterSwampGate) {
+				if ((mParty.Etc[34] & (1 << 5)) == 0)
+				{
+					Talk($"[color={RGB.White}] SWAMP GATE 로 들어가고 있는 당신에게  허공에서 갑자가 누군가가 말을 꺼낸다[/color]");
+					mSpecialEvent = SpecialEventType.EnterSwampGate;
+				}
+				else
+					await EnterSwampGate();
+			}
+			else if (mAnimationEvent == AnimationType.SwampGatePyramid) {
+				for (var y = 70; y < 81; y++) {
+					for (var x = 75; x < 86; x++) {
+						if (mMapLayer[x + mMapWidth * y] == 42)
+							mMapLayer[x + mMapWidth * y] = 51;
+					}
+				}
+
+				mFace = 5;
+
+				Talk($"[color={RGB.LightCyan}] 여기에는 기묘한 피라밋이 있었다[/color]");
+				mSpecialEvent = SpecialEventType.SwampGatePyramid;
+
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
 			}
 			else {
 				mAnimationEvent = AnimationType.None;
@@ -9286,7 +9449,11 @@ namespace Lore
 				}
 
 				if (mCharacterTiles != null) {
-					mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis), Vector4.One);
+					if (mAnimationEvent == AnimationType.EnterSwampGate) {
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - mAnimationFrame), Vector4.One);
+					}
+					else
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis), Vector4.One);
 
 					if (mSpecialEvent == SpecialEventType.MeetLoreSolider)
 						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(50, 71), Vector4.One);
@@ -9324,6 +9491,18 @@ namespace Lore
 						if (mAnimationFrame > 0)
 							mCharacterTiles.Draw(sb, 9, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
 					}
+					else if (mAnimationEvent == AnimationType.HugeDragon) {
+						if (mAnimationFrame > 0) {
+							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - (6 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (6 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (6 - mAnimationFrame)), Vector4.One);
+
+
+							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+						}
+					}
 				}
 			}
 		}
@@ -9355,10 +9534,13 @@ namespace Lore
 
 					if (mPosition == PositionType.Town)
 						mapIdx = 0;
+					else if (mPosition == PositionType.Keep)
+						mapIdx *= 1;
 					else if (mPosition == PositionType.Ground)
 						mapIdx *= 2;
 					else if (mPosition == PositionType.Den)
 						mapIdx *= 3;
+					
 
 					byte tileIdx = layer[index];
 
@@ -10484,7 +10666,9 @@ namespace Lore
 			Remains7,
 			Hydra,
 			Minotaur,
-			HugeDragon
+			HugeDragon,
+			EnterSwampGate,
+			SwampGatePyramid
 		}
 
 		private enum SpecialEventType {
@@ -10553,6 +10737,12 @@ namespace Lore
 			MeetWillOfArcturus,
 			MeetWillOfArcturus2,
 			MeetWillOfArcturus3,
+			SwampGatePyramid,
+			SwampGatePyramid2,
+			SwampGatePyramid3,
+			SwampGatePyramid4,
+			SwampGatePyramid5,
+			SwampGatePyramid6,
 			ReadScroll,
 			BattleWivern,
 			Ending
