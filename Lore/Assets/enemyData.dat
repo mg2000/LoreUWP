@@ -1173,7 +1173,7 @@
     "Level": 24
   },
   {
-    "Name": "대드라코니안",
+    "Name": "아키드라코니안",
     "Strength": 30,
     "Mentality": 20,
     "Endurance": 30,
@@ -1224,7 +1224,7 @@
     "Level": 27
   },
   {
-    "Name": "대전투승",
+    "Name": "아키전투승",
     "Strength": 20,
     "Mentality": 0,
     "Endurance": 50,

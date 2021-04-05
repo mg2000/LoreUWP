@@ -153,6 +153,7 @@ namespace Lore
 		// 22 - 가짜 네크로맨서 전투
 		// 23 - 팬저 바이퍼 전투
 		// 24 - 네크로맨서 전투
+		// 25 - 고르곤 전투
 		private int mBattleEvent = 0;
 
 		// 2 - 지식의 성전 유골 안식
@@ -187,6 +188,9 @@ namespace Lore
 		private byte mMemberLeftTile = 0;
 
 		private bool mPenetration = false;
+		private int mTelescopePeriod = 0;
+		private int mTelescopeXCount = 0;
+		private int mTelescopeYCount = 0;
 
 		// 동굴 질문 번호
 		private int mQuestionID = 0;
@@ -375,7 +379,7 @@ namespace Lore
 						if (mParty.Etc[4] > 0)
 							mParty.Etc[4]--;
 
-						if (mMapLayer[moveX + mMapWidth * moveY] != 0 && mRand.Next(mEncounter * 20) == 0)
+						if (!(mMapLayer[moveX + mMapWidth * moveY] == 0 || (mPosition == PositionType.Den && mMapLayer[moveX + mMapWidth * moveY] == 52)) && mRand.Next(mEncounter * 20) == 0)
 						{
 							EncounterEnemy();
 							mTriggeredDownEvent = true;
@@ -648,6 +652,58 @@ namespace Lore
 								mTriggeredDownEvent = true;
 							}
 						}
+						else if (mPosition == PositionType.Keep)
+						{
+							if (mMapLayer[x + mMapWidth * y] == 0 || mMapLayer[x + mMapWidth * y] == 52)
+							{
+								var oriX = mParty.XAxis;
+								var oriY = mParty.YAxis;
+								MovePlayer(x, y);
+								InvokeSpecialEvent(oriX, oriY);
+
+								mTriggeredDownEvent = true;
+							}
+							else if ((1 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 39) || mMapLayer[x + mMapWidth * y] == 51)
+							{
+
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 53)
+							{
+								ShowSign(x, y);
+								mTriggeredDownEvent = true;
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 48)
+							{
+								if (EnterWater())
+									MovePlayer(x, y);
+								mTriggeredDownEvent = true;
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 49)
+							{
+								EnterSwamp();
+								MovePlayer(x, y);
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 50)
+							{
+								EnterLava();
+								MovePlayer(x, y);
+							}
+							else if (mMapLayer[x + mMapWidth * y] == 54)
+							{
+								EnterMap();
+								mTriggeredDownEvent = true;
+							}
+							else if (40 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 47)
+							{
+								// Move Move
+								MovePlayer(x, y);
+							}
+							else
+							{
+								TalkMode(x, y);
+								mTriggeredDownEvent = true;
+							}
+						}
 					}
 				}
 			};
@@ -816,7 +872,7 @@ namespace Lore
 						else
 						{
 							#if DEBUG
-							var goldPlus = 5000;
+							var goldPlus = 10000;
 							#else	
 							var goldPlus = 0;
 							foreach (var enemy in mEncounterEnemyList)
@@ -1004,6 +1060,13 @@ namespace Lore
 						}
 						else if (mBattleEvent == 24)
 							WinNecromancer();
+						else if (mBattleEvent == 25) {
+							AppendText(new string[] { $"[color={RGB.White}]당신들은 Gorgon을 물리쳤다.[/color]" }, true);
+
+							ContinueText.Visibility = Visibility.Visible;
+
+							mParty.Etc[37] |= 1 << 4;
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1077,6 +1140,9 @@ namespace Lore
 							}
 							else
 								WinNecromancer();
+						}
+						else if (mBattleEvent == 25) {
+							mParty.YAxis++;
 						}
 
 						mEncounterEnemyList.Clear();
@@ -1995,6 +2061,13 @@ namespace Lore
 
 							mSpecialEvent = SpecialEventType.None;
 						}
+						else if (mSpecialEvent == SpecialEventType.BattleExitSwampGate)
+						{
+							mSpecialEvent = SpecialEventType.None;
+							mBattleEvent = 25;
+
+							StartBattle(true);
+						}
 					}
 
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -2020,6 +2093,30 @@ namespace Lore
 					else if (mPenetration == true)
 					{
 						mPenetration = false;
+					}
+					else if (mTelescopeXCount != 0 || mTelescopeYCount != 0) {
+						if ((mTelescopeXCount != 0 && (mParty.XAxis + mTelescopeXCount <= 4 || mParty.XAxis + mTelescopeXCount >= mMapWidth - 3)) ||
+							(mTelescopeXCount != 0 && (mParty.YAxis + mTelescopeYCount <= 4 || mParty.YAxis + mTelescopeYCount >= mMapHeight - 3)))
+						{
+							mTelescopeXCount = 0;
+							mTelescopeYCount = 0;
+							return;
+						}
+
+						if (mTelescopeXCount < 0)
+							mTelescopeXCount++;
+
+						if (mTelescopeXCount > 0)
+							mTelescopeXCount--;
+
+						if (mTelescopeYCount < 0)
+							mTelescopeYCount++;
+
+						if (mTelescopeYCount > 0)
+							mTelescopeYCount--;
+
+						if (mTelescopeXCount != 0 || mTelescopeYCount != 0)
+							Talk($"[color={RGB.White}]천리안의 사용중 ...[/color]");
 					}
 					else if (mTalkMode > 0)
 					{
@@ -2245,6 +2342,8 @@ namespace Lore
 							mMenuMode == MenuMode.CastAllMagic ||
 							mMenuMode == MenuMode.CastSpecial ||
 							mMenuMode == MenuMode.ChooseBattleCureSpell ||
+							mMenuMode == MenuMode.ApplyBattleCureSpell ||
+							mMenuMode == MenuMode.ApplyBattleCureAllSpell ||
 							mMenuMode == MenuMode.CastESP)
 							{
 								BattleMode();
@@ -2337,7 +2436,7 @@ namespace Lore
 								}
 								else
 								{
-									var availableCount = mMagicPlayer.Level[1] / 2 - 3;
+									var availableCount = player.Level[1] / 2 - 3;
 									var totalMagicCount = 32 - 26 + 1;
 									if (availableCount < totalMagicCount)
 										totalMagicCount = availableCount;
@@ -3090,29 +3189,27 @@ namespace Lore
 							}
 							else if (mMenuMode == MenuMode.TelescopeDirection)
 							{
-								var xOffset = 0;
-								var yOffset = 0;
-
 								mMagicPlayer.ESP -= mMagicPlayer.Level[2] * 5;
 								DisplayESP();
 
+								mTelescopePeriod = mMagicPlayer.Level[2];
 								switch (mMenuFocusID)
 								{
 									case 0:
-										yOffset = -1;
+										mTelescopeYCount = -mMagicPlayer.Level[2];
 										break;
 									case 1:
-										yOffset = 1;
+										mTelescopeYCount = mMagicPlayer.Level[2];
 										break;
 									case 2:
-										xOffset = 1;
+										mTelescopeXCount = mMagicPlayer.Level[2];
 										break;
 									case 3:
-										xOffset = -1;
+										mTelescopeXCount = -mMagicPlayer.Level[2];
 										break;
 								}
 
-								// 천리안 구현중...
+								Talk($"[color={RGB.White}]천리안의 사용중 ...[/color]");
 							}
 							else if (mMenuMode == MenuMode.GameOptions)
 							{
@@ -5292,7 +5389,7 @@ namespace Lore
 				void PlusExperience(BattleEnemyData enemy)
 				{
 #if DEBUG
-					var exp = 5000;
+					var exp = 50000;
 #else
 							var exp = (enemy.ENumber + 1) * (enemy.ENumber + 1) * (enemy.ENumber + 1) / 8;
 							if (exp == 0)
@@ -5658,7 +5755,7 @@ namespace Lore
 
 				void CastESP()
 				{
-					if ((battleCommand.Player.Class != 2 && battleCommand.Player.Class != 3 && battleCommand.Player.Class != 6) || ((mParty.Etc[38] & 1) > 0))
+					if (battleCommand.Player.Class != 2 && battleCommand.Player.Class != 3 && battleCommand.Player.Class != 6 && (mParty.Etc[38] & 1) == 0)
 					{
 						battleResult.Add($"당신에게는 아직 능력이 없다.");
 						return;
@@ -5765,9 +5862,9 @@ namespace Lore
 								PlusExperience(enemy);
 							}
 						}
-						else if (7 <= espType && espType == 10)
+						else if (7 <= espType && espType <= 10)
 						{
-							if (espType == 1 || espType == 2)
+							if (espType == 7 || espType == 8)
 								battleResult.Add($"갑자기 땅속의 우라늄이 핵분열을 일으켜 고온의 열기가 적의 주위를 감싸기 시작한다");
 							else
 								battleResult.Add($"공기중의 수소가 돌연히 핵융합을 일으켜 질량 결손의 에너지를 적들에게 방출하기 시작한다");
@@ -7081,6 +7178,20 @@ namespace Lore
 
 					mAnimationEvent = AnimationType.SwampGatePyramid;
 					InvokeAnimation();
+				}
+				else if (mParty.YAxis == 67 && (mParty.Etc[37] & (1 << 4)) == 0) {
+					mEncounterEnemyList.Clear();
+					for (var i = 49; i < 52; i++) {
+						var enemy = JoinEnemy(i);
+						enemy.ENumber = 0;
+					}
+
+					HideMap();
+					DisplayEnemy();
+
+					Talk($"[color={RGB.LightMagenta}]우리들의 영역을 침범하는 자는 가만두지 않겠다 !!![/color]");
+
+					mSpecialEvent = SpecialEventType.BattleExitSwampGate;
 				}
 			}
 			else if (mParty.Map == 14)
@@ -9430,7 +9541,24 @@ namespace Lore
 				return;
 			}
 
-			var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(64 * (mParty.XAxis - 4), 64 * (mParty.YAxis - 4)));
+			var xOffset = 0;
+			var yOffset = 0;
+			if (mTelescopeXCount != 0) {
+				if (mTelescopeXCount < 0)
+					xOffset = -(mTelescopePeriod - Math.Abs(mTelescopeXCount));
+				else
+					xOffset = mTelescopePeriod - Math.Abs(mTelescopeXCount);
+			}
+
+			if (mTelescopeYCount != 0)
+			{
+				if (mTelescopeYCount < 0)
+					yOffset = -(mTelescopePeriod - Math.Abs(mTelescopeYCount));
+				else
+					yOffset = mTelescopePeriod - Math.Abs(mTelescopeYCount);
+			}
+
+			var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(64 * (mParty.XAxis - 4 + xOffset), 64 * (mParty.YAxis - 4 + yOffset)));
 			args.DrawingSession.Transform = transform;
 
 			var size = sender.Size.ToVector2();
@@ -9544,7 +9672,11 @@ namespace Lore
 
 					byte tileIdx = layer[index];
 
-					if (tileIdx == 0 && !mPenetration) {
+					if (mPenetration) {
+						if ((mPosition == PositionType.Den || mPosition == PositionType.Keep) && tileIdx == 52)
+							tileIdx = 0;
+					}
+					else if (tileIdx == 0) {
 						switch (mParty.Map) {
 							case 1:
 								tileIdx = 2;
@@ -10745,6 +10877,7 @@ namespace Lore
 			SwampGatePyramid6,
 			ReadScroll,
 			BattleWivern,
+			BattleExitSwampGate,
 			Ending
 		}
 	}
