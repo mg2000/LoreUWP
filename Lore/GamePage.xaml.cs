@@ -1146,6 +1146,7 @@ namespace Lore
 						}
 
 						mEncounterEnemyList.Clear();
+						mBattleEvent = 0;
 						ShowMap();
 					}
 					else if (mBattleTurn == BattleTurn.Lose) {
@@ -5375,7 +5376,7 @@ namespace Lore
 							battleResult.Add($"[color={RGB.White}]{battleCommand.Player.Name}(은)는 {mPlayerList[battleCommand.FriendID].Name}에게 '{Common.GetMagicStr(battleCommand.Tool + 18)}'{Common.GetMagicJosaStr(battleCommand.Tool + 18)} 사용했다[/color]");
 							break;
 						case 5:
-							battleResult.Add($"[color={RGB.White}]{battleCommand.Player.Name}(은)는 {enemy.Name}에게 '{Common.GetMagicStr(battleCommand.Tool + 40)}'{Common.GetMagicJosaStr(battleCommand.Tool + 40)} 사용했다[/color]");
+							battleResult.Add($"[color={RGB.White}]{battleCommand.Player.Name}(은)는 {enemy.Name}에게 '{Common.GetMagicStr(battleCommand.Tool + 41)}'{Common.GetMagicMokjukStr(battleCommand.Tool + 40)} 사용했다[/color]");
 							break;
 						case 6:
 							battleResult.Add($"[color={RGB.White}]일행은 도망을 시도했다[/color]");
@@ -5554,7 +5555,10 @@ namespace Lore
 
 				void CastSpecialMagic()
 				{
-					var enemy = mEncounterEnemyList[battleCommand.EnemyID];
+					var enemy = GetDestEnemy();
+					if (enemy == null)
+						return;
+
 					GetBattleStatus(enemy);
 
 					if ((mParty.Etc[37] & 1) == 0)
@@ -5767,7 +5771,11 @@ namespace Lore
 						return;
 					}
 
-					var enemy = mEncounterEnemyList[battleCommand.EnemyID];
+					var enemy = GetDestEnemy();
+					if (enemy == null)
+						return;
+
+					GetBattleStatus(enemy);
 
 					if (battleCommand.Tool == 2)
 					{
