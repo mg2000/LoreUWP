@@ -67,6 +67,11 @@ namespace Lore
 		private MenuMode mMenuMode = MenuMode.None;
 		private int mMenuCount = 0;
 		private int mMenuFocusID = 0;
+
+		private SpinnerType mSpinnerType = SpinnerType.None;
+		private Tuple<string, int>[] mSpinnerItems;
+		private int mSpinnerID;
+
 		private Lore mMagicPlayer = null;
 		private Lore mMagicWhomPlayer = null;
 
@@ -1747,6 +1752,8 @@ namespace Lore
 							foreach (var player in mPlayerList)
 							{
 								player.Class = 10;
+								player.Level[1] = player.Level[0];
+								player.Level[2] = player.Level[0];
 							}
 
 							mSpecialEvent = SpecialEventType.None;
@@ -2742,7 +2749,7 @@ namespace Lore
 								else if (mMenuFocusID == 5)
 								{
 									if (mParty.Map == 20 || mParty.Map == 25 || mParty.Map == 26)
-										AppendText(new string[] { $"[color=ff00ff]이 동굴의 악의 힘이 이 마법을 방해합니다.[/color]" }, true);
+										AppendText(new string[] { $"[color={RGB.LightMagenta}]이 동굴의 악의 힘이 이 마법을 방해합니다.[/color]" });
 									else if (mMagicPlayer.SP < 30)
 										ShowNotEnoughSP();
 									else
@@ -2758,14 +2765,14 @@ namespace Lore
 								else if (mMenuFocusID == 6)
 								{
 									if (mParty.Map == 20 || mParty.Map == 25 || mParty.Map == 26)
-										AppendText(new string[] { $"[color=ff00ff]이 동굴의 악의 힘이 이 마법을 방해합니다.[/color]" }, true);
+										AppendText(new string[] { $"[color={RGB.LightMagenta}]이 동굴의 악의 힘이 이 마법을 방해합니다.[/color]" });
 									else if (mMagicPlayer.SP < 50)
 										ShowNotEnoughSP();
 									else
 									{
 										AppendText(new string[] { $"[color={RGB.White}]<<<  방향을 선택하시오  >>>[/color]" }, true);
 
-										ShowMenu(MenuMode.VaporizeMoveDirection, new string[] { "북쪽으로 공간이동",
+										ShowMenu(MenuMode.TeleportationDirection, new string[] { "북쪽으로 공간이동",
 										"남쪽으로 공간이동",
 										"동쪽으로 공간이동",
 										"서쪽으로 공간이동" });
@@ -2921,6 +2928,16 @@ namespace Lore
 
 									AppendText($"[color={RGB.White}]지형 변화에 성공했습니다.[/color]");
 								}
+							}
+							else if (mMenuMode == MenuMode.TeleportationDirection) {
+								mMenuMode = MenuMode.None;
+
+								var rangeItems = new List<Tuple<string, int>>();
+								for (var i = 1; i <= 9; i++) {
+									rangeItems.Add(new Tuple<string, int>($"[color={RGB.White}##[/color] [color={RGB.LightGreen}]{i + 1000}[/color] [color={RGB.White}] 공간 이동력[/color]", i));
+								}
+
+								ShowSpinner(SpinnerType.TeleportationRange, rangeItems.ToArray(), 5);
 							}
 							else if (mMenuMode == MenuMode.Extrasense)
 							{
@@ -3752,60 +3769,69 @@ namespace Lore
 								var player = mPlayerList[mMenuFocusID];
 
 								var exp = player.Experience;
-								var nextLevel = 0;
+								var nextFinalLevel = 0;
 								if (exp < 20000)
 								{
 									if (0 <= exp && exp <= 1499)
-										nextLevel = 1;
+										nextFinalLevel = 1;
 									else if (1500 <= exp && exp <= 5999)
-										nextLevel = 2;
+										nextFinalLevel = 2;
 									else if (6000 <= exp && exp <= 19999)
-										nextLevel = 3;
+										nextFinalLevel = 3;
 								}
 								else
 								{
 									exp /= 10000;
 
 									if (2 <= exp && exp <= 4)
-										nextLevel = 4;
+										nextFinalLevel = 4;
 									else if (5 <= exp && exp <= 14)
-										nextLevel = 5;
+										nextFinalLevel = 5;
 									else if (15 <= exp && exp <= 24)
-										nextLevel = 6;
+										nextFinalLevel = 6;
 									else if (25 <= exp && exp <= 49)
-										nextLevel = 7;
+										nextFinalLevel = 7;
 									else if (50 <= exp && exp <= 79)
-										nextLevel = 8;
+										nextFinalLevel = 8;
 									else if (80 <= exp && exp <= 104)
-										nextLevel = 9;
+										nextFinalLevel = 9;
 									else if (105 <= exp && exp <= 131)
-										nextLevel = 10;
+										nextFinalLevel = 10;
 									else if (132 <= exp && exp <= 161)
-										nextLevel = 11;
+										nextFinalLevel = 11;
 									else if (162 <= exp && exp <= 194)
-										nextLevel = 12;
+										nextFinalLevel = 12;
 									else if (195 <= exp && exp <= 230)
-										nextLevel = 13;
+										nextFinalLevel = 13;
 									else if (231 <= exp && exp <= 269)
-										nextLevel = 14;
+										nextFinalLevel = 14;
 									else if (270 <= exp && exp <= 311)
-										nextLevel = 15;
+										nextFinalLevel = 15;
 									else if (312 <= exp && exp <= 356)
-										nextLevel = 16;
+										nextFinalLevel = 16;
 									else if (357 <= exp && exp <= 404)
-										nextLevel = 17;
+										nextFinalLevel = 17;
 									else if (405 <= exp && exp <= 455)
-										nextLevel = 18;
+										nextFinalLevel = 18;
 									else if (456 <= exp && exp <= 509)
-										nextLevel = 19;
+										nextFinalLevel = 19;
 									else
-										nextLevel = 20;
+										nextFinalLevel = 20;
 								}
 
 								var payment = 0;
-								if (player.Level[0] < nextLevel)
+								if (player.Level[0] == 20)
 								{
-									switch (nextLevel)
+									AppendText(new string[] { $"당신은 최고 레벨에 도달했습니다.",
+									"더 이상 저희들은 가르칠 필요가 없습니다." });
+
+									ContinueText.Visibility = Visibility.Visible;
+
+									mTrainingEnd = true;
+								}
+								else if (player.Level[0] < nextFinalLevel)
+								{
+									switch (nextFinalLevel)
 									{
 										case 1:
 											payment = 2;
@@ -3869,18 +3895,7 @@ namespace Lore
 											break;
 									}
 
-									if (nextLevel == 20)
-									{
-										player.Level[0] = 20;
-
-										AppendText(new string[] { $"당신은 최고 레벨에 도달했습니다.",
-									"더 이상 저희들은 가르칠 필요가 없습니다." });
-
-										ContinueText.Visibility = Visibility.Visible;
-
-										mTrainingEnd = true;
-									}
-									else if (mParty.Gold < payment)
+									if (mParty.Gold < payment)
 									{
 										AppendText(new string[] { $"당신은 금 {payment - mParty.Gold}개가 더 필요합니다." });
 
@@ -3892,137 +3907,140 @@ namespace Lore
 									{
 										mParty.Gold -= payment;
 
-										AppendText(new string[] { $"[color={RGB.White}]{player.Name}의 레벨은 {nextLevel}입니다." });
+										AppendText(new string[] { $"[color={RGB.White}]{player.Name}의 레벨은 {nextFinalLevel}입니다." });
 
-										player.Level[0] = nextLevel;
-
-										if (player.Class == 1)
+										for (var nextLevel = player.Level[0] + 1; nextLevel <= nextFinalLevel; nextLevel++)
 										{
-											if (player.Luck > mRand.Next(30))
+											player.Level[0] = nextLevel;
+
+											if (player.Class == 1)
 											{
+												//if (player.Luck > mRand.Next(30))
+												//{
+													if (player.Strength < 20)
+														player.Strength++;
+													else if (player.Endurance < 20)
+														player.Endurance++;
+													else if (player.Accuracy[0] < 20)
+														player.Accuracy[0]++;
+													else
+														player.Agility++;
+												//}
+											}
+											else if (player.Class == 2 || player.Class == 9)
+											{
+												player.Level[1] = nextLevel;
+												player.Level[2] = (int)Math.Round((double)nextLevel / 2);
+
+												//if (player.Luck > mRand.Next(30))
+												//{
+													if (player.Mentality < 20)
+														player.Mentality++;
+													else if (player.Concentration < 20)
+														player.Concentration++;
+													else if (player.Accuracy[1] < 20)
+														player.Accuracy[1]++;
+												//}
+											}
+											else if (player.Class == 3)
+											{
+												player.Level[1] = (int)Math.Round((double)nextLevel / 2);
+												player.Level[2] = nextLevel;
+
+												//if (player.Luck > mRand.Next(30))
+												//{
+													if (player.Concentration < 20)
+														player.Concentration++;
+													else if (player.Accuracy[2] < 20)
+														player.Accuracy[2]++;
+													else if (player.Mentality < 20)
+														player.Mentality++;
+												//}
+											}
+											else if (player.Class == 4)
+											{
+												if (nextFinalLevel < 16)
+													player.Level[1] = nextLevel;
+												else
+													player.Level[1] = 16;
+
+												//if (player.Luck > mRand.Next(30))
+												//{
+													if (player.Strength < 20)
+														player.Strength++;
+													else if (player.Mentality < 20)
+														player.Mentality++;
+													else if (player.Accuracy[0] < 20)
+														player.Accuracy[0]++;
+													else if (player.Accuracy[1] < 20)
+														player.Accuracy[1]++;
+												//}
+											}
+											else if (player.Class == 5)
+											{
+												player.WeaPower = player.Level[0] * 2 + 10;
+
+												//if (player.Luck > mRand.Next(30))
+												//{
+													if (player.Strength < 20)
+														player.Strength++;
+													else if (player.Accuracy[1] < 20)
+														player.Accuracy[1]++;
+													else if (player.Endurance < 20)
+														player.Endurance++;
+												//}
+											}
+											else if (player.Class == 6)
+											{
+												player.Level[1] = (int)Math.Round((double)nextLevel / 2);
+												player.Level[2] = nextLevel;
+
+												//if (player.Luck > mRand.Next(30))
+												//{
+													if (player.Resistance < 18)
+														player.Resistance++;
+													else if (player.Resistance < 20)
+													{
+														if (player.Luck > mRand.Next(21))
+															player.Resistance++;
+													}
+													else
+														player.Agility++;
+												//}
+											}
+											else if (player.Class == 7 || player.Class == 8)
+											{
+												//if (player.Luck > mRand.Next(30))
+												//{
+													if (player.Endurance < 20)
+														player.Endurance++;
+													else if (player.Strength < 20)
+														player.Strength++;
+													else
+														player.Agility++;
+												//}
+											}
+											else if (player.Class == 10)
+											{
+												player.Level[1] = nextLevel;
+												player.Level[2] = nextLevel;
+
 												if (player.Strength < 20)
 													player.Strength++;
-												else if (player.Endurance < 20)
-													player.Endurance++;
-												else if (player.Accuracy[0] < 20)
-													player.Accuracy[0]++;
-												else
-													player.Agility++;
-											}
-										}
-										else if (player.Class == 2 || player.Class == 9)
-										{
-											player.Level[1] = nextLevel;
-											player.Level[2] = (int)Math.Round((double)nextLevel / 2);
-
-											if (player.Luck > mRand.Next(30))
-											{
 												if (player.Mentality < 20)
 													player.Mentality++;
-												else if (player.Concentration < 20)
-													player.Concentration++;
-												else if (player.Accuracy[1] < 20)
-													player.Accuracy[1]++;
-											}
-										}
-										else if (player.Class == 3)
-										{
-											player.Level[1] = (int)Math.Round((double)nextLevel / 2);
-											player.Level[2] = nextLevel;
-
-											if (player.Luck > mRand.Next(30))
-											{
 												if (player.Concentration < 20)
 													player.Concentration++;
-												else if (player.Accuracy[2] < 20)
-													player.Accuracy[2]++;
-												else if (player.Mentality < 20)
-													player.Mentality++;
-											}
-										}
-										else if (player.Class == 4)
-										{
-											if (nextLevel < 16)
-												player.Level[1] = nextLevel;
-											else
-												player.Level[1] = 16;
-
-											if (player.Luck > mRand.Next(30))
-											{
-												if (player.Strength < 20)
-													player.Strength++;
-												else if (player.Mentality < 20)
-													player.Mentality++;
-												else if (player.Accuracy[0] < 20)
-													player.Accuracy[0]++;
-												else if (player.Accuracy[1] < 20)
-													player.Accuracy[1]++;
-											}
-										}
-										else if (player.Class == 5)
-										{
-											player.WeaPower = player.Level[0] * 2 + 10;
-
-											if (player.Luck > mRand.Next(30))
-											{
-												if (player.Strength < 20)
-													player.Strength++;
-												else if (player.Accuracy[1] < 20)
-													player.Accuracy[1]++;
-												else if (player.Endurance < 20)
-													player.Endurance++;
-											}
-										}
-										else if (player.Class == 6)
-										{
-											player.Level[1] = (int)Math.Round((double)nextLevel / 2);
-											player.Level[2] = nextLevel;
-
-											if (player.Luck > mRand.Next(30))
-											{
-												if (player.Resistance < 18)
-													player.Resistance++;
-												else if (player.Resistance < 20)
-												{
-													if (player.Luck > mRand.Next(21))
-														player.Resistance++;
-												}
-												else
-													player.Agility++;
-											}
-										}
-										else if (player.Class == 7 || player.Class == 8)
-										{
-											if (player.Luck > mRand.Next(30))
-											{
 												if (player.Endurance < 20)
 													player.Endurance++;
-												else if (player.Strength < 20)
-													player.Strength++;
-												else
+												else if (player.Agility < 20)
 													player.Agility++;
-											}
-										}
-										else if (player.Class == 10)
-										{
-											player.Level[1] = nextLevel;
-											player.Level[2] = nextLevel;
 
-											if (player.Strength < 20)
-												player.Strength++;
-											if (player.Mentality < 20)
-												player.Mentality++;
-											if (player.Concentration < 20)
-												player.Concentration++;
-											if (player.Endurance < 20)
-												player.Endurance++;
-											else if (player.Agility < 20)
-												player.Agility++;
-
-											for (var i = 0; i < player.Accuracy.Length; i++)
-											{
-												if (player.Accuracy[i] < 20)
-													player.Accuracy[i]++;
+												for (var i = 0; i < player.Accuracy.Length; i++)
+												{
+													if (player.Accuracy[i] < 20)
+														player.Accuracy[i]++;
+												}
 											}
 										}
 
@@ -5128,7 +5146,7 @@ namespace Lore
 									for (var y = 48; y < 52; y++)
 									{
 										mMapLayer[21 + mMapWidth * y] = 25;
-										mMapLayer[25 + mMapWidth * y] = 25;
+										mMapLayer[25 + mMapWidth * y] = 23;
 
 										for (var x = 22; x < 25; x++)
 											mMapLayer[x + mMapWidth * y] = 44;
@@ -7606,28 +7624,28 @@ namespace Lore
 					switch (question)
 					{
 						case 0:
-							AppendText(new string[] { "문> CONFIG.SYS가 없으면 부팅이 안된다" });
+							AppendText(new string[] { "문> CONFIG.SYS가 없으면 부팅이 안된다" }, true);
 							break;
 						case 1:
-							AppendText(new string[] { "문> Quick-BASIC은 인터프리터어 이다" });
+							AppendText(new string[] { "문> Quick-BASIC은 인터프리터어 이다" }, true);
 							break;
 						case 2:
-							AppendText(new string[] { "문> Super VGA는 호환이 잘된다" });
+							AppendText(new string[] { "문> Super VGA는 호환이 잘된다" }, true);
 							break;
 						case 3:
-							AppendText(new string[] { "문> 8-bit APPLE의 CPU는 Z - 80 이다" });
+							AppendText(new string[] { "문> 8-bit APPLE의 CPU는 Z - 80 이다" }, true);
 							break;
 						case 4:
-							AppendText(new string[] { "문> COMMAND.COM 안에 도스 명령이 들어있다" });
+							AppendText(new string[] { "문> COMMAND.COM 안에 도스 명령이 들어있다" }, true);
 							break;
 						case 5:
-							AppendText(new string[] { "문> AdLib 카드는 9 채널이다" });
+							AppendText(new string[] { "문> AdLib 카드는 9 채널이다" }, true);
 							break;
 						case 6:
-							AppendText(new string[] { "문> Ultima의 제작자는 리차드 게리오트이다" });
+							AppendText(new string[] { "문> Ultima의 제작자는 리차드 게리오트이다" }, true);
 							break;
 						case 7:
-							AppendText(new string[] { "문> 당신의 컴퓨터는 IBM 계열이다" });
+							AppendText(new string[] { "문> 당신의 컴퓨터는 IBM 계열이다" }, true);
 							break;
 					}
 
@@ -7658,28 +7676,28 @@ namespace Lore
 					switch (question)
 					{
 						case 0:
-							AppendText(new string[] { "문> 태양계의 제 4 혹성은 지구이다" });
+							AppendText(new string[] { "문> 태양계의 제 4 혹성은 지구이다" }, true);
 							break;
 						case 1:
-							AppendText(new string[] { "문> 북극성이 가장 밝은 별이다" });
+							AppendText(new string[] { "문> 북극성이 가장 밝은 별이다" }, true);
 							break;
 						case 2:
-							AppendText(new string[] { "문> 1월의 수호성좌는 1월에 볼수있다" });
+							AppendText(new string[] { "문> 1월의 수호성좌는 1월에 볼수있다" }, true);
 							break;
 						case 3:
-							AppendText(new string[] { "문> 빛보다 빠른 입자는 실험상 없었다" });
+							AppendText(new string[] { "문> 빛보다 빠른 입자는 실험상 없었다" }, true);
 							break;
 						case 4:
-							AppendText(new string[] { "문> 달이 지구보다 먼저 생겨났다" });
+							AppendText(new string[] { "문> 달이 지구보다 먼저 생겨났다" }, true);
 							break;
 						case 5:
-							AppendText(new string[] { "문> 시그너스 X1은 블랙홀이다" });
+							AppendText(new string[] { "문> 시그너스 X1은 블랙홀이다" }, true);
 							break;
 						case 6:
-							AppendText(new string[] { "문> 과거로의 타임머신은 불가능하다" });
+							AppendText(new string[] { "문> 과거로의 타임머신은 불가능하다" }, true);
 							break;
 						case 7:
-							AppendText(new string[] { "문> 북극성은 주기적으로 달라진다" });
+							AppendText(new string[] { "문> 북극성은 주기적으로 달라진다" }, true);
 							break;
 					}
 
@@ -7699,7 +7717,7 @@ namespace Lore
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
-				else if (mParty.YAxis == 74)
+				else if (mParty.YAxis == 53)
 				{
 					AppendText(new string[] {
 						$" [color={RGB.White}]<< 다음의 옳고 그름을 가리시오 >>[/color]",
@@ -7710,28 +7728,28 @@ namespace Lore
 					switch (mQuestionID)
 					{
 						case 0:
-							AppendText(new string[] { "문> 이 게임의 배경은 4개의 대륙이다" });
+							AppendText(new string[] { "문> 이 게임의 배경은 4개의 대륙이다" }, true);
 							break;
 						case 1:
-							AppendText(new string[] { "문> Ancient Evil은 응징되어야 한다" });
+							AppendText(new string[] { "문> Ancient Evil은 응징되어야 한다" }, true);
 							break;
 						case 2:
-							AppendText(new string[] { "문> Lord Ahn만이 유일한 Semi-God이다" });
+							AppendText(new string[] { "문> Lord Ahn만이 유일한 Semi-God이다" }, true);
 							break;
 						case 3:
-							AppendText(new string[] { "문> 이 세계의 모든 악은 응징되어야 한다" });
+							AppendText(new string[] { "문> 이 세계의 모든 악은 응징되어야 한다" }, true);
 							break;
 						case 4:
-							AppendText(new string[] { "문> 이 게임의 제작자는 안 영기이다" });
+							AppendText(new string[] { "문> 이 게임의 제작자는 안 영기이다" }, true);
 							break;
 						case 5:
-							AppendText(new string[] { "문> 게임속의 인물은 거의 별의 이름을 가졌다" });
+							AppendText(new string[] { "문> 게임속의 인물은 거의 별의 이름을 가졌다" }, true);
 							break;
 						case 6:
-							AppendText(new string[] { "문> 네크로맨서는 신의 경지에 이르렀다" });
+							AppendText(new string[] { "문> 네크로맨서는 신의 경지에 이르렀다" }, true);
 							break;
 						case 7:
-							AppendText(new string[] { "문> 네크로맨서는 이 세계의 존재가 아니었다" });
+							AppendText(new string[] { "문> 네크로맨서는 이 세계의 존재가 아니었다" }, true);
 							break;
 					}
 
@@ -8319,6 +8337,24 @@ namespace Lore
 			FocusMenuItem();
 		}
 
+		private void ShowSpinner(SpinnerType spinnerType, Tuple<string, int>[] items, int defaultId) {
+			mSpinnerType = spinnerType;
+
+			mSpinnerItems = items;
+			mSpinnerID = defaultId;
+
+			AppendText(SpinnerText, mSpinnerItems[defaultId].Item1);
+			SpinnerText.Visibility = Visibility.Visible;
+		}
+
+		private void HideSpinner() {
+			mSpinnerType = SpinnerType.None;
+
+			SpinnerText.Visibility = Visibility.Collapsed;
+			mSpinnerItems = null;
+			mSpinnerID = -1;
+		}
+
 		private void ShowMenu(MenuMode menuMode, List<Tuple<string, Color>> menuItem)
 		{
 			mMenuMode = menuMode;
@@ -8349,18 +8385,16 @@ namespace Lore
 			}
 		}
 
-
-		private void AppendText(string text, bool append = false) {
-			AppendText(new string[] { text }, append);
+		private void AppendText(string str, bool append = false) {
+			AppendText(DialogText, str, append);
 		}
 
-		private void AppendText(string[] text, bool append = false)
-		{
+		private void AppendText(RichTextBlock textBlock, string str, bool append = false) {
 			var totalLen = 0;
 
 			if (append)
 			{
-				foreach (Paragraph prevParagraph in DialogText.Blocks)
+				foreach (Paragraph prevParagraph in textBlock.Blocks)
 				{
 					foreach (Run prevRun in prevParagraph.Inlines)
 					{
@@ -8370,106 +8404,114 @@ namespace Lore
 			}
 			else
 			{
-				DialogText.TextHighlighters.Clear();
-				DialogText.Blocks.Clear();
+				textBlock.TextHighlighters.Clear();
+				textBlock.Blocks.Clear();
 			}
 
 			var paragraph = new Paragraph();
-			DialogText.Blocks.Add(paragraph);
+			textBlock.Blocks.Add(paragraph);
 
-			for (var i = 0; i < text.Length; i++)
+			var startIdx = 0;
+			while ((startIdx = str.IndexOf("[", startIdx)) >= 0)
 			{
-				string str;
-				if (i == 0)
-					str = text[i];
-				else
-					str = "\r\n" + text[i];
-
-				var startIdx = 0;
-				while ((startIdx = str.IndexOf("[", startIdx)) >= 0)
+				if (startIdx < str.Length - 1 && str[startIdx + 1] == '[')
 				{
-					if (startIdx < str.Length - 1 && str[startIdx + 1] == '[') {
-						str = str.Remove(startIdx, 1);
-						startIdx++;
-						continue;
-					}
+					str = str.Remove(startIdx, 1);
+					startIdx++;
+					continue;
+				}
 
-					var preRun = new Run();
-					preRun.Text = str.Substring(0, startIdx);
+				var preRun = new Run
+				{
+					Text = str.Substring(0, startIdx)
+				};
 
-					paragraph.Inlines.Add(preRun);
-					DialogText.TextHighlighters.Add(new TextHighlighter()
-					{
-						Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(RGB.LightGray.Substring(0, 2), 16), Convert.ToByte(RGB.LightGray.Substring(2, 2), 16), Convert.ToByte(RGB.LightGray.Substring(4, 2), 16))),
-						Background = new SolidColorBrush(Colors.Transparent),
-						Ranges = { new TextRange()
+				paragraph.Inlines.Add(preRun);
+				textBlock.TextHighlighters.Add(new TextHighlighter()
+				{
+					Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(RGB.LightGray.Substring(0, 2), 16), Convert.ToByte(RGB.LightGray.Substring(2, 2), 16), Convert.ToByte(RGB.LightGray.Substring(4, 2), 16))),
+					Background = new SolidColorBrush(Colors.Transparent),
+					Ranges = { new TextRange()
 							{
 								StartIndex = totalLen,
 								Length = preRun.Text.Length
 							}
 						}
-					});
+				});
 
-					totalLen += preRun.Text.Length;
-					str = str.Substring(startIdx + 1);
+				totalLen += preRun.Text.Length;
+				str = str.Substring(startIdx + 1);
 
-					startIdx = str.IndexOf("]");
-					if (startIdx < 0)
-						break;
+				startIdx = str.IndexOf("]");
+				if (startIdx < 0)
+					break;
 
-					var tag = str.Substring(0, startIdx);
-					str = str.Substring(startIdx + 1);
-					var tagData = tag.Split("=");
+				var tag = str.Substring(0, startIdx);
+				str = str.Substring(startIdx + 1);
+				var tagData = tag.Split("=");
 
-					var endTag = $"[/{tagData[0]}]";
-					startIdx = str.IndexOf(endTag);
+				var endTag = $"[/{tagData[0]}]";
+				startIdx = str.IndexOf(endTag);
 
-					if (startIdx < 0)
-						break;
+				if (startIdx < 0)
+					break;
 
 
-					if (tagData[0] == "color" && tagData.Length > 1 && tagData[1].Length == 6)
+				if (tagData[0] == "color" && tagData.Length > 1 && tagData[1].Length == 6)
+				{
+					var tagRun = new Run
 					{
-						var tagRun = new Run();
-						tagRun.Text = str.Substring(0, startIdx).Replace("[[", "[");
+						Text = str.Substring(0, startIdx).Replace("[[", "[")
+					};
 
-						paragraph.Inlines.Add(tagRun);
-						DialogText.TextHighlighters.Add(new TextHighlighter()
-						{
-							Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(tagData[1].Substring(0, 2), 16), Convert.ToByte(tagData[1].Substring(2, 2), 16), Convert.ToByte(tagData[1].Substring(4, 2), 16))),
-							Background = new SolidColorBrush(Colors.Transparent),
-							Ranges = { new TextRange()
+					paragraph.Inlines.Add(tagRun);
+					textBlock.TextHighlighters.Add(new TextHighlighter()
+					{
+						Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(tagData[1].Substring(0, 2), 16), Convert.ToByte(tagData[1].Substring(2, 2), 16), Convert.ToByte(tagData[1].Substring(4, 2), 16))),
+						Background = new SolidColorBrush(Colors.Transparent),
+						Ranges = { new TextRange()
 											{
 												StartIndex = totalLen,
 												Length = tagRun.Text.Length
 											}
 										}
-						});
+					});
 
-						totalLen += tagRun.Text.Length;
-					}
-
-					str = str.Substring(startIdx + endTag.Length);
-					startIdx = 0;
+					totalLen += tagRun.Text.Length;
 				}
 
-				var run = new Run();
-				run.Text = str;
+				str = str.Substring(startIdx + endTag.Length);
+				startIdx = 0;
+			}
 
-				paragraph.Inlines.Add(run);
-				DialogText.TextHighlighters.Add(new TextHighlighter()
-				{
-					Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(RGB.LightGray.Substring(0, 2), 16), Convert.ToByte(RGB.LightGray.Substring(2, 2), 16), Convert.ToByte(RGB.LightGray.Substring(4, 2), 16))),
-					Background = new SolidColorBrush(Colors.Transparent),
-					Ranges = { new TextRange()
+			var run = new Run
+			{
+				Text = str
+			};
+
+			paragraph.Inlines.Add(run);
+			textBlock.TextHighlighters.Add(new TextHighlighter()
+			{
+				Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(RGB.LightGray.Substring(0, 2), 16), Convert.ToByte(RGB.LightGray.Substring(2, 2), 16), Convert.ToByte(RGB.LightGray.Substring(4, 2), 16))),
+				Background = new SolidColorBrush(Colors.Transparent),
+				Ranges = { new TextRange()
 						{
 							StartIndex = totalLen,
 							Length = run.Text.Length
 						}
 					}
-				});
+			});
 
-				totalLen += run.Text.Length;
+			totalLen += run.Text.Length;
+		}
+
+		private void AppendText(string[] text, bool append = false)
+		{
+			for (var i = 0; i < text.Length; i++) {
+				if (i == 0)
+					AppendText(text[i], append);
+				else
+					AppendText("\r\n" + text[i], true);
 			}
 		}
 
@@ -9200,7 +9242,7 @@ namespace Lore
 					Talk("Stheno 와 Euryale는 거의 불멸의 생명체 입니다.");
 				else if (moveX == 39 && moveY == 55)
 				{
-					Talk(new string[] {
+					AppendText(new string[] {
 					" 나는 LORE 특공대의 대장인 Lore Hunter 라고 하오. 여기서의 적들과는, 이제 대항하기가 혼자서는 무리라고 판단했소." +
 					" 그래서, 나는 여태껏 여기서 새로운 영웅들을 기다리고 있었소.",
 					" 내가 당신의 일행에 끼게 되는걸 어떻게 생각하오 ?"
@@ -10720,7 +10762,13 @@ namespace Lore
 			JoinRedAntares,
 			JoinSpica,
 			QnA,
-			ReadScroll
+			ReadScroll,
+			TeleportationDirection
+		}
+
+		private enum SpinnerType {
+			None,
+			TeleportationRange
 		}
 
 		private enum CureMenuState

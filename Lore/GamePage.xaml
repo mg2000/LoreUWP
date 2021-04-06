@@ -57,6 +57,7 @@
 				</Grid.RowDefinitions>
 				<StackPanel Grid.Row="0">
 					<RichTextBlock x:Name="DialogText" FontSize="25" Margin="30, 30, 30, 30" IsTextSelectionEnabled="False"></RichTextBlock>
+					<RichTextBlock x:Name="SpinnerText" FontSize="25" Margin="30, 0, 30, 0" IsTextSelectionEnabled="False" Visibility="Collapsed"></RichTextBlock>
 					<TextBlock x:Name="GameMenuText0" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴1</TextBlock>
 					<TextBlock x:Name="GameMenuText1" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴2</TextBlock>
 					<TextBlock x:Name="GameMenuText2" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴3</TextBlock>
