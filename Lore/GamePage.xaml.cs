@@ -1611,6 +1611,9 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.BattleMinotaur2)
 						{
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
 							mEncounterEnemyList.Clear();
 							JoinEnemy(52);
 
@@ -1868,8 +1871,7 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetWillOfDeneb6)
 						{
-							mAnimationEvent = AnimationType.Remains1;
-							InvokeAnimation();
+							InvokeAnimation(AnimationType.Remains1);
 
 							mSpecialEvent = SpecialEventType.None;
 						}
@@ -1900,8 +1902,7 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetWillOfSirius3)
 						{
-							mAnimationEvent = AnimationType.Remains2;
-							InvokeAnimation();
+							InvokeAnimation(AnimationType.Remains2);
 
 							mSpecialEvent = SpecialEventType.None;
 						}
@@ -1922,8 +1923,7 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetWillOfAlbireo2)
 						{
-							mAnimationEvent = AnimationType.Remains3;
-							InvokeAnimation();
+							InvokeAnimation(AnimationType.Remains3);
 
 							mSpecialEvent = SpecialEventType.None;
 						}
@@ -1955,8 +1955,7 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetWillOfCanopus3)
 						{
-							mAnimationEvent = AnimationType.Remains4;
-							InvokeAnimation();
+							InvokeAnimation(AnimationType.Remains4);
 
 							mSpecialEvent = SpecialEventType.None;
 						}
@@ -1986,15 +1985,13 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetWillOfArcturus3)
 						{
-							mAnimationEvent = AnimationType.Remains5;
-							InvokeAnimation();
+							InvokeAnimation(AnimationType.Remains5);
 
 							mSpecialEvent = SpecialEventType.None;
 						}
 						else if (mSpecialEvent == SpecialEventType.ReadScroll)
 						{
-							mAnimationEvent = AnimationType.Remains6;
-							InvokeAnimation();
+							InvokeAnimation(AnimationType.Remains6);
 
 							mSpecialEvent = SpecialEventType.None;
 						}
@@ -4671,8 +4668,7 @@ namespace Lore
 											{
 												AppendText("");
 
-												mAnimationEvent = AnimationType.EnterSwampGate;
-												InvokeAnimation();
+												InvokeAnimation(AnimationType.EnterSwampGate);
 											}
 											else if (mParty.Map == 21)
 											{
@@ -5137,6 +5133,8 @@ namespace Lore
 							else if (mMenuMode == MenuMode.QnA)
 							{
 								mMenuMode = MenuMode.None;
+
+								AppendText("");
 
 								for (var x = 22; x < 25; x++)
 									mMapLayer[x + mMapWidth * mParty.YAxis] = 44;
@@ -7202,8 +7200,7 @@ namespace Lore
 						}
 					}
 
-					mAnimationEvent = AnimationType.SwampGatePyramid;
-					InvokeAnimation();
+					InvokeAnimation(AnimationType.SwampGatePyramid);
 				}
 				else if (mParty.YAxis == 67 && (mParty.Etc[37] & (1 << 4)) == 0) {
 					mEncounterEnemyList.Clear();
@@ -7424,8 +7421,7 @@ namespace Lore
 					AppendText(new string[] { $"[color={RGB.LightCyan}]당신은 보스인 Hidra를 만났다.[/color]" });
 
 					// 히드라 등장 애니메이션
-					mAnimationEvent = AnimationType.Hydra;
-					InvokeAnimation();
+					InvokeAnimation(AnimationType.Hydra);
 				}
 			}
 			else if (mParty.Map == 18)
@@ -7448,8 +7444,7 @@ namespace Lore
 
 						AppendText($"[color={RGB.LightCyan}]미로속에서 소를 닮은 괴물이 나타났다[/color]");
 
-						mAnimationEvent = AnimationType.Minotaur;
-						InvokeAnimation();
+						InvokeAnimation(AnimationType.Minotaur);
 					}
 				}
 				else if (mParty.XAxis == 36 && mParty.YAxis == 30)
@@ -7494,8 +7489,7 @@ namespace Lore
 				{
 					AppendText(new string[] { "당신은 여기가 Huge Dragon의 거처임을 느꼈다" });
 
-					mAnimationEvent = AnimationType.HugeDragon;
-					InvokeAnimation();
+					InvokeAnimation(AnimationType.HugeDragon);
 				}
 			}
 			else if (mParty.Map == 19)
@@ -7779,10 +7773,7 @@ namespace Lore
 
 					AppendText(new string[] { $"[color={RGB.LightCyan}]미로속에서 소를 닮은 괴물이 나타났다[/color]" });
 
-					// 미노타우루스 등장 애니메이션
-
-					ContinueText.Visibility = Visibility.Visible;
-					mSpecialEvent = SpecialEventType.BattleMinotaur2;
+					InvokeAnimation(AnimationType.Minotaur2);
 				}
 				else if (mParty.YAxis == 12) {
 					CheckMuddyFinalBattle();
@@ -9383,8 +9374,7 @@ namespace Lore
 				else
 				{
 					AppendText(" 당신이 유골에 다가가자 재로 변하였다.");
-					mAnimationEvent = AnimationType.Remains7;
-					InvokeAnimation(moveX, moveY);
+					InvokeAnimation(AnimationType.Remains7, moveX, moveY);
 				}
 			}
 		}
@@ -9400,7 +9390,7 @@ namespace Lore
 			await RefreshGame();
 		}
 
-		private async void InvokeAnimation(int aniX = 0, int aniY = 0) {
+		private async void InvokeAnimation(AnimationType animationEvent, int aniX = 0, int aniY = 0) {
 			void RestRemains(int x, int y) {
 				for (var i = 1; i <= 30; i++) {
 					Task.Delay(i * 2).Wait();
@@ -9413,6 +9403,8 @@ namespace Lore
 
 
 			}
+
+			mAnimationEvent = animationEvent;
 
 			var animationTask = Task.Run(() =>
 			{
@@ -9444,7 +9436,7 @@ namespace Lore
 
 					mAnimationFrame = 6;
 				}
-				else if (mAnimationEvent == AnimationType.Minotaur) {
+				else if (mAnimationEvent == AnimationType.Minotaur || mAnimationEvent == AnimationType.Minotaur2) {
 					for (var i = 1; i <= 4; i++) {
 						mAnimationFrame = i;
 						Task.Delay(1000).Wait();
@@ -9517,6 +9509,11 @@ namespace Lore
 			else if (mAnimationEvent == AnimationType.Minotaur) {
 				ContinueText.Visibility = Visibility.Visible;
 				mSpecialEvent = SpecialEventType.BattleMinotaur;
+			}
+			else if (mAnimationEvent == AnimationType.Minotaur2)
+			{
+				ContinueText.Visibility = Visibility.Visible;
+				mSpecialEvent = SpecialEventType.BattleMinotaur2;
 			}
 			else if (mAnimationEvent == AnimationType.HugeDragon) {
 				ContinueText.Visibility = Visibility.Visible;
@@ -9665,7 +9662,7 @@ namespace Lore
 						else
 							Console.WriteLine("히드라 안그리기");
 					}
-					else if (mAnimationEvent == AnimationType.Minotaur) {
+					else if (mAnimationEvent == AnimationType.Minotaur || mAnimationEvent == AnimationType.Minotaur2) {
 						if (mAnimationFrame > 0)
 							mCharacterTiles.Draw(sb, 9, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
 					}
@@ -10854,6 +10851,7 @@ namespace Lore
 			Remains7,
 			Hydra,
 			Minotaur,
+			Minotaur2,
 			HugeDragon,
 			EnterSwampGate,
 			SwampGatePyramid
