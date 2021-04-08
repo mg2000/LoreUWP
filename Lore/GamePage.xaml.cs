@@ -805,15 +805,13 @@ namespace Lore
 				async Task EndBattle()
 				{
 					async Task DefeatAstralMud() {
+						mEncounterEnemyList.Clear();
+						mBattleEvent = 0;
+
+						ShowMap();
+
 						Talk(" 당신은 이 동굴에 보관되어 있는 봉인을 발견했다.  그리고는 봉쇄 되었던 봉인을 풀어버렸다.");
-
-						mParty.Etc[40] |= 1;
-
-						mParty.Map = 4;
-						mParty.XAxis = 81;
-						mParty.YAxis = 16;
-
-						await RefreshGame();
+						mSpecialEvent = SpecialEventType.DefeatAstralMud;
 					}
 					
 					async Task CheckPassSwampKeepExitEvent() {
@@ -1000,12 +998,14 @@ namespace Lore
 						else if (mBattleEvent == 12)
 						{
 							mParty.Etc[40] |= 1 << 1;
-							CheckMuddyFinalBattle();
+							await CheckMuddyFinalBattle();
+							return;
 						}
 						else if (mBattleEvent == 13)
 						{
 							mParty.Etc[40] |= 1 << 2;
-							CheckMuddyFinalBattle();
+							await CheckMuddyFinalBattle();
+							return;
 						}
 						else if (mBattleEvent == 14)
 						{
@@ -1627,6 +1627,9 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.BattleThreeDragon)
 						{
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 3; i++)
 								JoinEnemy(53);
@@ -1641,8 +1644,19 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.BattleAstralMud)
 						{
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
+							mEncounterEnemyList.Clear();
+							for (var i = 0; i < 6; i++)
+								JoinEnemy(30);
+							JoinEnemy(56);
+
 							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 14;
+
+							HideMap();
+							DisplayEnemy();
 
 							StartBattle(false);
 						}
@@ -2072,6 +2086,17 @@ namespace Lore
 							mBattleEvent = 25;
 
 							StartBattle(true);
+						}
+						else if (mSpecialEvent == SpecialEventType.DefeatAstralMud) {
+							mParty.Etc[40] |= 1;
+
+							mParty.Map = 4;
+							mParty.XAxis = 81;
+							mParty.YAxis = 16;
+
+							await RefreshGame();
+
+							mSpecialEvent = SpecialEventType.None;
 						}
 					}
 
@@ -7420,7 +7445,6 @@ namespace Lore
 
 					AppendText(new string[] { $"[color={RGB.LightCyan}]당신은 보스인 Hidra를 만났다.[/color]" });
 
-					// 히드라 등장 애니메이션
 					InvokeAnimation(AnimationType.Hydra);
 				}
 			}
@@ -7776,7 +7800,7 @@ namespace Lore
 					InvokeAnimation(AnimationType.Minotaur2);
 				}
 				else if (mParty.YAxis == 12) {
-					CheckMuddyFinalBattle();
+					await CheckMuddyFinalBattle();
 				}
 			}
 			else if (mParty.Map == 21) {
@@ -8006,7 +8030,7 @@ namespace Lore
 			}
 		}
 
-		private void CheckMuddyFinalBattle() {
+		private async Task CheckMuddyFinalBattle() {
 			if (mParty.Etc[0] == 0)
 			{
 				mParty.Etc[0] = 1;
@@ -8015,10 +8039,7 @@ namespace Lore
 
 			if ((mParty.Etc[40] & (1 << 1)) == 0)
 			{
-				// 드래곤 3마리 등장 애니메이션
-				ContinueText.Visibility = Visibility.Visible;
-
-				mSpecialEvent = SpecialEventType.BattleThreeDragon;
+				InvokeAnimation(AnimationType.Dragon3);
 			}
 			else if ((mParty.Etc[40] & (1 << 2)) == 0)
 			{
@@ -8035,17 +8056,15 @@ namespace Lore
 				StartBattle(false);
 			}
 			else if ((mParty.Etc[40] & 1) == 0) {
-				// 아스트랄 머드 등장 이벤트
-
-				Talk($" [color={RGB.LightMagenta}]나는 Necromacer 와 함께 다른 차원에서 내려온 Astral Mud 이다. 여기는 그가 세운 최고의 동굴이자 너가 마지막으로 거칠 동굴이다." +
-				"  나를 만만하게 보지마라.  다른 차원의 능력들을 너가 맛볼 기회를 가진다는 것에 대해  고맙게 생각하기 바란다. 하하하 ...");
-
-				mSpecialEvent = SpecialEventType.BattleAstralMud;
+				ShowMap();
+				InvokeAnimation(AnimationType.AstralMud);
 			}
 			else {
 				mParty.Map = 4;
 				mParty.XAxis = 81;
 				mParty.YAxis = 16;
+
+				await RefreshGame();
 			}
 		}
 
@@ -8502,7 +8521,7 @@ namespace Lore
 				if (i == 0)
 					AppendText(text[i], append);
 				else
-					AppendText("\r\n" + text[i], true);
+					AppendText(text[i], true);
 			}
 		}
 
@@ -9463,6 +9482,24 @@ namespace Lore
 							Task.Delay(2000).Wait();
 					}
 				}
+				else if (mAnimationEvent == AnimationType.HugeDragon)
+				{
+					for (var i = 1; i <= 4; i++)
+					{
+						mAnimationFrame = i;
+						if (i < 4)
+							Task.Delay(2000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.Dragon3)
+				{
+					for (var i = 1; i <= 6; i++)
+					{
+						mAnimationFrame = i;
+						if (i < 6)
+							Task.Delay(2000).Wait();
+					}
+				}
 				else if (mAnimationEvent == AnimationType.EnterSwampGate) {
 					for (var i = 1; i < 6; i++) {
 						Task.Delay(1000).Wait();
@@ -9498,6 +9535,14 @@ namespace Lore
 						}
 					}
 				}
+				else if (mAnimationEvent == AnimationType.AstralMud) {
+					for (var i = 1; i <= 4; i++)
+					{
+						mAnimationFrame = i;
+						if (i < 4)
+							Task.Delay(1500).Wait();
+					}
+				}
 			});
 
 			await animationTask;
@@ -9518,6 +9563,10 @@ namespace Lore
 			else if (mAnimationEvent == AnimationType.HugeDragon) {
 				ContinueText.Visibility = Visibility.Visible;
 				mSpecialEvent = SpecialEventType.BattleHugeDragon;
+			}
+			else if (mAnimationEvent == AnimationType.Dragon3) {
+				ContinueText.Visibility = Visibility.Visible;
+				mSpecialEvent = SpecialEventType.BattleThreeDragon;
 			}
 			else if (mAnimationEvent == AnimationType.EnterSwampGate) {
 				if ((mParty.Etc[34] & (1 << 5)) == 0)
@@ -9543,6 +9592,12 @@ namespace Lore
 
 				mAnimationEvent = AnimationType.None;
 				mAnimationFrame = 0;
+			}
+			else if (mAnimationEvent == AnimationType.AstralMud) {
+				Talk($" [color={RGB.LightMagenta}]나는 Necromacer 와 함께 다른 차원에서 내려온 Astral Mud 이다. 여기는 그가 세운 최고의 동굴이자 너가 마지막으로 거칠 동굴이다." +
+				"  나를 만만하게 보지마라.  다른 차원의 능력들을 너가 맛볼 기회를 가진다는 것에 대해  고맙게 생각하기 바란다. 하하하 ...[/color]");
+
+				mSpecialEvent = SpecialEventType.BattleAstralMud;
 			}
 			else {
 				mAnimationEvent = AnimationType.None;
@@ -9677,6 +9732,46 @@ namespace Lore
 							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
 							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
 						}
+					}
+					else if (mAnimationEvent == AnimationType.Dragon3)
+					{
+						if (mAnimationFrame > 0)
+						{
+							if (mAnimationFrame >= 4) {
+								mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - (9 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (9 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (9 - mAnimationFrame)), Vector4.One);
+
+
+								mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - (8 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (8 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (8 - mAnimationFrame)), Vector4.One);
+							}
+
+							var aniYOffset = mAnimationFrame > 4 ? 2 : 6 - mAnimationFrame;
+								
+							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 3, mParty.YAxis - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 2, mParty.YAxis - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - aniYOffset), Vector4.One);
+
+
+							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 3, mParty.YAxis - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 2, mParty.YAxis - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - aniYOffset + 1), Vector4.One);
+
+							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 2, mParty.YAxis - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 3, mParty.YAxis - aniYOffset), Vector4.One);
+
+
+							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 2, mParty.YAxis - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 3, mParty.YAxis - aniYOffset + 1), Vector4.One);
+						}
+					}
+					else if (mAnimationEvent == AnimationType.AstralMud) {
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (5 - mAnimationFrame), mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, 28, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (4 - mAnimationFrame), mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
 					}
 				}
 			}
@@ -10854,7 +10949,9 @@ namespace Lore
 			Minotaur2,
 			HugeDragon,
 			EnterSwampGate,
-			SwampGatePyramid
+			SwampGatePyramid,
+			Dragon3,
+			AstralMud
 		}
 
 		private enum SpecialEventType {
@@ -10931,7 +11028,8 @@ namespace Lore
 			SwampGatePyramid6,
 			ReadScroll,
 			BattleWivern,
-			BattleExitSwampGate,
+			BattleExitSwampGate, 
+			DefeatAstralMud,
 			Ending
 		}
 	}
