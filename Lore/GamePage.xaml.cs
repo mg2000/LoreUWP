@@ -162,6 +162,7 @@ namespace Lore
 		// 24 - 네크로맨서 전투
 		// 25 - 고르곤 전투
 		// 26 - 임페리움 마이너 입구 전투
+		// 27 - 던전 오브 이블 입구 전투
 		private int mBattleEvent = 0;
 
 		// 2 - 지식의 성전 유골 안식
@@ -842,7 +843,7 @@ namespace Lore
 							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 46;
 					}
 
-					async Task DefeatDungeonOfEvilKeeper() {
+					async Task DefeatImperiumMinorKeeper() {
 						if (mEncounterEnemyList[6].Dead)
 							mParty.Etc[42] |= 1 << 2;
 
@@ -907,6 +908,17 @@ namespace Lore
 						}
 						else
 							ShowMap();
+					}
+
+					async Task CheckDungeonOfEvilBattleResult() {
+						if (mEncounterEnemyList[2].Dead)
+							mParty.Etc[43] |= 1 << 1;
+
+						mParty.Map = 25;
+						mParty.XAxis = 24;
+						mParty.YAxis = 44;
+
+						await RefreshGame();
 					}
 
 					mBattleCommandQueue.Clear();
@@ -1062,14 +1074,15 @@ namespace Lore
 						else if (mBattleEvent == 16)
 							SwampKeepBattleEvent();
 						else if (mBattleEvent == 17)
-							await DefeatDungeonOfEvilKeeper();
+							await DefeatImperiumMinorKeeper();
 						else if (mBattleEvent == 18)
 							mParty.Etc[42] |= 1 << 1;
 						else if (mBattleEvent == 19)
 							mParty.Etc[42] |= 1;
 						else if (mBattleEvent == 20)
 							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 40;
-						else if (mBattleEvent == 21) {
+						else if (mBattleEvent == 21)
+						{
 							mBattleTurn = BattleTurn.None;
 
 							mEncounterEnemyList.Clear();
@@ -1091,7 +1104,8 @@ namespace Lore
 							mSpecialEvent = SpecialEventType.BattleFackNecromancer;
 							return;
 						}
-						else if (mBattleEvent == 22) {
+						else if (mBattleEvent == 22)
+						{
 							AppendText(new string[] { $"[color={RGB.LightMagenta}] 욱! 너의 힘은 대단하구나. 나는 너에게 졌다고 인정하겠다.  흐흐, 그러나 사실 나는 너희 찾던 네크로맨서님이 아니다.  만약 그분이라 이렇게 쉽게 당하지는 않았을게니까." +
 							"  내 생명이 얼마 안남았구나. 네크로맨서님 만세 !![/color]" }, true);
 
@@ -1099,7 +1113,8 @@ namespace Lore
 
 							mSpecialEvent = SpecialEventType.AfterBattleFakeNecromancer;
 						}
-						else if (mBattleEvent == 23) {
+						else if (mBattleEvent == 23)
+						{
 							for (var x = 23; x < 27; x++)
 								mMapLayer[x + mMapWidth * mParty.YAxis] = 41;
 
@@ -1111,18 +1126,22 @@ namespace Lore
 						}
 						else if (mBattleEvent == 24)
 							WinNecromancer();
-						else if (mBattleEvent == 25) {
+						else if (mBattleEvent == 25)
+						{
 							AppendText(new string[] { $"[color={RGB.White}]당신들은 Gorgon을 물리쳤다.[/color]" }, true);
 
 							ContinueText.Visibility = Visibility.Visible;
 
 							mParty.Etc[37] |= 1 << 4;
 						}
-						else if (mBattleEvent == 26) {
+						else if (mBattleEvent == 26)
+						{
 							await CheckImperiumMinorEntraceBattleResult();
 
 							return;
 						}
+						else if (mBattleEvent == 27)
+							await CheckDungeonOfEvilBattleResult();
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1171,7 +1190,7 @@ namespace Lore
 						else if (mBattleEvent == 16)
 							SwampKeepBattleEvent();
 						else if (mBattleEvent == 17)
-							await DefeatDungeonOfEvilKeeper();
+							await DefeatImperiumMinorKeeper();
 						else if (mBattleEvent == 20)
 							mMapLayer[mParty.XAxis + mMapWidth * mParty.YAxis] = 40;
 						else if (mBattleEvent == 21)
@@ -1206,6 +1225,8 @@ namespace Lore
 							await CheckImperiumMinorEntraceBattleResult();
 							return;
 						}
+						else if (mBattleEvent == 27)
+							await CheckDungeonOfEvilBattleResult();
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1489,6 +1510,8 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.EnterEvilConcentration)
 						{
+							mSpecialEvent = SpecialEventType.None;
+
 							mBattleEvent = 3;
 							StartBattle(false);
 						}
@@ -1724,7 +1747,7 @@ namespace Lore
 
 							StartBattle(false);
 						}
-						else if (mSpecialEvent == SpecialEventType.ExitDungeonOfEvil)
+						else if (mSpecialEvent == SpecialEventType.ExitImperiumMinor)
 						{
 							mSpecialEvent = SpecialEventType.None;
 							mBattleEvent = 17;
@@ -1757,6 +1780,9 @@ namespace Lore
 									enemy = TurnMind(mPlayerList[i]);
 								enemy.ENumber = 1;
 							}
+
+							HideMap();
+							DisplayEnemy();
 
 							mSpecialEvent = SpecialEventType.BattleDual;
 						}
@@ -1800,6 +1826,9 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.BattlePanzerViper)
 						{
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 4; i++)
 								JoinEnemy(65);
@@ -2170,6 +2199,42 @@ namespace Lore
 							ShowMap();
 
 							mSpecialEvent = SpecialEventType.None;
+						}
+						else if (mSpecialEvent == SpecialEventType.EnterDungeonOfEvil) {
+							var hasDraconian = false;
+							foreach (var player in mPlayerList)	{
+								if (player.Name == "드라코니안") {
+									Talk(new string[] {
+										" ArchiDraconian은 마지막에 있는 Draconian을 발견했다.", 
+										$"[color={RGB.LightMagenta}] 아니 너는 누구냐! 감히 Draconian 족이면서 Necromancer님에게 반기를 들다니... 그것은 바로 죽음이다. 받아랏!![/color]"
+									});
+
+									player.HP = 0;
+									player.Unconscious = 1;
+									player.Dead = 30000;
+
+									UpdatePlayersStat();
+
+									mSpecialEvent = SpecialEventType.KillDraconian;
+
+									hasDraconian = true;
+									break;
+								}
+							}
+
+							if (!hasDraconian)
+							{
+								mSpecialEvent = SpecialEventType.None;
+								mBattleEvent = 27;
+
+								StartBattle(true);
+							}
+						}
+						else if (mSpecialEvent == SpecialEventType.KillDraconian) {
+							mSpecialEvent = SpecialEventType.None;
+							mBattleEvent = 27;
+
+							StartBattle(false);
 						}
 					}
 
@@ -4453,7 +4518,7 @@ namespace Lore
 											StartBattle(false);
 										}
 									}
-									else if (mParty.Map == 23)
+									else if (mParty.Map == 22)
 									{
 										if ((mParty.Etc[42] & (1 << 2)) == 0)
 										{
@@ -4473,9 +4538,16 @@ namespace Lore
 											HideMap();
 											DisplayEnemy();
 
-											Talk($"[color={RGB.LightCyan}]{mPlayerList[0].Name}, 나의 힘을 보여주겠다.");
+											Talk($"[color={RGB.LightCyan}]{mPlayerList[0].Name}, 나의 힘을 보여주겠다.[/color]");
 
-											mSpecialEvent = SpecialEventType.ExitDungeonOfEvil;
+											mSpecialEvent = SpecialEventType.ExitImperiumMinor;
+										}
+										else {
+											mParty.Map = 5;
+											mParty.XAxis = 14;
+											mParty.YAxis = 31;
+
+											await RefreshGame();
 										}
 									}
 									else if (mParty.Map == 23)
@@ -5076,6 +5148,27 @@ namespace Lore
 											await RefreshGame();
 											break;
 										case EnterType.DungeonOfEvil:
+											if ((mParty.Etc[43] & (1 << 1)) == 0) {
+												mEncounterEnemyList.Clear();
+
+												for (var i = 0; i < 2; i++)
+													JoinEnemy(61);
+
+												JoinEnemy(69);
+
+												for (var i = 0; i < 4; i++)
+													JoinEnemy(61);
+
+												HideMap();
+												DisplayEnemy();
+
+												Talk(new string[] {
+													$"[color={RGB.LightMagenta}] 이 동굴에 들어 가겠다고?[/color]",
+													$"[color={RGB.LightMagenta}] 하!, 우습군. 너희들에게는 여기의 Draconian족들의 모습이 보이지 않는 모양이군.[/color]"
+												});
+
+												mSpecialEvent = SpecialEventType.EnterDungeonOfEvil;
+											}
 											break;
 
 									}
@@ -8135,7 +8228,7 @@ namespace Lore
 					}
 
 					for (var x = 24; x < 26; x++)
-						mMapLayer[x + mMapWidth * 11] = 53;
+						mMapLayer[x + mMapWidth * 11] = 54;
 
 					Talk(" 푯말에 쓰여 있는 대로 이 곳의 레버를 당겼 더니 굉음과 함께 감추어져 있었던 성이 지하 로부터 떠 올랐다.'");
 				}
@@ -8147,7 +8240,7 @@ namespace Lore
 			else if (mParty.Map == 25) {
 				if (mParty.YAxis == 45)
 					ShowExitMenu();
-				else if (mParty.YAxis == 43) {
+				else if (mParty.YAxis == 42) {
 					if (mParty.Etc[0] == 0)
 					{
 						mParty.Etc[0] = 1;
@@ -8156,11 +8249,7 @@ namespace Lore
 
 					AppendText(new string[] { $" [color={RGB.White}]금속으로된 어떤 적이 나타났다.[/color]" });
 
-					// 팬저 바이퍼 등장 이벤트
-
-					Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]" });
-
-					mSpecialEvent = SpecialEventType.BattlePanzerViper;
+					InvokeAnimation(AnimationType.PanzerViper);
 				}
 				else if (mParty.XAxis == 14 && mParty.YAxis == 33) {
 					mMapLayer[14 + mMapWidth * 33] = 41;
@@ -9629,8 +9718,6 @@ namespace Lore
 				}
 
 				mMapLayer[x + mMapWidth * y] = 35;
-
-
 			}
 
 			mAnimationEvent = animationEvent;
@@ -9745,12 +9832,21 @@ namespace Lore
 						}
 					}
 				}
-				else if (mAnimationEvent == AnimationType.AstralMud) {
+				else if (mAnimationEvent == AnimationType.AstralMud)
+				{
 					for (var i = 1; i <= 4; i++)
 					{
 						mAnimationFrame = i;
 						if (i < 4)
 							Task.Delay(1500).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.PanzerViper) {
+					for (var i = 1; i <= 4; i++)
+					{
+						mAnimationFrame = i;
+						if (i < 4)
+							Task.Delay(2000).Wait();
 					}
 				}
 			});
@@ -9808,6 +9904,11 @@ namespace Lore
 				"  나를 만만하게 보지마라.  다른 차원의 능력들을 너가 맛볼 기회를 가진다는 것에 대해  고맙게 생각하기 바란다. 하하하 ...[/color]");
 
 				mSpecialEvent = SpecialEventType.BattleAstralMud;
+			}
+			else if (mAnimationEvent == AnimationType.PanzerViper) {
+				Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]" });
+
+				mSpecialEvent = SpecialEventType.BattlePanzerViper;
 			}
 			else {
 				mAnimationEvent = AnimationType.None;
@@ -9984,6 +10085,9 @@ namespace Lore
 					else if (mAnimationEvent == AnimationType.AstralMud) {
 						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (5 - mAnimationFrame), mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
 						mCharacterTiles.Draw(sb, 28, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (4 - mAnimationFrame), mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+					}
+					else if (mAnimationEvent == AnimationType.PanzerViper) {
+						mCharacterTiles.Draw(sb, 23, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
 					}
 				}
 			}
@@ -11165,7 +11269,8 @@ namespace Lore
 			EnterSwampGate,
 			SwampGatePyramid,
 			Dragon3,
-			AstralMud
+			AstralMud,
+			PanzerViper
 		}
 
 		private enum SpecialEventType {
@@ -11204,7 +11309,7 @@ namespace Lore
 			BattleMinotaur2,
 			BattleThreeDragon,
 			BattleAstralMud,
-			ExitDungeonOfEvil,
+			ExitImperiumMinor,
 			BattleDeathKnight,
 			MeetFaceNecromancer,
 			BattleDual,
@@ -11246,6 +11351,8 @@ namespace Lore
 			BattleExitSwampGate, 
 			DefeatAstralMud,
 			EnterImperiumMinor,
+			EnterDungeonOfEvil,
+			KillDraconian,
 			Ending
 		}
 	}
