@@ -85,6 +85,8 @@ namespace Lore
 
 		private bool mTrainingEnd = false;
 
+		private int mTeleportationDirection = 0;
+
 		// 1 - 로어성에서 병사를 만났을때 발생하는 이벤트
 		// 2 - 로어성을 떠날때 스켈레톤을 만나는 이벤트
 		// 3 - 스켈레톤의 답을 거절했을때 이벤트
@@ -159,6 +161,7 @@ namespace Lore
 		// 23 - 팬저 바이퍼 전투
 		// 24 - 네크로맨서 전투
 		// 25 - 고르곤 전투
+		// 26 - 임페리움 마이너 입구 전투
 		private int mBattleEvent = 0;
 
 		// 2 - 지식의 성전 유골 안식
@@ -336,7 +339,7 @@ namespace Lore
 				}
 
 
-				if (mMenuMode == MenuMode.None && (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.Right ||
+				if (mMenuMode == MenuMode.None && mSpinnerType == SpinnerType.None && (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.Left || args.VirtualKey == VirtualKey.Right ||
 				 args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadLeftThumbstickLeft || args.VirtualKey == VirtualKey.GamepadLeftThumbstickRight ||
 				 args.VirtualKey == VirtualKey.GamepadDPadUp || args.VirtualKey == VirtualKey.GamepadDPadDown || args.VirtualKey == VirtualKey.GamepadDPadLeft || args.VirtualKey == VirtualKey.GamepadDPadRight))
 				{
@@ -863,6 +866,49 @@ namespace Lore
 						mSpecialEvent = SpecialEventType.Ending;
 					}
 
+					async Task CheckImperiumMinorEntraceBattleResult() {
+						var allDead = true;
+						foreach (var enemy in mEncounterEnemyList) {
+							if (enemy.ENumber == 64 && enemy.Dead)
+								mParty.Etc[41] |= 1 << 4;
+							else if (enemy.ENumber == 63 && enemy.Dead)
+								mParty.Etc[41] |= 1 << 5;
+
+							if (!allDead)
+								allDead = false;
+						}
+
+						if (allDead)
+							mParty.Etc[41] |= 1 << 1;
+
+						mEncounterEnemyList.Clear();
+						mBattleEvent = 0;
+
+						mParty.Map = 22;
+						mParty.XAxis = 24;
+						mParty.YAxis = 5;
+
+						await RefreshGame();
+
+						if ((mParty.Etc[41] & (1 << 6)) == 0)
+						{
+							JoinEnemy(67);
+
+							DisplayEnemy();
+
+							Talk(new string[] { " 역시 당신들은 나의 예상대로 마지막  대륙까지 무난하게 왔군요. 이번에 가게될 LAVA 대륙은 이 세계에 있는 모든 대륙중에서 가장 작은 대륙이오." +
+							" 적의 요새도 또한 2개 밖에 없는 곳이오. 하지만 이번에 도착할 IMPERIUM MINOR나 마지막으로 거칠 EVIL CONCENTRATION 은 말 그대로 악의 집결지인 것이오." +
+							"  거기에는 최강의 괴물들과 Necromancer 의 심복들로 가득차있는 곳이지만 IMPERIUM MINOR의 지하에는 마지막으로 살아남은 사람들의 도시가 있소." +
+							" 원래 거기는 Ancient Evil이 전에 세운 악의 동굴이었지만 Necromancer의 침략으로 지상의 도시가  함락되자 그 곳의 사람들은 모두 거기로 피난 했던 것이고" +
+							" 거기는 Ancient Evil의 영적인 힘으로 보호되고 있어서 적들이 침략을하지 못하는 이유가 되지요.  그러므로 모든 도움과 물자는 거기서 받도록하시오.",
+							" 그러면, 나는 당신이 Necromancer와 상대하게 될 때 다시 Ancient Evil과 같이 나타나겠소."});
+
+							mSpecialEvent = SpecialEventType.EnterImperiumMinor;
+						}
+						else
+							ShowMap();
+					}
+
 					mBattleCommandQueue.Clear();
 					mBatteEnemyQueue.Clear();
 
@@ -1072,6 +1118,11 @@ namespace Lore
 
 							mParty.Etc[37] |= 1 << 4;
 						}
+						else if (mBattleEvent == 26) {
+							await CheckImperiumMinorEntraceBattleResult();
+
+							return;
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1146,8 +1197,14 @@ namespace Lore
 							else
 								WinNecromancer();
 						}
-						else if (mBattleEvent == 25) {
+						else if (mBattleEvent == 25)
+						{
 							mParty.YAxis++;
+						}
+						else if (mBattleEvent == 26)
+						{
+							await CheckImperiumMinorEntraceBattleResult();
+							return;
 						}
 
 						mEncounterEnemyList.Clear();
@@ -1287,7 +1344,14 @@ namespace Lore
 								" 3차원에서는 동 시간대에 무한한 2차원을 포함 하듯이 4차원에서는 동 시간대에  무한한 3차원을 포함하고 있다는 이론이 성립되오." +
 								" 말이 조금은 빗나갔지만  이 이론으로 Necromancer의 출처를 해명해 보겠소",
 								" 방금 말했듯이 3차원은 이 공간만이 존재하는 것은 아니오. 동 시대를 살아가는 다른 공간도 인정해야 한다는 말이오.  그 공간들을 이어주는 것이 바로 블랙 홀이란 것이지요." +
-								"  그는 원래 그가 있던 공간에서 블랙 홀을 통해서 다른 공간으로 가려고 시도를 했고 웜 홀을 통해 시공간을 가로질러 오래전 우리의 공간에 화이트 홀이 생기는 틈을 이용하여 내려왔던 것이오.",
+								"  그는 원래 그가 있던 공간에서 블랙 홀을 통해서 다른 공간으로 가려고 시도를 했고 웜 홀을 통해 시공간을 가로질러 오래전 우리의 공간에 화이트 홀이 생기는 틈을 이용하여 내려왔던 것이오."
+							});
+
+							mSpecialEvent = SpecialEventType.MeetDraconian3;
+						}
+						else if (mSpecialEvent == SpecialEventType.MeetDraconian3)
+						{
+							Talk(new string[] {
 								" 하지만 3차원에 사는 나로서는 그가 전에  있던 공간에서 왜 이쪽으로 왔는지  알수가 없었지요. 그래서 그와 같이 이 공간으로 들어왔던 심복들을 통해 그 사정을 알게 되었소.",
 								" Necromacer는 저쪽의 공간에서도 지금과 마찬가지로 차원을 통해 그 공간에 도달했소. 역시 거기서도 악을 뿌리며 거기의 생명체들을 위협했소." +
 								" 하지만 어떤 선택되어진 6인의 용사들에 의해 쫒겨나서 여기로 온것이오.  지금의 당신들과 비슷하다고 생각되지 않소? 그렇소." +
@@ -2098,6 +2162,15 @@ namespace Lore
 
 							mSpecialEvent = SpecialEventType.None;
 						}
+						else if (mSpecialEvent == SpecialEventType.EnterImperiumMinor) {
+							AppendText("");
+
+							mParty.Etc[41] |= 1 << 6;
+
+							ShowMap();
+
+							mSpecialEvent = SpecialEventType.None;
+						}
 					}
 
 					if (args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp ||
@@ -2200,6 +2273,103 @@ namespace Lore
 						"여기서 쉰다",
 						"게임 선택 상황"
 					});
+				}
+				else if (mSpinnerType != SpinnerType.None) {
+					void CloseSpinner() {
+						SpinnerText.TextHighlighters.Clear();
+						SpinnerText.Blocks.Clear();
+						SpinnerText.Visibility = Visibility.Visible;
+
+						mSpinnerItems = null;
+						mSpinnerID = 0;
+						mSpinnerType = SpinnerType.None;
+					}
+
+					if(args.VirtualKey == VirtualKey.Up || args.VirtualKey == VirtualKey.GamepadLeftThumbstickUp || args.VirtualKey == VirtualKey.GamepadDPadUp)
+					{
+						mSpinnerID = (mSpinnerID + 1) % mSpinnerItems.Length;
+
+						AppendText(SpinnerText, mSpinnerItems[mSpinnerID].Item1);
+					}
+					else if (args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadDPadDown)
+					{
+						if (mSpinnerID == 0)
+							mSpinnerID = mSpinnerItems.Length - 1;
+						else
+							mSpinnerID--;
+						
+						AppendText(SpinnerText, mSpinnerItems[mSpinnerID].Item1);
+					}
+					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
+					{
+						if (mSpinnerType == SpinnerType.TeleportationRange) {
+							AppendText("");
+
+							CloseSpinner();
+						}
+					}
+					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
+					{
+						if (mSpinnerType == SpinnerType.TeleportationRange) {
+							int moveX = mParty.XAxis;
+							int moveY = mParty.YAxis;
+
+							switch (mTeleportationDirection) {
+								case 0:
+									moveY -= mSpinnerItems[mSpinnerID].Item2;
+									break;
+								case 1:
+									moveY += mSpinnerItems[mSpinnerID].Item2;
+									break;
+								case 2:
+									moveX += mSpinnerItems[mSpinnerID].Item2;
+									break;
+								case 3:
+									moveX -= mSpinnerItems[mSpinnerID].Item2;
+									break;
+							}
+
+							if (moveX < 4 || moveX > mMapWidth - 4 || moveY < 4 || moveY > mMapHeight - 4)
+								AppendText("공간 이동이 통하지 않습니다.");
+							else {
+								var valid = false;
+								if (mPosition == PositionType.Town) {
+									if (27 <= mMapLayer[moveX + mMapWidth * moveY] && mMapLayer[moveX + mMapWidth * moveY] <= 47)
+										valid = true;
+								}
+								else if (mPosition == PositionType.Ground) {
+									if (24 <= mMapLayer[moveX + mMapWidth * moveY] && mMapLayer[moveX + mMapWidth * moveY] <= 47)
+										valid = true;
+								}
+								else if (mPosition == PositionType.Den) {
+									if (41 <= mMapLayer[moveX + mMapWidth * moveY] && mMapLayer[moveX + mMapWidth * moveY] <= 47)
+										valid = true;
+								}
+								else if (mPosition == PositionType.Keep)
+								{
+									if (27 <= mMapLayer[moveX + mMapWidth * moveY] && mMapLayer[moveX + mMapWidth * moveY] <= 47)
+										valid = true;
+								}
+
+								if (!valid)
+									AppendText("공간 이동 장소로 부적합 합니다.");
+								else {
+									mMagicPlayer.SP -= 50;
+
+									if (mMapLayer[moveX + mMapWidth * moveY] == 0 || ((mPosition == PositionType.Den || mPosition == PositionType.Keep) && mMapLayer[moveX + mMapWidth * moveY] == 52))
+										AppendText($"[color={RGB.LightMagenta}]알수없는 힘이 당신을 배척합니다.[/color]");
+									else {
+										mParty.XAxis = moveX;
+										mParty.YAxis = moveY;
+
+										AppendText($"[color={RGB.White}]공간 이동 마법이 성공했습니다.[/color]");
+									}
+								}
+							}
+						}
+
+						CloseSpinner();
+					}
 				}
 				else if (mMenuMode != MenuMode.None)
 				{
@@ -2954,9 +3124,11 @@ namespace Lore
 							else if (mMenuMode == MenuMode.TeleportationDirection) {
 								mMenuMode = MenuMode.None;
 
+								mTeleportationDirection = mMenuFocusID;
+
 								var rangeItems = new List<Tuple<string, int>>();
 								for (var i = 1; i <= 9; i++) {
-									rangeItems.Add(new Tuple<string, int>($"[color={RGB.White}##[/color] [color={RGB.LightGreen}]{i + 1000}[/color] [color={RGB.White}] 공간 이동력[/color]", i));
+									rangeItems.Add(new Tuple<string, int>($"[color={RGB.White}]##[/color] [color={RGB.LightGreen}]{i * 1000}[/color] [color={RGB.White}] 공간 이동력[/color]", i));
 								}
 
 								ShowSpinner(SpinnerType.TeleportationRange, rangeItems.ToArray(), 5);
@@ -3939,14 +4111,14 @@ namespace Lore
 											{
 												//if (player.Luck > mRand.Next(30))
 												//{
-													if (player.Strength < 20)
-														player.Strength++;
-													else if (player.Endurance < 20)
-														player.Endurance++;
-													else if (player.Accuracy[0] < 20)
-														player.Accuracy[0]++;
-													else
-														player.Agility++;
+												if (player.Strength < 20)
+													player.Strength++;
+												else if (player.Endurance < 20)
+													player.Endurance++;
+												else if (player.Accuracy[0] < 20)
+													player.Accuracy[0]++;
+												else
+													player.Agility++;
 												//}
 											}
 											else if (player.Class == 2 || player.Class == 9)
@@ -3956,12 +4128,12 @@ namespace Lore
 
 												//if (player.Luck > mRand.Next(30))
 												//{
-													if (player.Mentality < 20)
-														player.Mentality++;
-													else if (player.Concentration < 20)
-														player.Concentration++;
-													else if (player.Accuracy[1] < 20)
-														player.Accuracy[1]++;
+												if (player.Mentality < 20)
+													player.Mentality++;
+												else if (player.Concentration < 20)
+													player.Concentration++;
+												else if (player.Accuracy[1] < 20)
+													player.Accuracy[1]++;
 												//}
 											}
 											else if (player.Class == 3)
@@ -3971,12 +4143,12 @@ namespace Lore
 
 												//if (player.Luck > mRand.Next(30))
 												//{
-													if (player.Concentration < 20)
-														player.Concentration++;
-													else if (player.Accuracy[2] < 20)
-														player.Accuracy[2]++;
-													else if (player.Mentality < 20)
-														player.Mentality++;
+												if (player.Concentration < 20)
+													player.Concentration++;
+												else if (player.Accuracy[2] < 20)
+													player.Accuracy[2]++;
+												else if (player.Mentality < 20)
+													player.Mentality++;
 												//}
 											}
 											else if (player.Class == 4)
@@ -3988,14 +4160,14 @@ namespace Lore
 
 												//if (player.Luck > mRand.Next(30))
 												//{
-													if (player.Strength < 20)
-														player.Strength++;
-													else if (player.Mentality < 20)
-														player.Mentality++;
-													else if (player.Accuracy[0] < 20)
-														player.Accuracy[0]++;
-													else if (player.Accuracy[1] < 20)
-														player.Accuracy[1]++;
+												if (player.Strength < 20)
+													player.Strength++;
+												else if (player.Mentality < 20)
+													player.Mentality++;
+												else if (player.Accuracy[0] < 20)
+													player.Accuracy[0]++;
+												else if (player.Accuracy[1] < 20)
+													player.Accuracy[1]++;
 												//}
 											}
 											else if (player.Class == 5)
@@ -4004,12 +4176,12 @@ namespace Lore
 
 												//if (player.Luck > mRand.Next(30))
 												//{
-													if (player.Strength < 20)
-														player.Strength++;
-													else if (player.Accuracy[1] < 20)
-														player.Accuracy[1]++;
-													else if (player.Endurance < 20)
-														player.Endurance++;
+												if (player.Strength < 20)
+													player.Strength++;
+												else if (player.Accuracy[1] < 20)
+													player.Accuracy[1]++;
+												else if (player.Endurance < 20)
+													player.Endurance++;
 												//}
 											}
 											else if (player.Class == 6)
@@ -4019,27 +4191,27 @@ namespace Lore
 
 												//if (player.Luck > mRand.Next(30))
 												//{
-													if (player.Resistance < 18)
+												if (player.Resistance < 18)
+													player.Resistance++;
+												else if (player.Resistance < 20)
+												{
+													if (player.Luck > mRand.Next(21))
 														player.Resistance++;
-													else if (player.Resistance < 20)
-													{
-														if (player.Luck > mRand.Next(21))
-															player.Resistance++;
-													}
-													else
-														player.Agility++;
+												}
+												else
+													player.Agility++;
 												//}
 											}
 											else if (player.Class == 7 || player.Class == 8)
 											{
 												//if (player.Luck > mRand.Next(30))
 												//{
-													if (player.Endurance < 20)
-														player.Endurance++;
-													else if (player.Strength < 20)
-														player.Strength++;
-													else
-														player.Agility++;
+												if (player.Endurance < 20)
+													player.Endurance++;
+												else if (player.Strength < 20)
+													player.Strength++;
+												else
+													player.Agility++;
 												//}
 											}
 											else if (player.Class == 10)
@@ -4394,9 +4566,9 @@ namespace Lore
 									avgAgility /= mPlayerList.Count;
 
 									if (avgAgility > avgEnemyAgility)
-										StartBattle(false);
-									else
 										StartBattle(true);
+									else
+										StartBattle(false);
 								}
 								else if (mMenuFocusID == 1)
 								{
@@ -4790,6 +4962,11 @@ namespace Lore
 												mParty.XAxis = 24;
 												mParty.YAxis = 5;
 											}
+											else if (mParty.Map == 22) {
+												mParty.Map = 21;
+												mParty.XAxis = 24;
+												mParty.YAxis = 19;
+											}
 
 											await RefreshGame();
 											break;
@@ -4813,23 +4990,45 @@ namespace Lore
 												mParty.Map = 22;
 												mParty.XAxis = 24;
 												mParty.YAxis = 44;
+
+												await RefreshGame();
 											}
 											else if (mParty.Map == 21)
 											{
-												if (mParty.Etc[39] % 2 == 1 && mParty.Etc[40] % 2 == 1)
-													AppendText(new string[] { " 라바 게이트는 작동되지 않았다." });
+												if (mParty.Etc[39] % 2 == 0 || mParty.Etc[40] % 2 == 0)
+													AppendText(" 라바 게이트는 작동되지 않았다.");
 												else
 												{
 													mEncounterEnemyList.Clear();
 
 													if ((mParty.Etc[41] & (1 << 1)) == 0)
 													{
-														// 계속 구현...
+														if ((mParty.Etc[41] & (1 << 4)) == 0)
+															JoinEnemy(64);
+
+														if ((mParty.Etc[41] & (1 << 5)) == 0)
+															JoinEnemy(63);
+
+														if (mEncounterEnemyList.Count == 0)
+															mParty.Etc[41] |= 1 << 1;
+														else {
+															HideMap();
+															DisplayEnemy();
+
+															mBattleEvent = 26;
+
+															StartBattle(false);
+														}
+													}
+													else {
+														mParty.Map = 22;
+														mParty.XAxis = 24;
+														mParty.YAxis = 5;
+
+														await RefreshGame();
 													}
 												}
 											}
-
-											await RefreshGame();
 											break;
 										case EnterType.EvilConcentration:
 											if ((mParty.Etc[43] & 1) == 0)
@@ -4865,6 +5064,18 @@ namespace Lore
 
 											if (mParty.Etc[13] > 1)
 												mMapLayer[17 + mMapWidth * 8] = 0;
+											break;
+										case EnterType.LastShelter:
+											mParty.Map = 24;
+											mParty.XAxis = 24;
+											mParty.YAxis = 44;
+
+											if ((mParty.Etc[42] & (1 << 3)) > 0)
+												mMapLayer[32 + mMapWidth * 9] = 47;
+
+											await RefreshGame();
+											break;
+										case EnterType.DungeonOfEvil:
 											break;
 
 									}
@@ -7547,7 +7758,7 @@ namespace Lore
 								mMapLayer[27 + mMapWidth * y] = 23;
 							}
 
-							mMapLayer[23 + mMapWidth * 36] = 16;
+							mMapLayer[23 + mMapWidth * 36] = 17;
 							mMapLayer[27 + mMapWidth * 36] = 19;
 
 							for (var y = 26; y < 37; y++) {
@@ -9322,7 +9533,7 @@ namespace Lore
 					GoWeaponShop();
 				else if ((moveX == 14 && moveY == 35) || (moveX == 10 && moveY == 37) || (moveX == 13 && moveY == 39))
 					GoHospital();
-				else if (moveX == 10 && moveY == 21)
+				else if (moveX == 16 && moveY == 14)
 					Talk(" Ancient Evil은 우리의 구세주였습니다.");
 				else if (moveX == 17 && moveY == 9)
 					Talk(" 이 세상을 이렇게 불행하게 한자는 바로 안 영기라는 프로그래머입니다.");
@@ -9333,7 +9544,6 @@ namespace Lore
 				else if (moveX == 30 && moveY == 12)
 					Talk(" 당신들은 분명히 우리들을 밖으로 나가게 해줄것입니다.");
 				else if (moveX == 32 && moveY == 9) {
-					// 안영기 등장 이벤트
 					Talk(new string[] {
 						" 이 사람들은 잘 모르겠지만  사실 나는 이 게임의 제작자인 안 영기요.",
 						" 나는 여태껏 계속 당신들이 가는 도시마다 주민으로 가장한채 당신들을 지켜 보았소. 이 게임의 버그를 찾거나 난이도를 조절하기 위해서 말이요." +
@@ -9689,6 +9899,8 @@ namespace Lore
 						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(50, 71), Vector4.One);
 					else if (mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore || mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore2)
 						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(14, 5), Vector4.One);
+					if (mSpecialEvent == SpecialEventType.MeetAhnInLastShelter)
+						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(32, 9), Vector4.One);
 					else if (mAnimationEvent == AnimationType.Hydra) {
 						if (mAnimationFrame > 0)
 						{
@@ -9798,6 +10010,8 @@ namespace Lore
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				else if ((mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore || mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore2) && (index == 14 + mMapWidth * 5))
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				else if (mSpecialEvent == SpecialEventType.MeetAhnInLastShelter && (index == 32 + mMapWidth * 9))
+					mMapTiles.Draw(sb, 47, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				else
 				{
 					var mapIdx = 56;
@@ -10962,6 +11176,7 @@ namespace Lore
 			RefuseJoinSkeleton,
 			MeetDraconian,
 			MeetDraconian2,
+			MeetDraconian3,
 			MeetAncientEvil,
 			MeetAncientEvil2,
 			MeetAncientEvil3,
@@ -11030,6 +11245,7 @@ namespace Lore
 			BattleWivern,
 			BattleExitSwampGate, 
 			DefeatAstralMud,
+			EnterImperiumMinor,
 			Ending
 		}
 	}
