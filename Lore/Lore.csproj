@@ -151,6 +151,9 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\den.mp3" />
+    <Content Include="Assets\ground.mp3" />
+    <Content Include="Assets\keep.mp3" />
     <Content Include="Assets\lore_sprite.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -170,6 +173,7 @@
     <Content Include="Assets\DEN5.MAP" />
     <Content Include="Assets\DEN6.MAP" />
     <Content Include="Assets\DEN7.MAP" />
+    <Content Include="Assets\town.mp3" />
     <Content Include="Assets\T_DEN1.MAP" />
     <Content Include="Assets\T_DEN2.MAP" />
     <Content Include="Assets\WATER.MAP" />

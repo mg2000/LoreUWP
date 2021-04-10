@@ -8,7 +8,7 @@
 	xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
 	mc:Ignorable="d"
 	Background="#0000a5">
-	
+
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="636"/>
@@ -147,5 +147,6 @@
 			<TextBlock x:Name="PlayerLevel5" Grid.Row="6" Grid.Column="5" Foreground="White" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="40, 0, 40, 0"></TextBlock>
 			<TextBlock x:Name="PlayerCondition5" Grid.Row="6" Grid.Column="6" Foreground="White" FontSize="25" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
 		</Grid>
+		<MediaElement x:Name="BGMPlayer" Visibility="Collapsed" AutoPlay="True" IsLooping="True"/>
 	</Grid>
 </Page>

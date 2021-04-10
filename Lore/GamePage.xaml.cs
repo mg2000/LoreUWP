@@ -9901,14 +9901,27 @@ namespace Lore
 		}
 
 		private void InitializeMap() {
+			Uri musicUri;
 			if (1 <= mParty.Map && mParty.Map <= 5)
+			{
 				mPosition = PositionType.Ground;
+				musicUri = new Uri("ms-appx:///Assets/ground.mp3");
+			}
 			else if ((6 <= mParty.Map && mParty.Map <= 10) || mParty.Map == 24 || (26 <= mParty.Map && mParty.Map <= 27))
+			{
 				mPosition = PositionType.Town;
+				musicUri = new Uri("ms-appx:///Assets/town.mp3");
+			}
 			else if ((11 <= mParty.Map && mParty.Map <= 20) || mParty.Map == 25)
+			{
 				mPosition = PositionType.Den;
+				musicUri = new Uri("ms-appx:///Assets/den.mp3");
+			}
 			else
+			{
 				mPosition = PositionType.Keep;
+				musicUri = new Uri("ms-appx:///Assets/keep.mp3");
+			}
 
 			if (mMapHeight / 2 > mParty.YAxis)
 				mFace = 0;
@@ -9924,6 +9937,8 @@ namespace Lore
 			}
 
 			ShowMap();
+
+			BGMPlayer.Source = musicUri;
 		}
 
 		private async Task LoadEnemyData() {
