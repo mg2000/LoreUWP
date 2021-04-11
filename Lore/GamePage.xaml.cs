@@ -163,6 +163,7 @@ namespace Lore
 		// 25 - 고르곤 전투
 		// 26 - 임페리움 마이너 입구 전투
 		// 27 - 던전 오브 이블 입구 전투
+		// 28 - 네크로맨서의 방 입구 전투
 		private int mBattleEvent = 0;
 
 		// 2 - 지식의 성전 유골 안식
@@ -203,6 +204,10 @@ namespace Lore
 
 		// 동굴 질문 번호
 		private int mQuestionID = 0;
+
+		// 블랙 나이트 등장 위치
+		private int xEnemyOffset = 0;
+		private int yEnemyOffset = -1;
 
 		public GamePage()
 		{
@@ -434,7 +439,7 @@ namespace Lore
 					if (mParty.Map == 26)
 						mFace += 4;
 
-					if (x > 4 && x < mMapWidth - 3 && y > 3 && y < mMapHeight - 3)
+					if (x > 3 && x < mMapWidth - 3 && y > 3 && y < mMapHeight - 3)
 					{
 						void EnterMap()
 						{
@@ -1142,6 +1147,13 @@ namespace Lore
 						}
 						else if (mBattleEvent == 27)
 							await CheckDungeonOfEvilBattleResult();
+						else if (mBattleEvent == 28) {
+							mParty.Map = 26;
+							mParty.XAxis = 24;
+							mParty.YAxis = 14;
+
+							await RefreshGame();
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1227,6 +1239,10 @@ namespace Lore
 						}
 						else if (mBattleEvent == 27)
 							await CheckDungeonOfEvilBattleResult();
+						else if (mBattleEvent == 28) {
+							mParty.XAxis = 24;
+							mParty.YAxis = 44;
+						}
 
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
@@ -1865,6 +1881,32 @@ namespace Lore
 								player.Level[1] = player.Level[0];
 								player.Level[2] = player.Level[0];
 							}
+
+							mSpecialEvent = SpecialEventType.AfterLordAhnAndAncientEvil;
+						}
+						else if (mSpecialEvent == SpecialEventType.AfterLordAhnAndAncientEvil) {
+							mEncounterEnemyList.Clear();
+
+							ShowMap();
+
+							mSpecialEvent = SpecialEventType.None;
+						}
+						else if (mSpecialEvent == SpecialEventType.BattleBlackKnight)
+						{
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
+							mEncounterEnemyList.Clear();
+							for (var i = 0; i < 5; i++)
+								JoinEnemy(62);
+							JoinEnemy(71);
+
+							mBattleEvent = 28;
+
+							HideMap();
+							DisplayEnemy();
+
+							StartBattle(true);
 
 							mSpecialEvent = SpecialEventType.None;
 						}
@@ -5200,6 +5242,10 @@ namespace Lore
 												mSpecialEvent = SpecialEventType.EnterDungeonOfEvil;
 											}
 											break;
+										case EnterType.ChamberOfNecromancer:
+											mParty.Etc[0] = 1;
+											InvokeAnimation(AnimationType.BlackKnight);
+											break;
 
 									}
 								}
@@ -8301,7 +8347,7 @@ namespace Lore
 				else if (mParty.XAxis == 35 && mParty.YAxis == 33)
 				{
 					mMapLayer[35 + mMapWidth * 33] = 41;
-					for (var x = 36; x < 14; x++)
+					for (var x = 36; x < 40; x++)
 					{
 						mMapLayer[x + mMapWidth * 32] = 24;
 						mMapLayer[x + mMapWidth * 34] = 26;
@@ -9878,6 +9924,29 @@ namespace Lore
 							Task.Delay(2000).Wait();
 					}
 				}
+				else if (mAnimationEvent == AnimationType.BlackKnight) {
+					for (var i = 1; i <= 10; i++)
+					{
+						mAnimationFrame = i;
+
+						if (mAnimationFrame == 10)
+						{
+							xEnemyOffset = 0;
+							yEnemyOffset = -1;
+						}
+						else
+						{ 
+							xEnemyOffset = mRand.Next(9) - 4;
+							yEnemyOffset = mRand.Next(9) - 4;
+
+							if (xEnemyOffset == 0 && yEnemyOffset == 0)
+								yEnemyOffset = -1;
+						}
+
+						if (i < 10)
+							Task.Delay(1000).Wait();
+					}
+				}
 			});
 
 			await animationTask;
@@ -9938,6 +10007,11 @@ namespace Lore
 				Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]" });
 
 				mSpecialEvent = SpecialEventType.BattlePanzerViper;
+			}
+			else if (mAnimationEvent == AnimationType.BlackKnight) {
+				Talk(new string[] { $" 두말이 필요없다. 덤벼라 !![/color]" });
+
+				mSpecialEvent = SpecialEventType.BattleBlackKnight;
 			}
 			else {
 				mAnimationEvent = AnimationType.None;
@@ -10117,6 +10191,9 @@ namespace Lore
 					}
 					else if (mAnimationEvent == AnimationType.PanzerViper) {
 						mCharacterTiles.Draw(sb, 23, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+					}
+					else if (mAnimationEvent == AnimationType.BlackKnight) {
+						mCharacterTiles.Draw(sb, 22, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + xEnemyOffset, mParty.YAxis + yEnemyOffset), Vector4.One);
 					}
 				}
 			}
@@ -11315,7 +11392,8 @@ namespace Lore
 			SwampGatePyramid,
 			Dragon3,
 			AstralMud,
-			PanzerViper
+			PanzerViper,
+			BlackKnight
 		}
 
 		private enum SpecialEventType {
@@ -11363,6 +11441,7 @@ namespace Lore
 			FailRunawayBattleFakeNecromancer,
 			BattlePanzerViper,
 			AfterBattlePanzerViper,
+			AfterLordAhnAndAncientEvil,
 			FailRunawayBattleNecromancer,
 			BattleNecromancer,
 			MeetAhnInLastShelter,
@@ -11398,6 +11477,7 @@ namespace Lore
 			EnterImperiumMinor,
 			EnterDungeonOfEvil,
 			KillDraconian,
+			BattleBlackKnight,
 			Ending
 		}
 	}
