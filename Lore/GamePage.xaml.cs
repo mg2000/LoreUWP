@@ -861,8 +861,8 @@ namespace Lore
 
 					void WinNecromancer() {
 						Talk(new string[] {
-							$" [color={RGB.LightMagenta}욱!!! 역시 너희들의 능력으로 여기까지 뚫고 들어왔다는게 믿어지는구나. 대단한 힘이다.[/color]",
-							$" [color={RGB.LightMagenta}내가 졌다는걸 인정하마. 하지만 나는 완전히 너에게 진것은 아니야.  나에게는 탈출할 수단이 있기 때문이지. 안심해라." +
+							$" [color={RGB.LightMagenta}]욱!!! 역시 너희들의 능력으로 여기까지 뚫고 들어왔다는게 믿어지는구나. 대단한 힘이다.[/color]",
+							$" [color={RGB.LightMagenta}]내가 졌다는걸 인정하마. 하지만 나는 완전히 너에게 진것은 아니야.  나에게는 탈출할 수단이 있기 때문이지. 안심해라." +
 							" 그렇지만 다시는 나와 만날 인연은 없으니까.  블랙홀이 생기기 시작하는구나.  다음 공간에서 또다시 힘을 길러야 겠군." +
 							" 내가 이 블랙홀로 들어간다면 다시 이 공간으로 올 확률이 거의 제로이지. 흠, 멋진 나의 도전자여 안녕.  나는 이런 공간의 패러독스를 운명적으로 반복하는 생명체로  태어난 내가 참으로 비참하지." +
 							" 무한히 많은 3 차원의 공간중에서 내가 여기로 온것도  이 공간의 생명이 끝날때까지도 한번 있을까 말까한 희귀한 일이었다고 기억해다오." +
@@ -1153,6 +1153,10 @@ namespace Lore
 							mParty.YAxis = 14;
 
 							await RefreshGame();
+
+							mFace = 5;
+
+							InvokeAnimation(AnimationType.EnterChamberOfNecromancer);
 						}
 
 						mEncounterEnemyList.Clear();
@@ -1912,10 +1916,13 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.BattleNecromancer)
 						{
+							mAnimationEvent = AnimationType.None;
+							mAnimationFrame = 0;
+
 							mEncounterEnemyList.Clear();
 							for (var i = 0; i < 7; i++)
 							{
-								JoinEnemy(67 + i);
+								JoinEnemy(68 + i);
 							}
 
 							mBattleEvent = 24;
@@ -1937,6 +1944,10 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.Ending)
 						{
+							Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
+							Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
+							Frame.Navigate(typeof(Ending));
+
 							mSpecialEvent = SpecialEventType.None;
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetAhnInLastShelter)
@@ -5244,6 +5255,7 @@ namespace Lore
 											break;
 										case EnterType.ChamberOfNecromancer:
 											mParty.Etc[0] = 1;
+											AppendText("");
 											InvokeAnimation(AnimationType.BlackKnight);
 											break;
 
@@ -8396,17 +8408,7 @@ namespace Lore
 				}
 			}
 			else if (mParty.Map == 26) {
-				// 네크로맨서 등장 이벤트
-
-				Talk(new string[] {
-					" 당신들이 나를 없에겠다고 온자들인가?",
-					" 그럼 예의를 갖추고 소개를 하지.  당신의 오른쪽의 사람은  ArchiMonk라고 하며 맨손을 사용하는 무예의 일인자로 통하지." +
-					"  그리고 당신의 정면의 사람은 ArchiMage 라고 하는 마법사 중의 마법사이라네.  당신들은 우리 셋 보다도 숫자가 많군." +
-					" 그렇다면 나도 그것에 대비를 해야겠지.  내가 여기서 약간의 인원을 늘인다고 너무 섭섭하게 생각말게.  그렇다면 이제 서로의 실력을 겨뤄볼 시간이 다 되었나보군." +
-					" 당신의 행운을 빌겠네."
-				});
-
-				mSpecialEvent = SpecialEventType.BattleNecromancer;
+				InvokeAnimation(AnimationType.FinalBattle);
 			}
 			else if (mParty.Map == 27) {
 				ShowExitMenu();
@@ -9813,35 +9815,42 @@ namespace Lore
 					RestRemains(20, 11);
 				else if (mAnimationEvent == AnimationType.Remains7)
 					RestRemains(aniX, aniY);
-				else if (mAnimationEvent == AnimationType.Hydra) {
+				else if (mAnimationEvent == AnimationType.Hydra)
+				{
 					for (var i = 1; i <= 2; i++)
 					{
 						mAnimationFrame = i;
 						Task.Delay(1000).Wait();
 					}
 
-					for (var i = 3; i <= 5; i++) {
+					for (var i = 3; i <= 5; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(700).Wait();
 					}
 
 					mAnimationFrame = 6;
 				}
-				else if (mAnimationEvent == AnimationType.Minotaur || mAnimationEvent == AnimationType.Minotaur2) {
-					for (var i = 1; i <= 4; i++) {
+				else if (mAnimationEvent == AnimationType.Minotaur || mAnimationEvent == AnimationType.Minotaur2)
+				{
+					for (var i = 1; i <= 4; i++)
+					{
 						mAnimationFrame = i;
 						Task.Delay(1000).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.HugeDragon) {
+				else if (mAnimationEvent == AnimationType.HugeDragon)
+				{
 					mFace = 6;
-					for (var x = 0; x < 6; x++) {
+					for (var x = 0; x < 6; x++)
+					{
 						mParty.XAxis++;
 						Task.Delay(200).Wait();
 					}
 
 					mFace = 4;
-					for (var y = mParty.YAxis + 1; y < 13; y++) {
+					for (var y = mParty.YAxis + 1; y < 13; y++)
+					{
 						mParty.YAxis = y;
 						Task.Delay(200).Wait();
 					}
@@ -9872,14 +9881,18 @@ namespace Lore
 							Task.Delay(2000).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.EnterSwampGate) {
-					for (var i = 1; i < 6; i++) {
+				else if (mAnimationEvent == AnimationType.EnterSwampGate)
+				{
+					for (var i = 1; i < 6; i++)
+					{
 						Task.Delay(1000).Wait();
 						mAnimationFrame = i;
 					}
 				}
-				else if (mAnimationEvent == AnimationType.SwampGatePyramid) {
-					while (mParty.XAxis != 80) {
+				else if (mAnimationEvent == AnimationType.SwampGatePyramid)
+				{
+					while (mParty.XAxis != 80)
+					{
 						Task.Delay(1500).Wait();
 						if (mParty.XAxis > 80)
 						{
@@ -9893,7 +9906,8 @@ namespace Lore
 						}
 					}
 
-					while (mParty.YAxis != 76) {
+					while (mParty.YAxis != 76)
+					{
 						Task.Delay(1500).Wait();
 						if (mParty.YAxis > 76)
 						{
@@ -9916,7 +9930,8 @@ namespace Lore
 							Task.Delay(1500).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.PanzerViper) {
+				else if (mAnimationEvent == AnimationType.PanzerViper)
+				{
 					for (var i = 1; i <= 4; i++)
 					{
 						mAnimationFrame = i;
@@ -9924,7 +9939,8 @@ namespace Lore
 							Task.Delay(2000).Wait();
 					}
 				}
-				else if (mAnimationEvent == AnimationType.BlackKnight) {
+				else if (mAnimationEvent == AnimationType.BlackKnight)
+				{
 					for (var i = 1; i <= 10; i++)
 					{
 						mAnimationFrame = i;
@@ -9935,7 +9951,7 @@ namespace Lore
 							yEnemyOffset = -1;
 						}
 						else
-						{ 
+						{
 							xEnemyOffset = mRand.Next(9) - 4;
 							yEnemyOffset = mRand.Next(9) - 4;
 
@@ -9945,6 +9961,43 @@ namespace Lore
 
 						if (i < 10)
 							Task.Delay(1000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.EnterChamberOfNecromancer) {
+					for (var i = 1; i <= 5; i++)
+					{
+						mAnimationFrame = i;
+
+						Task.Delay(1000).Wait();
+					}
+				}
+				else if (mAnimationEvent == AnimationType.FinalBattle) {
+					mFace = 5;
+					Task.Delay(1500).Wait();
+					for (var i = 0; i < 3; i++) {
+						mParty.YAxis--;
+						Task.Delay(1500).Wait();
+					}
+
+					mFace = 6;
+					while (mParty.XAxis < 25) {
+						mParty.XAxis++;
+						Task.Delay(1500).Wait();
+					}
+
+					mFace = 5;
+
+					for (var i = 1; i <= 11; i++)
+					{
+						mAnimationFrame = i;
+
+						if (i < 11)
+						{
+							if (i > 6)
+								Task.Delay(2000).Wait();
+							else
+								Task.Delay(1000).Wait();
+						}
 					}
 				}
 			});
@@ -10012,6 +10065,26 @@ namespace Lore
 				Talk(new string[] { $" 두말이 필요없다. 덤벼라 !![/color]" });
 
 				mSpecialEvent = SpecialEventType.BattleBlackKnight;
+			}
+			else if (mAnimationEvent == AnimationType.EnterChamberOfNecromancer) {
+				for (var y = 15; y < 19; y++) {
+					for (var x = 23; x < 26; x++)
+						mMapLayer[x + mMapWidth * y] = 16;
+				}
+
+				mAnimationEvent = AnimationType.None;
+				mAnimationFrame = 0;
+			}
+			else if (mAnimationEvent == AnimationType.FinalBattle) {
+				Talk(new string[] {
+					" 당신들이 나를 없에겠다고 온자들인가?",
+					" 그럼 예의를 갖추고 소개를 하지.  당신의 오른쪽의 사람은  ArchiMonk라고 하며 맨손을 사용하는 무예의 일인자로 통하지." +
+					"  그리고 당신의 정면의 사람은 ArchiMage 라고 하는 마법사 중의 마법사이라네.  당신들은 우리 셋 보다도 숫자가 많군." +
+					" 그렇다면 나도 그것에 대비를 해야겠지.  내가 여기서 약간의 인원을 늘인다고 너무 섭섭하게 생각말게.  그렇다면 이제 서로의 실력을 겨뤄볼 시간이 다 되었나보군." +
+					" 당신의 행운을 빌겠네."
+				});
+
+				mSpecialEvent = SpecialEventType.BattleNecromancer;
 			}
 			else {
 				mAnimationEvent = AnimationType.None;
@@ -10095,6 +10168,9 @@ namespace Lore
 				if (mCharacterTiles != null) {
 					if (mAnimationEvent == AnimationType.EnterSwampGate) {
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - mAnimationFrame), Vector4.One);
+					}
+					else if (mAnimationEvent == AnimationType.EnterChamberOfNecromancer) {
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis + (5 - mAnimationFrame)), Vector4.One);
 					}
 					else
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis), Vector4.One);
@@ -10194,6 +10270,28 @@ namespace Lore
 					}
 					else if (mAnimationEvent == AnimationType.BlackKnight) {
 						mCharacterTiles.Draw(sb, 22, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + xEnemyOffset, mParty.YAxis + yEnemyOffset), Vector4.One);
+					}
+					else if (mAnimationEvent == AnimationType.FinalBattle) {
+						if (mAnimationFrame > 0)
+						{
+							var archiMonkOffset = mAnimationFrame > 3 ? 3 : mAnimationFrame;
+
+							mCharacterTiles.Draw(sb, 26, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 2, mParty.YAxis - (5 - archiMonkOffset)), Vector4.One);
+
+							if (mAnimationFrame >= 4) {
+								var archiMageOffset = mAnimationFrame > 6 ? 3 : mAnimationFrame - 3;
+
+								mCharacterTiles.Draw(sb, 25, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - archiMageOffset)), Vector4.One);
+							}
+
+							if (mAnimationFrame >= 7) {
+								var necromancerXOffset = mAnimationFrame > 9 ? 3 : mAnimationFrame - 6;
+								var necromancerYOffset = mAnimationFrame > 9 ? mAnimationFrame - 9 : 0;
+
+								mCharacterTiles.Draw(sb, 16, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (5 - necromancerXOffset), mParty.YAxis - 3 + necromancerYOffset), Vector4.One);
+								mCharacterTiles.Draw(sb, 17, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (5 - necromancerXOffset), mParty.YAxis - 2 + necromancerYOffset), Vector4.One);
+							}
+						}
 					}
 				}
 			}
@@ -11393,7 +11491,9 @@ namespace Lore
 			Dragon3,
 			AstralMud,
 			PanzerViper,
-			BlackKnight
+			BlackKnight,
+			EnterChamberOfNecromancer,
+			FinalBattle,
 		}
 
 		private enum SpecialEventType {
