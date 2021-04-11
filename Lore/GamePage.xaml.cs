@@ -808,7 +808,7 @@ namespace Lore
 
 				async Task EndBattle()
 				{
-					async Task DefeatAstralMud() {
+					void DefeatAstralMud() {
 						mEncounterEnemyList.Clear();
 						mBattleEvent = 0;
 
@@ -889,8 +889,6 @@ namespace Lore
 						mParty.XAxis = 24;
 						mParty.YAxis = 5;
 
-						await RefreshGame();
-
 						if ((mParty.Etc[41] & (1 << 6)) == 0)
 						{
 							JoinEnemy(67);
@@ -907,7 +905,9 @@ namespace Lore
 							mSpecialEvent = SpecialEventType.EnterImperiumMinor;
 						}
 						else
-							ShowMap();
+						{
+							await RefreshGame();
+						}
 					}
 
 					async Task CheckDungeonOfEvilBattleResult() {
@@ -1067,7 +1067,7 @@ namespace Lore
 						}
 						else if (mBattleEvent == 14)
 						{
-							await DefeatAstralMud();
+							DefeatAstralMud();
 						}
 						else if (mBattleEvent == 15)
 							await CheckPassSwampKeepExitEvent();
@@ -1181,7 +1181,7 @@ namespace Lore
 						else if (mBattleEvent == 14)
 						{
 							if (mEncounterEnemyList[6].Dead)
-								await DefeatAstralMud();
+								DefeatAstralMud();
 							else
 								mParty.YAxis++;
 						}
@@ -2196,7 +2196,7 @@ namespace Lore
 
 							mParty.Etc[41] |= 1 << 6;
 
-							ShowMap();
+							await RefreshGame();
 
 							mSpecialEvent = SpecialEventType.None;
 						}
@@ -2293,7 +2293,27 @@ namespace Lore
 					}
 					else if (mBattleTurn == BattleTurn.Player)
 					{
-						ExecuteBattle();
+						if (mBattleCommandQueue.Count == 0) {
+							var allUnavailable = true;
+							foreach (var enemy in mEncounterEnemyList)
+							{
+								if (!enemy.Dead && !enemy.Unconscious)
+								{
+									allUnavailable = false;
+									break;
+								}
+							}
+
+							if (allUnavailable)
+							{
+								mBattleTurn = BattleTurn.Win;
+								await EndBattle();
+							}
+							else
+								ExecuteBattle();
+						}
+						else
+							ExecuteBattle();
 					}
 					else if (mBattleTurn == BattleTurn.Enemy)
 					{
@@ -2343,7 +2363,7 @@ namespace Lore
 					void CloseSpinner() {
 						SpinnerText.TextHighlighters.Clear();
 						SpinnerText.Blocks.Clear();
-						SpinnerText.Visibility = Visibility.Visible;
+						SpinnerText.Visibility = Visibility.Collapsed;
 
 						mSpinnerItems = null;
 						mSpinnerID = 0;
@@ -2446,17 +2466,17 @@ namespace Lore
 
 						int availCount;
 						if (0 <= player.Level[1] && player.Level[1] <= 1)
-							availCount = 2;
+							availCount = 1;
 						else if (2 <= player.Level[1] && player.Level[1] <= 3)
-							availCount = 3;
+							availCount = 2;
 						else if (4 <= player.Level[1] && player.Level[1] <= 7)
-							availCount = 4;
+							availCount = 3;
 						else if (8 <= player.Level[1] && player.Level[1] <= 11)
-							availCount = 5;
+							availCount = 4;
 						else if (12 <= player.Level[1] && player.Level[1] <= 15)
-							availCount = 6;
+							availCount = 5;
 						else
-							availCount = 7;
+							availCount = 6;
 
 						menuStr = new string[availCount];
 						for (var i = 1; i <= availCount; i++)
@@ -2475,28 +2495,33 @@ namespace Lore
 
 						int availCount;
 						if (0 <= player.Level[1] && player.Level[1] <= 1)
-							availCount = 1;
+							availCount = 0;
 						else if (player.Level[1] == 2)
-							availCount = 2;
+							availCount = 1;
 						else if (3 <= player.Level[1] && player.Level[1] <= 5)
-							availCount = 3;
+							availCount = 2;
 						else if (6 <= player.Level[1] && player.Level[1] <= 9)
-							availCount = 4;
+							availCount = 3;
 						else if (10 <= player.Level[1] && player.Level[1] <= 13)
-							availCount = 5;
+							availCount = 4;
 						else if (14 <= player.Level[1] && player.Level[1] <= 17)
-							availCount = 6;
+							availCount = 5;
 						else
-							availCount = 7;
+							availCount = 6;
 
-						menuStr = new string[availCount];
-						const int allMagicIdx = 6;
-						for (var i = 1 + allMagicIdx; i <= availCount + allMagicIdx; i++)
+						if (availCount > 0)
 						{
-							menuStr[i - allMagicIdx - 1] = Common.GetMagicStr(i);
-						}
+							menuStr = new string[availCount];
+							const int allMagicIdx = 6;
+							for (var i = 1 + allMagicIdx; i <= availCount + allMagicIdx; i++)
+							{
+								menuStr[i - allMagicIdx - 1] = Common.GetMagicStr(i);
+							}
 
-						ShowMenu(MenuMode.CastAllMagic, menuStr);
+							ShowMenu(MenuMode.CastAllMagic, menuStr);
+						}
+						else
+							BattleMode();
 					}
 
 					void ShowCastSpecialMenu()
@@ -2507,28 +2532,33 @@ namespace Lore
 
 						int availCount;
 						if (0 <= player.Level[1] && player.Level[1] <= 4)
-							availCount = 1;
+							availCount = 0;
 						else if (5 <= player.Level[1] && player.Level[1] <= 9)
-							availCount = 2;
+							availCount = 1;
 						else if (10 <= player.Level[1] && player.Level[1] <= 11)
-							availCount = 3;
+							availCount = 2;
 						else if (12 <= player.Level[1] && player.Level[1] <= 13)
-							availCount = 4;
+							availCount = 3;
 						else if (14 <= player.Level[1] && player.Level[1] <= 15)
-							availCount = 5;
+							availCount = 4;
 						else if (16 <= player.Level[1] && player.Level[1] <= 17)
-							availCount = 6;
+							availCount = 5;
 						else
-							availCount = 7;
+							availCount = 6;
 
-						menuStr = new string[availCount];
-						const int allSpecialIdx = 12;
-						for (var i = 1 + allSpecialIdx; i <= availCount + allSpecialIdx; i++)
+						if (availCount > 0)
 						{
-							menuStr[i - allSpecialIdx - 1] = Common.GetMagicStr(i);
-						}
+							menuStr = new string[availCount];
+							const int allSpecialIdx = 12;
+							for (var i = 1 + allSpecialIdx; i <= availCount + allSpecialIdx; i++)
+							{
+								menuStr[i - allSpecialIdx - 1] = Common.GetMagicStr(i);
+							}
 
-						ShowMenu(MenuMode.CastSpecial, menuStr);
+							ShowMenu(MenuMode.CastSpecial, menuStr);
+						}
+						else
+							BattleMode();
 					}
 
 					void ShowCureDestMenu(Lore player, MenuMode menuMode)
@@ -5581,9 +5611,10 @@ namespace Lore
 				else
 				{
 					var allEnemyDead = true;
+
 					foreach (var enemy in mEncounterEnemyList)
 					{
-						if (!enemy.Dead && !enemy.Unconscious)
+						if (!enemy.Dead)
 						{
 							allEnemyDead = false;
 							break;
@@ -5850,13 +5881,16 @@ namespace Lore
 						return;
 					}
 
+#if DEBUG
+					var magicPoint = 1;
+#else
 					var magicPoint = (int)Math.Round((double)battleCommand.Player.Level[1] * battleCommand.Tool * battleCommand.Tool / 2);
 					if (battleCommand.Player.SP < magicPoint)
 					{
 						battleResult.Add($"마법 지수가 부족했다");
 						return;
 					}
-
+#endif
 					battleCommand.Player.SP -= magicPoint;
 					DisplaySP();
 
@@ -6387,6 +6421,9 @@ namespace Lore
 
 				do
 				{
+					if (mBatteEnemyQueue.Count == 0)
+						break;
+
 					enemy = mBatteEnemyQueue.Dequeue();
 
 					if (enemy.Posion)
@@ -8655,14 +8692,6 @@ namespace Lore
 
 			AppendText(SpinnerText, mSpinnerItems[defaultId].Item1);
 			SpinnerText.Visibility = Visibility.Visible;
-		}
-
-		private void HideSpinner() {
-			mSpinnerType = SpinnerType.None;
-
-			SpinnerText.Visibility = Visibility.Collapsed;
-			mSpinnerItems = null;
-			mSpinnerID = -1;
 		}
 
 		private void ShowMenu(MenuMode menuMode, List<Tuple<string, Color>> menuItem)
@@ -11209,6 +11238,7 @@ namespace Lore
 			Player,
 			Enemy,
 			RunAway,
+			AlmostWin,
 			Win,
 			Lose
 		}
