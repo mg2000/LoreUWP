@@ -6,10 +6,10 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d"
-	Background="Black">
+	Background="White">
 
 	<Grid>
-		<TextBlock Foreground="#FFFFFF55" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30">
+		<TextBlock x:Name="EndingText" Foreground="#FFFFFF55" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" Visibility="Collapsed">
 밖은 비바람이 치기 시작한다. 이번 계절에 들어 처음 오는 비였다.<LineBreak/>
 마치 Necromancer의 기구한 운명을 애도하는 듯이 ...<LineBreak/>
 하지만 그는 또다른 운명의 아이러니 때문에 새로운 길을 떠났다.<LineBreak/>

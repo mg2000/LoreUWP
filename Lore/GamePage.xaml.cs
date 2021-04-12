@@ -209,6 +209,9 @@ namespace Lore
 		private int xEnemyOffset = 0;
 		private int yEnemyOffset = -1;
 
+		private TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
+		private TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
+
 		public GamePage()
 		{
 			var rootFrame = Window.Current.Content as Frame;
@@ -318,9 +321,6 @@ namespace Lore
 			mEnterTypeMap[EnterType.DungeonOfEvil] = "던전 오브 이블";
 			mEnterTypeMap[EnterType.ChamberOfNecromancer] = "챔버 오브 네크로맨서";
 
-
-			TypedEventHandler <CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
-			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
 			gamePageKeyDownEvent = (sender, args) =>
 			{
 
@@ -8408,7 +8408,11 @@ namespace Lore
 				}
 			}
 			else if (mParty.Map == 26) {
-				InvokeAnimation(AnimationType.FinalBattle);
+				//InvokeAnimation(AnimationType.FinalBattle);
+
+				Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
+				Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
+				Frame.Navigate(typeof(Credit));
 			}
 			else if (mParty.Map == 27) {
 				ShowExitMenu();
@@ -10084,7 +10088,7 @@ namespace Lore
 					" 당신의 행운을 빌겠네."
 				});
 
-				mSpecialEvent = SpecialEventType.BattleNecromancer;
+				//mSpecialEvent = SpecialEventType.BattleNecromancer;
 			}
 			else {
 				mAnimationEvent = AnimationType.None;

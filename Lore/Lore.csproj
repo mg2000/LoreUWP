@@ -127,6 +127,12 @@
     </Compile>
     <Compile Include="BattleEnemyData.cs" />
     <Compile Include="Common.cs" />
+    <Compile Include="Credit.xaml.cs">
+      <DependentUpon>Credit.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ending.xaml.cs">
+      <DependentUpon>Ending.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EnemyData.cs" />
     <Compile Include="GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
@@ -198,6 +204,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Credit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Ending.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
