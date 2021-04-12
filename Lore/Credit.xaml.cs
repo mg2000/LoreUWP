@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Core;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -35,12 +37,26 @@ namespace Lore
 		private int mWidth;
 		private int mHeight;
 
+		private bool mAnimate = true;
+		private int mYOffset = 0;
+
+		private string mPlayerName;
+
 		public Credit()
 		{
 			this.InitializeComponent();
 
 			mWidth = (int)((Frame)Window.Current.Content).ActualWidth;
 			mHeight = (int)((Frame)Window.Current.Content).ActualHeight;
+
+			TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
+			gamePageKeyUpEvent = (sender, args) =>
+			{
+				Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
+				Frame.Navigate(typeof(MainPage));
+			};
+
+			Window.Current.CoreWindow.KeyUp += gamePageKeyUpEvent;
 		}
 		private void canvas_CreateResources(Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.CanvasCreateResourcesEventArgs args)
 		{
@@ -67,25 +83,76 @@ namespace Lore
 					for (var x = 0; x < column; x++)
 						mMapTiles.Draw(sb, 47, mMapTiles.SpriteSize * new Vector2(x, y), tint);
 				}
+
+				mCharacterTiles.Draw(sb, 5, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 2), Vector4.One);
+
+				mCharacterTiles.Draw(sb, 8, new Vector2(mCharacterTiles.SpriteSize.X * 1, mCharacterTiles.SpriteSize.Y / 2 * 5), Vector4.One);
+				mCharacterTiles.Draw(sb, 8, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 5), Vector4.One);
+				mCharacterTiles.Draw(sb, 12, new Vector2(mCharacterTiles.SpriteSize.X * 3, mCharacterTiles.SpriteSize.Y / 2 * 5), Vector4.One);
+
+				mCharacterTiles.Draw(sb, 10, new Vector2(mCharacterTiles.SpriteSize.X * 1, mCharacterTiles.SpriteSize.Y / 2 * 8), Vector4.One);
+				mCharacterTiles.Draw(sb, 14, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 8), Vector4.One);
+				mCharacterTiles.Draw(sb, 18, new Vector2(mCharacterTiles.SpriteSize.X * 3, mCharacterTiles.SpriteSize.Y / 2 * 8), Vector4.One);
+				mCharacterTiles.Draw(sb, 11, new Vector2(mCharacterTiles.SpriteSize.X * 1, mCharacterTiles.SpriteSize.Y / 2 * 10), Vector4.One);
+				mCharacterTiles.Draw(sb, 15, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 10), Vector4.One);
+				mCharacterTiles.Draw(sb, 19, new Vector2(mCharacterTiles.SpriteSize.X * 3, mCharacterTiles.SpriteSize.Y / 2 * 10), Vector4.One);
+
+				mCharacterTiles.Draw(sb, 9, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 13), Vector4.One);
+				
+				mCharacterTiles.Draw(sb, 23, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 16), Vector4.One);
+
+				mCharacterTiles.Draw(sb, 22, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 19), Vector4.One);
+
+				mCharacterTiles.Draw(sb, 26, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 22), Vector4.One);
+
+				mCharacterTiles.Draw(sb, 25, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 25), Vector4.One);
+
+				mCharacterTiles.Draw(sb, 16, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 28), Vector4.One);
+				mCharacterTiles.Draw(sb, 17, new Vector2(mCharacterTiles.SpriteSize.X * 2, mCharacterTiles.SpriteSize.Y / 2 * 30), Vector4.One);
+
+				int ahnTile;
+				if (mYOffset % 2 == 0)
+					ahnTile = 20;
+				else
+					ahnTile = 21;
+
+				mCharacterTiles.Draw(sb, ahnTile, new Vector2(mCharacterTiles.SpriteSize.X * 27, mYOffset), Vector4.One);
 			}
 
 
 			var text = "이 게임의 끝마무리에 공헌한 인물";
-				var symbolText = new CanvasTextFormat()
-				{
-					FontSize = 30,
-					FontFamily = "Segoe UI",
-					HorizontalAlignment = CanvasHorizontalAlignment.Center
-				};
+			var titlelText = new CanvasTextFormat()
+			{
+				FontSize = 30,
+				FontFamily = "Segoe UI",
+				FontWeight = FontWeights.Bold,
+				HorizontalAlignment = CanvasHorizontalAlignment.Center
+			};
 
-				var textLayout = new CanvasTextLayout(sender, text, symbolText, (float)sender.Size.Width, (float)sender.Size.Height);
-				args.DrawingSession.DrawTextLayout(textLayout, 0, 0, new CanvasSolidColorBrush(sender, Colors.LightBlue));
+			var textLayout = new CanvasTextLayout(sender, text, titlelText, (float)sender.Size.Width, (float)sender.Size.Height);
+			args.DrawingSession.DrawTextLayout(textLayout, 0, 0, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0xff)));
 
-				//var ds = args.DrawingSession;
-				//using (ds.CreateLayer(0))
-				//{
-				//	ds.DrawImage(GenerateTextDisplay(sender, (float)sender.Size.Width, (float)sender.Size.Height));
-				//}
+			var descText = new CanvasTextFormat()
+			{
+				FontSize = 30,
+				FontFamily = "Segoe UI"
+			};
+
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, $"이름은 {mPlayerName}. 바로 당신이다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 70, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Hydra, NOTICE 동굴의 보스였다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 166, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Huge Dragon, LOCKUP 동굴의 보스였다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 292, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Minotaur, 여기서 두번 등장하는 생물이다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 420, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Panzer Viper, DUNGEON OF EVIL 을 지키던 기계 생물.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 516, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Black Knight, Necromancer 쪽의 제 2 인자 이다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 612, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "ArchiMonk, Necromancer의 왼팔 역할의 실력자.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 708, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "ArchiMage, Necromancer의 오른팔인 마법사.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 804, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Neo-Necromancer, 바로 당신의 목표였던 그자.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 932, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+
+			//var ds = args.DrawingSession;
+			//using (ds.CreateLayer(0))
+			//{
+			//	ds.DrawImage(GenerateTextDisplay(sender, (float)sender.Size.Width, (float)sender.Size.Height));
+			//}
 		}
 		private async Task LoadImages(CanvasDevice device)
 		{
@@ -93,6 +160,8 @@ namespace Lore
 			{
 				mMapTiles = await SpriteSheet.LoadAsync(device, new Uri("ms-appx:///Assets/lore_tile.png"), new Vector2(64, 64), Vector2.Zero);
 				mCharacterTiles = await SpriteSheet.LoadAsync(device, new Uri("ms-appx:///Assets/lore_sprite.png"), new Vector2(64, 64), Vector2.Zero);
+
+				AnimateAhn();
 			}
 			catch (Exception e)
 			{
@@ -100,32 +169,26 @@ namespace Lore
 			}
 		}
 
-		private CanvasCommandList GenerateTextDisplay(ICanvasResourceCreator resourceCreator, float width, float height)
-		{
-			var cl = new CanvasCommandList(resourceCreator);
-
-			using (var ds = cl.CreateDrawingSession())
+		private async void AnimateAhn() {
+			await Task.Run(() =>
 			{
-				float top = 10;
-
-				//float center = width / 2.0f;
-				//float symbolPos = center - 5.0f;
-				//float labelPos = center + 5.0f;
-
-				var symbolText = new CanvasTextFormat()
+				while (mAnimate)
 				{
-					FontSize = 30,
-					FontFamily = "Segoe UI",
-					HorizontalAlignment = CanvasHorizontalAlignment.Center,
-					VerticalAlignment = CanvasVerticalAlignment.Center
-				};
+					if (mYOffset < mHeight)
+						mYOffset++;
+					else
+						mYOffset = 0;
 
-				float y = top;
+					Task.Delay(200).Wait();
+				}
+			});
+		}
 
-				ds.DrawText("이 게임의 끝마무리에 공헌한 인물", 0, 0, Color.FromArgb(0xff, 0x53, 0xef, 0xef), symbolText);
-			}
+		protected override void OnNavigatedTo(NavigationEventArgs e)
+		{
+			mPlayerName = e.Parameter.ToString();
 
-			return cl;
+			base.OnNavigatedTo(e);
 		}
 	}
 }

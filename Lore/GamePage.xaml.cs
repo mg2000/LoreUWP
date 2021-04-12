@@ -1946,7 +1946,7 @@ namespace Lore
 						{
 							Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
 							Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
-							Frame.Navigate(typeof(Ending));
+							Frame.Navigate(typeof(Ending), mPlayerList[0].Name);
 
 							mSpecialEvent = SpecialEventType.None;
 						}
@@ -6439,8 +6439,11 @@ namespace Lore
 				{
 					for (var i = 0; i < mEncounterEnemyList.Count; i++)
 					{
-						battleCommand.EnemyID = i;
-						CastOne();
+						if (!mEncounterEnemyList[i].Dead)
+						{
+							battleCommand.EnemyID = i;
+							CastOne();
+						}
 					}
 				}
 				else if (battleCommand.Method == 3)
@@ -8408,11 +8411,7 @@ namespace Lore
 				}
 			}
 			else if (mParty.Map == 26) {
-				//InvokeAnimation(AnimationType.FinalBattle);
-
-				Window.Current.CoreWindow.KeyDown -= gamePageKeyDownEvent;
-				Window.Current.CoreWindow.KeyUp -= gamePageKeyUpEvent;
-				Frame.Navigate(typeof(Credit));
+				InvokeAnimation(AnimationType.FinalBattle);
 			}
 			else if (mParty.Map == 27) {
 				ShowExitMenu();
@@ -10088,7 +10087,7 @@ namespace Lore
 					" 당신의 행운을 빌겠네."
 				});
 
-				//mSpecialEvent = SpecialEventType.BattleNecromancer;
+				mSpecialEvent = SpecialEventType.BattleNecromancer;
 			}
 			else {
 				mAnimationEvent = AnimationType.None;
