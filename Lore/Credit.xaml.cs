@@ -75,8 +75,7 @@ namespace Lore
 				{
 					FontSize = 30,
 					FontFamily = "Segoe UI",
-					HorizontalAlignment = CanvasHorizontalAlignment.Center,
-					VerticalAlignment = CanvasVerticalAlignment.Center
+					HorizontalAlignment = CanvasHorizontalAlignment.Center
 				};
 
 				var textLayout = new CanvasTextLayout(sender, text, symbolText, (float)sender.Size.Width, (float)sender.Size.Height);
