@@ -1310,6 +1310,9 @@ namespace Lore
 				{
 					mSpecialEvent = SpecialEventType.None;
 
+					mAnimationEvent = AnimationType.None;
+					mAnimationFrame = 0;
+
 					await ExitCastleLore();
 				}
 				else if (mSpecialEvent == SpecialEventType.StartGame)
@@ -1327,16 +1330,8 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetSkeleton)
 						{
-							mMoveEvent = true;
-							for (var y = mParty.YAxis - 4; y < mParty.YAxis; y++)
-							{
-								mMapLayer[mParty.XAxis + mMapWidth * (y - 1)] = 44;
-								mMapLayer[mParty.XAxis + mMapWidth * y] = 48;
-								Task.Delay(500).Wait();
-							}
-							mMoveEvent = false;
-
-							TalkMode(mTalkX, mTalkY, args.VirtualKey);
+							InvokeAnimation(AnimationType.MeetSkeleton);
+							
 							mSpecialEvent = SpecialEventType.None;
 						}
 						else if (mSpecialEvent == SpecialEventType.MeetDraconian)
@@ -4439,14 +4434,9 @@ namespace Lore
 									{
 										if ((mParty.Etc[30] & 1) == 0)
 										{
-											AppendText(" 당신이 로어 성을 떠나려는 순간 누군가가 당신을 불렀다.");
+											Talk(" 당신이 로어 성을 떠나려는 순간 누군가가 당신을 불렀다.");
 
-											mTalkMode = 1;
-											mTalkX = mParty.XAxis;
-											mTalkY = mParty.YAxis;
 											mSpecialEvent = SpecialEventType.MeetSkeleton;
-
-											ContinueText.Visibility = Visibility.Visible;
 										}
 										else
 											await ExitCastleLore();
@@ -4684,6 +4674,9 @@ namespace Lore
 
 								if (mMenuFocusID == 0)
 								{
+									mAnimationEvent = AnimationType.None;
+									mAnimationFrame = 0;
+
 									JoinMemberFromEnemy(18);
 									await ExitCastleLore();
 								}
@@ -9394,21 +9387,6 @@ namespace Lore
 						mTalkMode = 0;
 					}
 				}
-				else if ((mParty.Etc[30] & 1) == 0 && mTalkMode == 1)
-				{
-					AppendText(new string[] { $" 나는 스켈레톤이라 불리는 종족의 사람이오.",
-						" 우리 종족의 사람들은 나를 제외하고는 모두 네크로맨서에게 굴복하여 그의 부하가 되었지만 나는 그렇지 않소." +
-						" 나는 네크로맨서 의 영향을 피해서 이곳 로어 성으로 왔지만 나의 혐오스런 생김새 때문에 이곳 사람들에게 배척되어서 지금은 어디로도 갈 수 없는 존재가 되었소." +
-						" 이제 나에게 남은 것은 네크로맨서 의 타도 밖에 없소. 그래서 당신들의 일행에 끼고 싶소."
-					});
-
-					ShowMenu(MenuMode.JoinSkeleton, new string[] {
-						"당신을 환영하오.",
-						"미안하지만 안되겠소."
-					});
-
-					mTalkMode = 0;
-				}
 			}
 			else if (mParty.Map == 7)
 			{
@@ -9804,6 +9782,14 @@ namespace Lore
 
 			var animationTask = Task.Run(() =>
 			{
+				if (mAnimationEvent == AnimationType.MeetSkeleton) {
+					for (var i = 1; i <= 4; i++)
+					{
+						mAnimationFrame = i;
+						if (i < 4)
+							Task.Delay(500).Wait();
+					}
+				}
 				if (mAnimationEvent == AnimationType.Remains1)
 					RestRemains(9, 13);
 				else if (mAnimationEvent == AnimationType.Remains2)
@@ -10007,7 +9993,19 @@ namespace Lore
 
 			await animationTask;
 
-			if (mAnimationEvent == AnimationType.Hydra) {
+			if (mAnimationEvent == AnimationType.MeetSkeleton) {
+				AppendText(new string[] { $" 나는 스켈레톤이라 불리는 종족의 사람이오.",
+						" 우리 종족의 사람들은 나를 제외하고는 모두 네크로맨서에게 굴복하여 그의 부하가 되었지만 나는 그렇지 않소." +
+						" 나는 네크로맨서 의 영향을 피해서 이곳 로어 성으로 왔지만 나의 혐오스런 생김새 때문에 이곳 사람들에게 배척되어서 지금은 어디로도 갈 수 없는 존재가 되었소." +
+						" 이제 나에게 남은 것은 네크로맨서 의 타도 밖에 없소. 그래서 당신들의 일행에 끼고 싶소."
+					});
+
+				ShowMenu(MenuMode.JoinSkeleton, new string[] {
+						"당신을 환영하오.",
+						"미안하지만 안되겠소."
+					});
+			}
+			else if (mAnimationEvent == AnimationType.Hydra) {
 				ContinueText.Visibility = Visibility.Visible;
 				mSpecialEvent = SpecialEventType.BattleHydra;
 			}
@@ -10169,17 +10167,19 @@ namespace Lore
 				}
 
 				if (mCharacterTiles != null) {
-					if (mAnimationEvent == AnimationType.EnterSwampGate) {
+					if (mAnimationEvent == AnimationType.EnterSwampGate)
+					{
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - mAnimationFrame), Vector4.One);
 					}
-					else if (mAnimationEvent == AnimationType.EnterChamberOfNecromancer) {
+					else if (mAnimationEvent == AnimationType.EnterChamberOfNecromancer)
+					{
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis + (5 - mAnimationFrame)), Vector4.One);
 					}
 					else
 						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis), Vector4.One);
 
 					if (mSpecialEvent == SpecialEventType.MeetLoreSolider)
-						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(50, 71), Vector4.One);
+						mMapTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(50, 71), Vector4.One);
 					else if (mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore || mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore2)
 						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(14, 5), Vector4.One);
 					if (mSpecialEvent == SpecialEventType.MeetAhnInLastShelter)
@@ -10317,7 +10317,9 @@ namespace Lore
 
 			if (mMapTiles != null)
 			{
-				if (mSpecialEvent == SpecialEventType.MeetLoreSolider && (index == 50 + mMapWidth * 71))
+				if (mAnimationEvent == AnimationType.MeetSkeleton && mAnimationFrame > 0 && column == mParty.XAxis && mParty.YAxis - row == 5 - mAnimationFrame)
+					mMapTiles.Draw(sb, 48, mMapTiles.SpriteSize * new Vector2(column, row), tint);
+				else if (mSpecialEvent == SpecialEventType.MeetLoreSolider && (index == 50 + mMapWidth * 71))
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				else if ((mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore || mSpecialEvent == SpecialEventType.MeetAhnInAnotherLore2) && (index == 14 + mMapWidth * 5))
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
@@ -11478,6 +11480,7 @@ namespace Lore
 
 		private enum AnimationType {
 			None,
+			MeetSkeleton,
 			Remains1,
 			Remains2,
 			Remains3,
