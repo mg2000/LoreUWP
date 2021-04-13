@@ -8965,23 +8965,23 @@ namespace Lore
 				{
 					if ((mParty.Etc[49] & (1 << 4)) == 0)
 					{
-						AppendText(new string[] { " 당신이 네크로맨서에 진정으로 대항하고자 한다면, 이 성의 바로위에 있는 피라미드에 가보도록하시오." +
-							$"그 곳은 네크로맨서와 동시에 바다에서 떠오른 [color={RGB.LightCyan}]또다른 지식의 성전[/color]이기 때문이오." +
-							" 당신이 어느 수준이 되어 그 곳에 들어간다면 진정한 이 세계의 진실을 알수 있을것이오." });
+						AppendText(new string[] { " 당신이 네크로맨서에 진정으로 대항하고자 한다면, 이 성의 바로 위에 있는 피라미드에 가보도록 하시오." +
+							$"그 곳은 네크로맨서와 동시에 바다에서 떠오른 [color={RGB.LightCyan}]또 다른 지식의 성전[/color]이기 때문이오." +
+							" 당신이 어느 수준이 되어 그 곳에 들어간다면 진정한 이 세계의 진실을 알 수 있을 것이오." });
 
 						mSpecialEvent = SpecialEventType.MeetLoreSolider;
 						ContinueText.Visibility = Visibility.Visible;
 					}
 					else
 					{
-						AppendText(new string[] { " '메나스' 속에는 드와프, 거인, 식인 늑대, 독사 같은 괴물들이 살고 있소." });
+						AppendText(new string[] { " '메나스'속에는 드와프, 거인, 식인 늑대, 독사 같은 괴물들이 살고 있소." });
 
 						ContinueText.Visibility = Visibility.Visible;
 					}
 				}
 				else if (moveX == 57 && moveY == 73)
 				{
-					AppendText(new string[] { " 나의 부모님은 독사의 독에 의해 돌아 가셨습니다. 독사 정말 위험한 존재입니다." });
+					AppendText(new string[] { " 나의 부모님은 독사의 독에 의해 돌아가셨습니다. 독사 정말 위험한 존재입니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9002,13 +9002,13 @@ namespace Lore
 				}
 				else if (moveX == 93 && moveY == 67)
 				{
-					AppendText(new string[] { " 우리는 메나스의 동쪽에 있는 나무로부터 많은 식량을 얻은적이 있습니다." });
+					AppendText(new string[] { " 우리는 메나스의 동쪽에 있는 나무로부터 많은 식량을 얻은 적이 있습니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
 				else if (moveX == 18 && moveY == 52)
 				{
-					AppendText(new string[] { $"[color={RGB.LightGreen}] 이 세계의 창시자는 안 영기님 이시며, 그는 위대한 프로그래머 입니다.[/color]" });
+					AppendText(new string[] { $"[color={RGB.LightGreen}] 이 세계의 창시자는 안 영기님 이시며, 그는 위대한 프로그래머입니다.[/color]" });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9028,7 +9028,7 @@ namespace Lore
 				}
 				else if (moveX == 9 && moveY == 29)
 				{
-					AppendText(new string[] { "요새 무덤쪽에서 유령이 떠돈다던데..." });
+					AppendText(new string[] { "요새 무덤 쪽에서 유령이 떠돈다던데..." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9040,14 +9040,14 @@ namespace Lore
 				}
 				else if (moveX == 14 && moveY == 34)
 				{
-					AppendText(new string[] { " 이제 로드 안의 시대도 끝나가는가 ? 그까짓 네크로맨서라는 작자에게 쩔쩔 매는 꼴이라니 ... 차라리 내가 나가서 그 놈과 싸우는게 났겠다." });
+					AppendText(new string[] { " 이제 로드 안의 시대도 끝나가는가? 그까짓 네크로맨서라는 작자에게 쩔쩔 매는 꼴이라니 ... 차라리 내가 나가서 그놈과 싸우는 게 났겠다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
 				else if (moveX == 17 && moveY == 32)
 				{
-					AppendText(new string[] { " 당신은 스켈레톤족의 한명이 우리와 함께 생활하려 한다는 것에 대해서 어떻게 생각하십니까 ?",
-					" 저는 그 말을 들었을때 너무 혐오스러웠습니다. 어서 빨리 그 살아있는 뼈다귀를 여기서 쫒아냈으면 좋겠습니다." });
+					AppendText(new string[] { " 당신은 스켈레톤족의 한 명이 우리와 함께 생활하려 한다는 것에 대해서 어떻게 생각하십니까 ?",
+					" 저는 그 말을 들었을 때 너무 혐오스러웠습니다. 어서 빨리 그 살아있는 뼈다귀를 여기서 쫓아냈으면 좋겠습니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9059,9 +9059,9 @@ namespace Lore
 				}
 				else if (moveX == 17 && moveY == 37)
 				{
-					AppendText(new string[] { " 이보게 자네, 내말 좀 들어 보게나. 나의 친구들은 이제 이 세상에 없다네. 그들은 너무나도 용감하고 믿음직스런 친구들이었는데..." +
-						"내가 다리를 다쳐 병원에 있을 동안 그들은 모두 이 대륙의 평화를 위해 로어 특공대에 지원 했다네. 하지만 그들은 아무도 다시는 돌아오지못했어." +
-						" 그런 그들에게 이렇게 살아있는 나로서는 미안할 뿐이네 그래서 술로 나날을 보내고 있지. 죄책감을 잊기위해서 말이지..." });
+					AppendText(new string[] { " 이보게 자네, 내말 좀 들어 보게나. 나의 친구들은 이제 이 세상에 없다네. 그들은 너무나도 용감하고 믿음직스러운 친구들이었는데..." +
+						"내가 다리를 다쳐 병원에 있을 동안 그들은 모두 이 대륙의 평화를 위해 로어 특공대에 지원했다네. 하지만 그들은 아무도 다시는 돌아오지 못했어." +
+						" 그런 그들에게 이렇게 살아있는 나로서는 미안할 뿐이네 그래서 술로 나날을 보내고 있지. 죄책감을 잊기 위해서 말이지..." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9075,7 +9075,7 @@ namespace Lore
 				{
 					if (mTalkMode == 0)
 					{
-						AppendText(new string[] { " 당신이 한 유골 앞에 섰을때 이상한 느낌과 함께 먼곳으로 부터 어떤 소리가 들려왔다." });
+						AppendText(new string[] { " 당신이 한 유골 앞에 섰을 때 이상한 느낌과 함께 먼 곳으로부터 어떤 소리가 들려왔다." });
 
 						ContinueText.Visibility = Visibility.Visible;
 
@@ -9086,9 +9086,9 @@ namespace Lore
 					else if (mTalkMode == 1)
 					{
 						AppendText(new string[] { $"[color={RGB.LightMagenta}] 안녕하시오. 대담한 용사여.[/color]",
-							$"[color={RGB.LightMagenta}] 당신이 나의 잠을 깨웠소 ? 나는 고대에 이곳을 지키다가 죽어간 기사 Jr. Antares 라고 하오." +
-							" 저의 아버지는 레드 안타레스 라고 불리웠던 최강의 마법사였소. 그는 말년에 어떤 동굴로 은신을 한 후 아무에게도 모습을 나타내지 않았소." +
-							" 하지만 당신의 운명은 나의 아버지를 만나야만하는 운명이라는 것을 알수있소. 반드시 나의 아버지를 만나서 당신이 알지 못했던 새로운 능력들을 배우시오." +
+							$"[color={RGB.LightMagenta}] 당신이 나의 잠을 깨웠소? 나는 고대에 이곳을 지키다가 죽어간 기사 주니어 안타레스라고 하오." +
+							" 저의 아버지는 레드 안타레스라고 불렸던 최강의 마법사였소. 그는 말년에 어떤 동굴로 은신을 한 후 아무에게도 모습을 나타내지 않았소." +
+							" 하지만 당신의 운명은 나의 아버지를 만나야만 하는 운명이라는 것을 알 수 있소. 반드시 나의 아버지를 만나서 당신이 알지 못했던 새로운 능력들을 배우시오." +
 							" 그리고 나의 아버지를 당신의 동행으로 참가시키도록 하시오. 물론 좀 어렵겠지만 ...[/color]" });
 
 						ContinueText.Visibility = Visibility.Visible;
@@ -9099,7 +9099,7 @@ namespace Lore
 					}
 					else if (mTalkMode == 2)
 					{
-						AppendText(new string[] { $"[color={RGB.LightMagenta}] 아참, 그리고 내가 죽기전에 여기에 뭔가를 여기에 숨겨 두었는데 당신에게 도움이 될지모르겠소. 그럼, 나는 다시 오랜 잠으로 들어가야 겠소.[/color]" });
+						AppendText(new string[] { $"[color={RGB.LightMagenta}] 아 참, 그리고 내가 죽기 전에 여기에 뭔가를 여기에 숨겨 두었는데 당신에게 도움이 될지 모르겠소. 그럼, 나는 다시 오랜 잠으로 들어가야겠소.[/color]" });
 
 						mMapLayer[61 + mMapWidth * 78] = 44;
 						mMapLayer[61 + mMapWidth * 79] = 44;
@@ -9117,21 +9117,21 @@ namespace Lore
 				else if (moveX == 23 && moveY == 49)
 				{
 					AppendText(new string[] { $"힘내게, {mPlayerList[0].Name}",
-					"자네라면 충분히 네크로맨서를 무찌를수 있을 걸세. 자네만 믿겠네."
+					"자네라면 충분히 네크로맨서를 무찌를 수 있을 걸세. 자네만 믿겠네."
 					});
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
 				else if (moveX == 23 && moveY == 53)
 				{
-					AppendText(new string[] { $" 위의 저 친구로부터 당신 얘기 많이 들었습니다. 저는 우리성에서 당신같은 용감한 사람이 있다는걸 자랑스럽게 생각합니다." });
-
+					AppendText(new string[] { $" 위의 저 친구로부터 당신 얘기 많이 들었습니다. 저는 우리성에서 당신 같은 용감한 사람이 있다는 걸 자랑스럽게 생각합니다." });
+					 
 					ContinueText.Visibility = Visibility.Visible;
 				}
 				else if (moveX == 12 || moveY == 54)
 				{
-					AppendText(new string[] { $" 만약, 당신들이 그 일을 해내기가 어렵다고 생각되시면 라스트디치 성에서 성문을 지키고있는 폴라리스란 청년을 일행에 참가시켜 주십시오." +
-						" 분명 그 사람이라면 쾌히 승락할 겁니다." });
+					AppendText(new string[] { $" 만약, 당신들이 그 일을 해내기가 어렵다고 생각되시면 라스트디치 성에서 성문을 지키고 있는 폴라리스란 청년을 일행에 참가시켜 주십시오." +
+						" 분명 그 사람이라면 쾌히 승낙할 겁니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9144,7 +9144,7 @@ namespace Lore
 				else if (moveX == 52 && moveY == 10)
 				{
 					AppendText(new string[] { $" 여기는 로드 안의 체제에 대해서 깊은 반감을 가지고 있는 자들을 수용하고 있습니다.",
-					" 아마 그들은 죽기전에는 이곳을 나올수 없을겁니다." });
+					" 아마 그들은 죽기 전에는 이곳을 나올 수 없을 겁니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9153,11 +9153,11 @@ namespace Lore
 					if (mTalkMode == 0)
 					{
 						AppendText(new string[] { $" 나는 이곳의 기사로서 이 세계의 모든 대륙을 탐험하고 돌아왔었습니다." +
-						" 내가 마지막 대륙을 돌았을때 나는 새로운 존재를 발견했습니다. 그는 바로 예전까지도 로드 안과 대립하던 에이션트 이블이라는 존재였습니다." +
-						" 지금 우리의 성에서는 철저하게 배격하도록 어릴때부터 가르침 받아온 그 에이션트 이블이었습니다." +
-						" 하지만 그곳에서 본 그는 우리가 알고있는 그와는 전혀 다른 인간미를 가진 말 그대로 신과같은 존재였습니다." +
-						"내가 그의 신앙아래 있는 어느 도시를 돌면서 내가 느낀것은 정말 로드 안에게서는 찾아볼수가 없는 그런 자애와 따뜻한 정이었습니다." +
-						" 그리고 여태껏 내가 알고 있는 그에 대한 지식이 정말 잘못되었다는 것과 이런 사실을 다른 사람에게도 알려주고 싶다는 이유로 그의 사상을 퍼뜨리다 이렇게 잡히게 된것입니다." });
+						" 내가 마지막 대륙을 돌았을 때 나는 새로운 존재를 발견했습니다. 그는 바로 예전까지도 로드 안과 대립하던 에이션트 이블이라는 존재였습니다." +
+						" 지금 우리의 성에서는 철저하게 배격하도록 어릴 때부터 가르침 받아온 그 에이션트 이블이었습니다." +
+						" 하지만 그곳에서 본 그는 우리가 알고 있는 그와는 전혀 다른 인간미를 가진 말 그대로 신과 같은 존재였습니다." +
+						"내가 그의 신앙 아래 있는 어느 도시를 돌면서 내가 느낀것은 정말 로드 안에게서는 찾아볼 수가 없는 그런 자애와 따뜻한 정이었습니다." +
+						" 그리고 여태껏 내가 알고 있는 그에 대한 지식이 정말 잘못되었다는 것과 이런 사실을 다른 사람에게도 알려주고 싶다는 이유로 그의 사상을 퍼뜨리다 이렇게 잡히게 된 것입니다." });
 
 						ContinueText.Visibility = Visibility.Visible;
 
@@ -9167,9 +9167,9 @@ namespace Lore
 					}
 					else if (mTalkMode == 1)
 					{
-						AppendText(new string[] { " 하지만 더욱 이상한것은 로드 안 자신도 그에 대한 사실을 인정하면서도 왜 우리에게는 그를 배격하도록만 교육시키는 가를 알고 싶을뿐입니다." +
-							"로드 안께서는 나를 이해한다고 하셨지만 사회 혼란을 방지하기 위해 나를 이렇게 밖에 할수 없다고 말씀하시더군요. 그리 이것은 선을 대표하는 자기로서는 이 방법 밖에는 없다고 하시더군요." +
-							" 하지만 로드 안의 마음은 사실 이렇지 않다는걸 알수 있었습니다. 에이션트 이블의 말로는 사실 서로가 매우 절친한 관계임을 알수가 있었기 때문입니다." });
+						AppendText(new string[] { " 하지만 더욱 이상한 것은 로드 안 자신도 그에 대한 사실을 인정하면서도 왜 우리에게는 그를 배격하도록만 교육하는 가를 알고 싶을 뿐입니다." +
+							"로드 안께서는 나를 이해한다고 하셨지만 사회 혼란을 방지하기 위해 나를 이렇게 밖에 할 수 없다고 말씀하시더군요. 그리 이것은 선을 대표하는 자기로서는 이 방법 밖에는 없다고 하시더군요." +
+							" 하지만 로드 안의 마음은 사실 이렇지 않다는 걸 알 수 있었습니다. 에이션트 이블의 말로는 사실 서로가 매우 절친한 관계임을 알 수가 있었기 때문입니다." });
 
 						ContinueText.Visibility = Visibility.Visible;
 
@@ -9179,34 +9179,34 @@ namespace Lore
 				}
 				else if (moveX == 39 && moveY == 14)
 				{
-					AppendText(new string[] { " 히히히... 위대한 용사님. 낄낄낄.. 내가 당신들의 일행에 끼이면 안될까요 ? 우히히히.." });
+					AppendText(new string[] { " 히히히... 위대한 용사님. 낄낄낄.. 내가 당신들의 일행에 끼이면 안될까요? 우히히히.." });
 
 					ShowMenu(MenuMode.JoinMadJoe, new string[]
 					{
 						"그렇다면 당신을 받아들이지요",
-						"당신은 이곳에 그냥 있는게 낫겠소"
+						"당신은 이곳에 그냥 있는 게 낫겠소"
 					});
 				}
 				else if (moveX == 62 && moveY == 9)
 				{
-					AppendText(new string[] { " 안녕하시오. 나는 한때 이 곳의 유명한 도둑이었던 사람이오. 결국 그 때문에 나는 잡혀서 평생 여기에 있게 되었지만...",
-					$" 그건 그렇고, 내가 로어 성의 보물인 [color={RGB.LightCyan}]황금의 방패[/color]를 훔쳐 달아나다. 그만 그것을 메나스라는 금광에 숨겨 놓은채 잡혀 버리고 말았소.",
-					"나는 이제 그것을 가져봤자 쓸때도 없으니 차라리 당신이 그걸 가지시오. 가만있자... 어디였더라... 그래 ! 메나스의 가운데쯤에 벽으로 사방이 둘러 싸여진 곳이었는데.." +
-					" 당신들이라면 지금 여기에 들어온것과 같은 방법으로 들어가서 방패를 찾을수 있을것이오. 행운을 빌겠소."
+					AppendText(new string[] { " 안녕하시오. 나는 한때 이곳의 유명한 도둑이었던 사람이오. 결국 그 때문에 나는 잡혀서 평생 여기에 있게 되었지만...",
+					$" 그건 그렇고, 내가 로어 성의 보물인 [color={RGB.LightCyan}]황금의 방패[/color]를 훔쳐 달아나다. 그만 그것을 메나스라는 금광에 숨겨 놓은 채 잡혀 버리고 말았소.",
+					"나는 이제 그것을 가져봤자 쓸 때도 없으니 차라리 당신이 그걸 가지시오. 가만있자... 어디였더라... 그래! 메나스의 가운데쯤에 벽으로 사방이 둘러 싸여진 곳이었는데.." +
+					" 당신들이라면 지금 여기에 들어온 것과 같은 방법으로 들어가서 방패를 찾을수 있을 것이오. 행운을 빌겠소."
 					});
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
 				else if (moveX == 59 && moveY == 14)
 				{
-					AppendText(new string[] { " 당신들에게 경고해 두겠는데 건너편 방에 있는 Joe는 오랜 수감생활 끝에 미쳐 버리고 말았소. 그의 말에 속아서 당신네 일행에 참가시키는 그런 실수는 하지마시오." });
+					AppendText(new string[] { " 당신들에게 경고해 두겠는데 건너편 방에 있는 조는 오랜 수감생활 끝에 미쳐 버리고 말았소. 그의 말에 속아서 당신네 일행에 참가시키는 그런 실수는 하지 마시오." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
 				else if ((moveX == 41 && moveY == 77) || (moveX == 41 && moveY == 79))
 				{
 					if ((mParty.Etc[49] & (1 << 3)) == 0)
-						AppendText(new string[] { " 로드안 님의 명령에 의해서 당신들에게 한가지의 무기를 드리겠습니다. 들어가셔서 무기를 선택해 주십시오." });
+						AppendText(new string[] { " 로드 안님의 명령에 의해서 당신들에게 한 가지의 무기를 드리겠습니다. 들어가셔서 무기를 선택해 주십시오." });
 					else
 						AppendText(new string[] { " 여기서 가져가신 무기를 잘 사용하셔서 세계의 적인 네크로맨서를 무찔러 주십시오." });
 
@@ -9221,7 +9221,7 @@ namespace Lore
 				}
 				else if (moveX == 82 && moveY == 26)
 				{
-					AppendText(new string[] { "메나스 는 한때 금광이었습니다." });
+					AppendText(new string[] { "메나스는 한때 금광이었습니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9249,7 +9249,7 @@ namespace Lore
 							AppendText(new string[] { "저희 성주님을 만나 보십시오." });
 						else
 						{
-							AppendText(new string[] { "당신은 이 게임 세계에 도전하고 싶습니까 ?",
+							AppendText(new string[] { "당신은 이 게임 세계에 도전하고 싶습니까?",
 							AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Xbox" ? "(A: 예 / B: 아니오)" : "(Y/n)" });
 
 							mTalkMode = 1;
@@ -9288,7 +9288,7 @@ namespace Lore
 						AppendText(new string[] { "",
 						"아니오.",
 						"",
-						"다시 생각 해보십시오." }, true);
+						"다시 생각해 보십시오." }, true);
 
 						ContinueText.Visibility = Visibility.Visible;
 						mTalkMode = 0;
@@ -9329,7 +9329,7 @@ namespace Lore
 						if (mParty.Etc[9] == 0)
 						{
 							AppendText(new string[] { $"나는 [color={RGB.LightCyan}]로드 안[/color]이오.",
-							"이제부터 당신은 이 게임에서 새로운 인물로서 생을 시작하게 될것이오. 그럼 나의 이야기를 시작하겠소." });
+							"이제부터 당신은 이 게임에서 새로운 인물로서 생을 시작하게 될 것이오. 그럼 나의 이야기를 시작하겠소." });
 							ContinueText.Visibility = Visibility.Visible;
 
 							mParty.Etc[9]++;
@@ -9345,7 +9345,7 @@ namespace Lore
 						}
 						else if (mParty.Etc[9] == 4)
 						{
-							AppendText(new string[] { "당신들의 성공을 축하하오 !!",
+							AppendText(new string[] { "당신들의 성공을 축하하오!!",
 						$"[color={RGB.LightCyan}][[EXP + 1000][/color]" });
 
 							mPlayerList.ForEach(delegate (Lore player)
@@ -9358,8 +9358,8 @@ namespace Lore
 						}
 						else if (mParty.Etc[9] == 5)
 						{
-							AppendText(new string[] { " 드디어 나는 당신들의 능력을 믿을수 있게 되었소. 그렇다면 당신들에게 네크로맨서 응징이라는 막중한 임무를 한번 맡겨 보겠소.",
-							$"먼저 대륙의 동쪽에 있는 '[color={RGB.LightCyan}]라스트디치[/color]'에 가보도록 하시오. '[color={RGB.LightCyan}]라스트디치[/color]'성에는 지금 많은 근심에 쌓여있소. 그들을 도와 주시오." });
+							AppendText(new string[] { " 드디어 나는 당신들의 능력을 믿을 수 있게 되었소. 그렇다면 당신들에게 네크로맨서 응징이라는 막중한 임무를 한번 맡겨 보겠소.",
+							$"먼저 대륙의 동쪽에 있는 '[color={RGB.LightCyan}]라스트디치[/color]'에 가보도록 하시오. '[color={RGB.LightCyan}]라스트디치[/color]'성에는 지금 많은 근심에 쌓여있소. 그들을 도와주시오." });
 
 							mParty.Etc[9]++;
 							ContinueText.Visibility = Visibility.Visible;
@@ -9373,13 +9373,13 @@ namespace Lore
 					else if (mTalkMode == 1)
 					{
 						AppendText(new string[] { " 이 세계는 내가 통치하는 동안에는 무척 평화로운 세상이 진행되어 왔었소. 그러나 그것은 한 운명의 장난으로 무참히 깨어져 버렸소.",
-							" 한날, 대기의 공간이 진동하며 난데없는 푸른 번개가 대륙들 중의 하나를 강타했소. 공간은 휘어지고 시간은 진동하며 이 세계를 공포 속으로 몰고 갔소." +
-							" 그 번개의 위력으로 그 불운한 대륙은 황폐화된 용암 대지로 변하고 말았고, 다른 하나의 대륙은 충돌시의 진동에 의해 바다 깊이 가라앉아 버렸소.",
-							" 그런 일이 있은 한참 후에, 이상하게도 용암대지의 대륙으로부터 강한 생명의 기운이 발산되기 시작 했소." +
+							" 한 날, 대기의 공간이 진동하며 난데없는 푸른 번개가 대륙들 중의 하나를 강타했소. 공간은 휘어지고 시간은 진동하며 이 세계를 공포 속으로 몰고 갔소." +
+							" 그 번개의 위력으로 그 불운한 대륙은 황폐화된 용암 대지로 변하고 말았고, 다른 하나의 대륙은 충돌 시의 진동에 의해 바다 깊이 가라앉아 버렸소.",
+							" 그런 일이 있은 한참 후에, 이상하게도 용암대지의 대륙으로부터 강한 생명의 기운이 발산되기 시작했소." +
 							" 그래서, 우리들은 그 원인을 알아보기 위해 '로어 특공대'를 조직하기로 합의를 하고 " +
-							"이곳에 있는 거의 모든 용사들을 모아서 용암 대지로 변한 그 대륙으로 급히 그들을 파견하였지만 여태껏 아무 소식도 듣지못했소. 그들이 생존해 있는지 조차도 말이오.",
-							$" 이런 저런 방법을 통하여 그들의 생사를 알아려던중 우연히 우리들은 '[color={RGB.LightCyan}]네크로맨서[/color]'라고 불리우는 용암 대지속의 새로운 세력의 존재를" +
-							"알아내었고, 그때의 그들은 이미 막강한 세력으로 성장해가고 있는중 이었소. 그때의 번개는 그가 이 공간으로 이동하는 수단이었소. 즉 그는 이 공간의 인물이 아닌 다른 차원을 가진공간에서 왔던 것이오."
+							"이곳에 있는 거의 모든 용사들을 모아서 용암 대지로 변한 그 대륙으로 급히 그들을 파견하였지만 여태껏 아무 소식도 듣지 못했소. 그들이 생존해 있는지조차도 말이오.",
+							$" 이런저런 방법을 통하여 그들의 생사를 알아내려던 중 우연히 우리들은 '[color={RGB.LightCyan}]네크로맨서[/color]'라고 불리는 용암 대지속의 새로운 세력의 존재를" +
+							"알아내었고, 그때의 그들은 이미 막강한 세력으로 성장해가고 있는 중이었소. 그때의 번개는 그가 이 공간으로 이동하는 수단이었소. 즉 그는 이 공간의 인물이 아닌 다른 차원을 가진 공간에서 왔던 것이오."
 						});
 
 						ContinueText.Visibility = Visibility.Visible;
@@ -9392,9 +9392,9 @@ namespace Lore
 					else if (mTalkMode == 2)
 					{
 						AppendText(new string[] { $" 그는 현재 이 세계의 반을 그의 세력권 안에 넣고 있소. 여기서 당신의 궁극적인 임무는 바로 '[color={RGB.LightCyan}]네크로맨서의 야심을 봉쇄 시키는 것[/color]'이라는 걸 명심해 두시오.",
-						" 네크로맨서 의 영향력은 이미 로어 대륙까지 도달해있소. 또한 그들은 이 대륙의 남서쪽에 '메나스' 라고 불리우는 지하 동굴을 얼마전에 구축했소. 그래서, 그 동굴의 존재 때문에 우리들은 그에게 위협을 당하게 되었던 것이오.",
-						" 하지만, 로어 특공대가 이 대륙을 떠난후로는 그 일당들에게 대적할 용사는 이미 남아있지 않았소. 그래서 부탁하건데, 그 동굴을 중심부까지 탐사해 주시오.",
-						" 나는 당신들에게 네크로맨에 대한 일을 맡기고 싶지만, 아직은 당신들의 확실한 능력을 모르는 상태이지요. 그래서 이 일은 당신들의 잠재력을 증명해 주는 좋은 기회가 될것이오.",
+						" 네크로맨서의 영향력은 이미 로어 대륙까지 도달해있소. 또한 그들은 이 대륙의 남서쪽에 '메나스'라고 불리는 지하 동굴을 얼마 전에 구축했소. 그래서, 그 동굴의 존재 때문에 우리들은 그에게 위협을 당하게 되었던 것이오.",
+						" 하지만, 로어 특공대가 이 대륙을 떠난 후로는 그 일당들에게 대적할 용사는 이미 남아있지 않았소. 그래서 부탁하건대, 그 동굴을 중심부까지 탐사해 주시오.",
+						" 나는 당신들에게 네크로맨서에 대한 일을 맡기고 싶지만, 아직은 당신들의 확실한 능력을 모르는 상태이지요. 그래서 이 일은 당신들의 잠재력을 증명해 주는 좋은 기회가 될 것이오.",
 						" 만약 당신들이 무기가 필요하다면 무기고에서 약간의 무기를 가져가도록 허락하겠소."
 						});
 
@@ -9409,23 +9409,23 @@ namespace Lore
 			else if (mParty.Map == 7)
 			{
 				if (moveX == 50 && moveY == 54)
-					Talk($"LASTDITCH 성과 배리안트 피플즈 성은 매우 닮았다는 말이 있습니다.");
+					Talk($"라스트디치 성과 배리안트 피플즈 성은 매우 닮았다는 말이 있습니다.");
 				else if (moveX == 7 && moveY == 43)
-					Talk("이 세계는 다섯개의 대륙으로 되어 있다더군요.");
+					Talk("이 세계는 다섯 개의 대륙으로 되어 있다더군요.");
 				else if (moveX == 67 && moveY == 34)
 					Talk("각각의 대륙에는 서로 통하는 문이 존재합니다.");
 				else if (moveX == 42 && moveY == 8)
-					Talk("당신은 피라미드 안에서 쉽게 창을 발견할 수 있을것입니다.");
+					Talk("당신은 피라미드 안에서 쉽게 창을 발견할 수 있을 것입니다.");
 				else if (moveX == 64 && moveY == 9)
-					Talk("지하 출입구 는 여기로부터 서쪽에 나타나곤 합니다.");
+					Talk("지하 출입구는 여기로부터 서쪽에 나타나곤 합니다.");
 				else if (moveX == 13 && moveY == 67)
 					Talk("로어 특공대의 지휘관은 저의 남편인데 '로어 헌터'라고 불렸습니다.");
 				else if (moveX == 56 && moveY == 41)
-					Talk("미이라 장군 와 두마리의 스핑크스 의 공격은 가히 치명적입니다.");
+					Talk("미이라 장군과 두 마리의 스핑크스 의 공격은 가히 치명적입니다.");
 				else if (moveX == 43 && moveY == 33)
-					Talk("지하 출입구 는 당신을 다른 대륙으로 인도해 줄것입니다.");
+					Talk("지하 출입구는 당신을 다른 대륙으로 인도해 줄 것입니다.");
 				else if (moveX == 31 && moveY == 55)
-					Talk("로어 특공대의 지휘관은 상당히 능력있는 인물이었습니다.");
+					Talk("로어 특공대의 지휘관은 상당히 능력 있는 인물이었습니다.");
 				else if ((moveX == 35 && moveY == 18) || (moveX == 35 && moveY == 20) || (moveX == 40 && moveY == 17) || (moveX == 40 && moveY == 19) || (moveX == 40 && moveY == 21) || (moveX == 39 && moveY == 40))
 				{
 					if (mParty.Etc[12] == 0)
