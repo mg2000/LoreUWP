@@ -952,7 +952,7 @@
     "Level": 16
   },
   {
-    "Name": "진흙 생명체",
+    "Name": "아스트랄 머드",
     "Strength": 13,
     "Mentality": 20,
     "Endurance": 25,
@@ -969,7 +969,7 @@
     "Level": 16
   },
   {
-    "Name": "Reaper",
+    "Name": "추수꾼",
     "Strength": 15,
     "Mentality": 20,
     "Endurance": 33,
@@ -986,7 +986,7 @@
     "Level": 17
   },
   {
-    "Name": "Crab God",
+    "Name": "크랩 갓",
     "Strength": 20,
     "Mentality": 20,
     "Endurance": 30,
