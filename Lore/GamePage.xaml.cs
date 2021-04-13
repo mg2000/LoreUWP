@@ -9421,7 +9421,7 @@ namespace Lore
 				else if (moveX == 13 && moveY == 67)
 					Talk("로어 특공대의 지휘관은 저의 남편인데 '로어 헌터'라고 불렸습니다.");
 				else if (moveX == 56 && moveY == 41)
-					Talk("미이라 장군과 두 마리의 스핑크스 의 공격은 가히 치명적입니다.");
+					Talk("미이라 장군과 두 마리의 스핑크스의 공격은 가히 치명적입니다.");
 				else if (moveX == 43 && moveY == 33)
 					Talk("지하 출입구는 당신을 다른 대륙으로 인도해 줄 것입니다.");
 				else if (moveX == 31 && moveY == 55)
@@ -9437,12 +9437,12 @@ namespace Lore
 				{
 					AppendText(new string[] {
 						$"나의 이름은 [color={RGB.LightCyan}]폴라리스[/color]요.",
-						"당신들과 같이 미이라 장군 를 물리치고 싶소.",
+						"당신들과 같이 미이라 장군을 물리치고 싶소.",
 						$"[color={RGB.LightGreen}]내가 당신의 일행에 끼여도 되겠소?[/color]"
 					});
 
 					ShowMenu(MenuMode.JoinPolaris, new string[] {
-						"나는 당신의 제안을 받아 들이겠소",
+						"나는 당신의 제안을 받아들이겠소",
 						"나는 당신의 도움은 필요 없소"
 					});
 
@@ -9464,17 +9464,17 @@ namespace Lore
 					{
 						Talk(new string[] {
 							$" 당신이 {mPlayerList[0].Name}이오?",
-							" 나는 로드 안 에게 당신이 온다는 소식을 전해받았소. 들었다시피 우리성에는 큰 문제가 있소." +
-							" 그것은 이 성의 북쪽에 위치해있는 동굴 때문이오. 그 동굴때문에 우리들은 상당한 압박을받고 있소.",
+							" 나는 로드 안에게 당신이 온다는 소식을 전해 받았소. 들었다시피 우리성에는 큰 문제가 있소." +
+							" 그것은 이 성의 북쪽에 위치해있는 동굴 때문이오. 그 동굴 때문에 우리들은 상당한 압박을 받고 있소.",
 							$" 만약 당신들이 위대한 영웅이라면, [color={RGB.LightCyan}]피라미드[/color]라는 동굴에 있는 [color={RGB.LightCyan}]미이라 장군[/color]를 처단해 주시오.",
-							" 당신들이 이 임무를 완수하면 나는 당신들에게 도움에 대한 댓가를 치뤄주겠소."
+							" 당신들이 이 임무를 완수하면 나는 당신들에게 도움에 대한 댓가를 치러주겠소."
 						});
 
 						mParty.Etc[12]++;
 					}
 					else if (mParty.Etc[12] == 1)
 					{
-						Talk($" 부탁하건데, 피라미드의 '[color={RGB.LightCyan}]미이라 장군[/color]'를 처단해 주시오.");
+						Talk($" 부탁하건대, 피라미드의 '[color={RGB.LightCyan}]미이라 장군[/color]'을 처단해 주시오.");
 					}
 					else if (mParty.Etc[12] == 2)
 					{
@@ -9493,9 +9493,9 @@ namespace Lore
 					else if (mParty.Etc[12] == 3)
 					{
 						Talk(new string[] {
-							$" 이 성의 북동쪽에 '[color={RGB.LightCyan}]지하 출입구[/color]' 라는것이 있소." +
+							$" 이 성의 북동쪽에 '[color={RGB.LightCyan}]지하 출입구[/color]'라는 것이 있소." +
 							$" 만약 당신이 '[color={RGB.LightCyan}]지하 출입구[/color]' 속에 들어간다면 '[color={RGB.LightCyan}]배리안트 피플즈[/color]'성으로 통하게 될것이오.",
-							$"'[color={RGB.LightCyan}]배리안트 피플즈[/color]'는 네크로맨서에게 매우 심하게 영향을 받고있소"
+							$"'[color={RGB.LightCyan}]배리안트 피플즈[/color]'는 네크로맨서에게 매우 심하게 영향을 받고 있소"
 						});
 					}
 				}
@@ -9511,21 +9511,21 @@ namespace Lore
 				else if ((moveX == 8 && moveY == 38) || (moveX == 11 && moveY == 40) || (moveX == 15 && moveY == 39))
 					GoHospital();
 				else if (moveX == 23 && moveY == 37)
-					Talk(" 이블 씰 의 어디엔가에 '황금의 봉인'이 숨겨져 있다더군요.");
+					Talk(" 이블 씰의 어디엔가에 '황금의 봉인'이 숨겨져 있다더군요.");
 				else if (moveX == 22 && moveY == 11)
 					Talk(" 황금의 갑옷이 퀘이크 동굴 안에 숨겨져있다는 소문이 떠돌고 있습니다.");
 				else if (moveX == 27 && moveY == 17)
-					Talk(" 배리안트 피플즈 성은 네크로맨서에 대한 강한저항 때문에 그에 의해 쑥밭이 되어 버렸습니다.");
+					Talk(" 배리안트 피플즈 성은 네크로맨서에 대한 강한 저항 때문에 그에 의해 쑥밭이 되어 버렸습니다.");
 				else if (moveX == 29 && moveY == 30)
-					Talk(" 배리안트 피플즈 최대의 사냥꾼인 리겔은 성을파괴시킨 적들을 물리치기 위해서 이블 씰로 들어갔습니다.");
+					Talk(" 배리안트 피플즈 최대의 사냥꾼인 리겔은 성을 파괴시킨 적들을 물리치기 위해서 이블 씰로 들어갔습니다.");
 				else if (moveX == 33 && moveY == 37)
-					Talk("위쪽에는 스왐프 대륙으로 통하는 문이 있지만 아무도 접근 할 수가 없습니다.");
+					Talk("위쪽에는 스왐프 대륙으로 통하는 문이 있지만 아무도 접근할 수가 없습니다.");
 				else if (moveX == 37 && moveY == 13)
-					Talk("퀘이크속에는 많은 비밀문이 있다고 들었습니다.");
+					Talk("퀘이크 속에는 많은 비밀문이 있다고 들었습니다.");
 				else if (moveX == 14 && moveY == 41)
-					Talk("'워터 필드 로 통하는 문에는 세마리의 와이번이 지키고 있습니다.");
+					Talk("워터 필드 로 통하는 문에는 세 마리의 와이번이 지키고 있습니다.");
 				else if (moveX == 25 && moveY == 6)
-					Talk("스왐프 대륙으로 통하는 문에는 고르곤 세자매가 살고 있소.");
+					Talk("스왐프 대륙으로 통하는 문에는 고르곤 세 자매가 살고 있소.");
 				else if ((moveX == 33 && moveY == 23) || (moveX == 36 && moveY == 23) || (moveX == 40 && moveY == 23) || (moveX == 34 && moveY == 26) || (moveX == 37 && moveY == 26) || (moveX == 40 && moveY == 26))
 				{
 					if (mParty.Etc[13] == 0)
@@ -9538,12 +9538,12 @@ namespace Lore
 					if (mParty.Etc[13] == 0)
 					{
 						Talk(new string[] {
-							" 당신을 만나게되어 영광이오.",
-							" 나는 로어 대륙에서의 당신의 공훈을 높이 평가하며, 또한 LAST DITCH성을 구제하것에 대해서도 감사를 표하오." +
-							$" LAST DITCH 성의 쌍둥이성인 '[color={RGB.LightCyan}]배리안트 피플즈[/color]'는 네크로맨서에 대한 강한 저항 때문에 그에 의해서 처참히 파괴되었소." +
-							$" 그런후에 그는 '배리안트 피플즈'의 지하에다가 [color={RGB.LightCyan}]이블 씰[/color]이라는 동굴을 구축하였소.",
-							"그리고 그는 이블 씰의 어디엔가에 이 대륙의 운명을 담고 있는 황금의 봉인을 숨겨놓았소. 만약 그 봉인이 풀어진다면, 이 대륙은 봉인 속에서 나타난 괴물들에 의해서 황폐화 될 것이오.",
-							$" 한시바삐 이블 씰 로 가시오, 그리고 '[color={RGB.LightCyan}]황금의 봉인[/color]'을 찾으시오."
+							" 당신을 만나게 되어 영광이오.",
+							" 나는 로어 대륙에서의 당신의 공훈을 높이 평가하며, 또한 라스트디치성을 구제하것에 대해서도 감사를 표하오." +
+							$" 라스트디치 성의 쌍둥이 성인 '[color={RGB.LightCyan}]배리안트 피플즈[/color]'는 네크로맨서에 대한 강한 저항 때문에 그에 의해서 처참히 파괴되었소." +
+							$" 그런 후에 그는 '배리안트 피플즈'의 지하에다가 [color={RGB.LightCyan}]이블 씰[/color]이라는 동굴을 구축하였소.",
+							"그리고 그는 이블 씰의 어디엔가에 이 대륙의 운명을 담고 있는 황금의 봉인을 숨겨놓았소. 만약 그 봉인이 풀어진다면, 이 대륙은 봉인 속에서 나타난 괴물들에 의해서 황폐화될 것이오.",
+							$" 한시바삐 이블 씰로 가시오, 그리고 '[color={RGB.LightCyan}]황금의 봉인[/color]'을 찾으시오."
 						});
 						mParty.Etc[13]++;
 					}
@@ -9557,7 +9557,7 @@ namespace Lore
 					else if (mParty.Etc[13] == 2)
 					{
 						Talk(new string[] {
-							" 오, 당신은 황금의 봉인을 찾았군요 !",
+							" 오, 당신은 황금의 봉인을 찾았군요!",
 							$" [color={RGB.LightCyan}][[ EXP + 10000 ][/color]"
 						});
 
@@ -9572,7 +9572,7 @@ namespace Lore
 					{
 						Talk(new string[] {
 							" 그러나, 이 대륙에는 아직 위험한 장소가 많이 있소.",
-							$" 여기로부터 북동쪽에 '[color={RGB.LightCyan}]퀘이크[/color]'라고 불리는 동굴이있소. 만약 퀘이크 마저 무너뜨리면, 이 대륙은 다시 평화롭게 될것이오.",
+							$" 여기로부터 북동쪽에 '[color={RGB.LightCyan}]퀘이크[/color]'라고 불리는 동굴이 있소. 만약 퀘이크마저 무너뜨리면, 이 대륙은 다시 평화롭게 될 것이오.",
 							$" [color={RGB.LightCyan}]퀘이크[/color]로 가서 보스인 아키가고일과 좀비들을 물리쳐 주십시오."
 						});
 						mParty.Etc[13]++;
@@ -9587,8 +9587,8 @@ namespace Lore
 							" 당신들은 위대한 영웅임에 틀림없군요.",
 							$" [color={RGB.LightCyan}][[ EXP + 40000 ][/color]",
 							"",
-							$" 여기에 [color={RGB.LightCyan}]Water Key[/color]가 있소.",
-							$" 이 열쇠는 [color={RGB.LightCyan}]워터 필드[/color]의 문을 열것이오."
+							$" 여기에 [color={RGB.LightCyan}]워터 키[/color]가 있소.",
+							$" 이 열쇠는 [color={RGB.LightCyan}]워터 필드[/color]의 문을 열 것이오."
 						});
 
 						foreach (var player in mPlayerList)
@@ -9619,35 +9619,35 @@ namespace Lore
 				else if (moveX == 23 && moveY == 21)
 					Talk("락업 동굴은 미로로 구성된 동굴이오.");
 				else if (moveX == 26 && moveY == 21)
-					Talk("락업 속에 Minotaur는 네크로맨서의 부하는 아닙니다.");
+					Talk("락업 속에 미노타우루스는 네크로맨서의 부하는 아닙니다.");
 				else if (moveX == 23 && moveY == 68)
-					Talk(" 락업 의 보스인 거대 드래곤은 아주 거대한 용이라는데, 그것의 꼬리 또한 강력한 무기라서 조심해야 할것이오.");
+					Talk(" 락업 의 보스인 거대 드래곤은 아주 거대한 용이라는데, 그것의 꼬리 또한 강력한 무기라서 조심해야 할 것이오.");
 				else if (moveX == 36 && moveY == 15)
-					Talk(" 고르곤 세자매의 힘은 네크로맨서의 힘과 필적하지만 중대한 약점이 하나 있소.");
+					Talk(" 고르곤 세 자매의 힘은 네크로맨서의 힘과 필적하지만 중대한 약점이 하나 있소.");
 				else if (moveX == 39 && moveY == 17)
-					Talk("Stheno 와 Euryale는 거의 불멸의 생명체 입니다.");
+					Talk("스테노와 에우리알레는 거의 불멸의 생명체 입니다.");
 				else if (moveX == 39 && moveY == 55)
 				{
 					AppendText(new string[] {
-					" 나는 로어 특공대의 대장인 로어 헌터 라고 하오. 여기서의 적들과는, 이제 대항하기가 혼자서는 무리라고 판단했소." +
+					" 나는 로어 특공대의 대장인 로어 헌터라고 하오. 여기서의 적들과는, 이제 대항하기가 혼자서는 무리라고 판단했소." +
 					" 그래서, 나는 여태껏 여기서 새로운 영웅들을 기다리고 있었소.",
-					" 내가 당신의 일행에 끼게 되는걸 어떻게 생각하오 ?"
+					" 내가 당신의 일행에 끼게 되는 걸 어떻게 생각하오?"
 					});
 
 					ShowMenu(MenuMode.JoinLoreHunter, new string[] {
 						"우리도 그러기를 바라오",
-						"몸이 완전히 회복될때까지 기다리시오"
+						"몸이 완전히 회복될 때까지 기다리시오"
 					});
 				}
 				else if (moveX == 24 && moveY == 17) {
 					if (mParty.Etc[14] == 0) {
 						Talk(new string[] {
-						" 여기는 워터 필드 라는 성이오. 이곳이 당신이 마지막으로 거칠 우리편의 성이오.",
-						" 차원의 틈을 통해 네크로맨서가 내려 오던날이 대륙은 거의 전부가 바다로 가라않았소." +
-						" 하지만 그때에 살아 남은 사람들은 아직 가라않지 않은 이곳에 찾아와서 이 성을 건립했소.그리고는 공이 컸던 나를 왕으로 추대했던 것이오.",
-						" 당신도 생각하고 있다시피 이 대륙은 거의 물로 덮혀있소. 하지만 이곳처럼 물이 차지않은 두곳에 네크로맨서 는 이미 이 대륙의 지배를 위한 동굴을 만들었소." +
-						" 그 두곳의 적들은 여타의 대륙과는 비교가 안될 정도의 거대한 적들이 많이 있소.",
-						" 우리로서는 더 이상 손을 쓸수가 없소. 이곳 사람들의 마지막 희망인 이 곳이 적들에게 점령된다면 와이번 동굴로 이어지는 워터 게이트를 통해 다른 대륙도 하나둘씩 점령되어 갈것이오."
+						" 여기는 워터 필드라는 성이오. 이곳이 당신이 마지막으로 거칠 우리편의 성이오.",
+						" 차원의 틈을 통해 네크로맨서가 내려 오던 날이 대륙은 거의 전부가 바다로 가라앉았소." +
+						" 하지만 그때에 살아남은 사람들은 아직 가라앉지 않은 이곳에 찾아와서 이 성을 건립했소. 그러고는 공이 컸던 나를 왕으로 추대했던 것이오.",
+						" 당신도 생각하고 있다시피 이 대륙은 거의 물로 덮여있소. 하지만 이곳처럼 물이 차지 않은 두 곳에 네크로맨서는 이미 이 대륙의 지배를 위한 동굴을 만들었소." +
+						" 그 두 곳의 적들은 여타의 대륙과는 비교가 안될 정도의 거대한 적들이 많이 있소.",
+						" 우리로서는 더 이상 손을 쓸 수가 없소. 이곳 사람들의 마지막 희망인 이곳이 적들에게 점령된다면 와이번 동굴로 이어지는 워터 게이트를 통해 다른 대륙도 하나둘씩 점령되어 갈 것이오."
 						});
 
 						mParty.Etc[14]++;
@@ -9669,12 +9669,12 @@ namespace Lore
 						mParty.Etc[14]++;
 					}
 					else if (mParty.Etc[14] == 3)
-						Talk(" 이번에는 대륙의 동쪽에 있는 락업 동굴속의 거대 드래곤을 물리쳐 주시오.");
+						Talk(" 이번에는 대륙의 동쪽에 있는 락업 동굴 속의 거대 드래곤을 물리쳐 주시오.");
 					else if (mParty.Etc[14] == 4) {
 						Talk(new string[] {
-							"역시 위대한 영웅이오 !!",
+							"역시 위대한 영웅이오!!",
 							$" [color={RGB.LightCyan}][[ EXP + 300000 ][/color]",
-							"여기에 Swamp Key 가 있소."
+							"여기에 스왐프 키가 있소."
 						});
 
 						foreach (var player in mPlayerList)
@@ -9685,7 +9685,7 @@ namespace Lore
 						mParty.Etc[14]++;
 					}
 					else if (mParty.Etc[14] == 5) {
-						Talk(" Swamp Key 는 가이아 테라 의 스왐프 게이트를 여는데 사용되오. 거기서 늪의 대륙으로 가시오. 늪의 대륙은 완전한 적들의 소굴이므로 매우 주의하시오.");
+						Talk(" 스왐프 키는 가이아 테라 의 스왐프 게이트를 여는데 사용되오. 거기서 늪의 대륙으로 가시오. 늪의 대륙은 완전한 적들의 소굴이므로 매우 주의하시오.");
 					}
 				}
 			}
@@ -9707,12 +9707,12 @@ namespace Lore
 				else if (moveX == 26 && moveY == 7)
 					Talk(" 에이션트 이블은 결코 평판과 같이 나쁜 존재가 아닙니다.");
 				else if (moveX == 30 && moveY == 12)
-					Talk(" 당신들은 분명히 우리들을 밖으로 나가게 해줄것입니다.");
+					Talk(" 당신들은 분명히 우리들을 밖으로 나가게 해줄 것입니다.");
 				else if (moveX == 32 && moveY == 9) {
 					Talk(new string[] {
 						" 이 사람들은 잘 모르겠지만 사실 나는 이 게임의 제작자인 안 영기요.",
-						" 나는 여태껏 계속 당신들이 가는 도시마다 주민으로 가장한채 당신들을 지켜 보았소. 이 게임의 버그를 찾거나 난이도를 조절하기 위해서 말이요." +
-						" 만약 당신들이 네크로맨서 를 물리친다면 내가 마지막으로 당신앞에 나타나겠소.",
+						" 나는 여태껏 계속 당신들이 가는 도시마다 주민으로 가장한 채 당신들을 지켜보았소. 이 게임의 버그를 찾거나 난이도를 조절하기 위해서 말이요." +
+						" 만약 당신들이 네크로맨서를 물리친다면 내가 마지막으로 당신 앞에 나타나겠소.",
 						" 그럼, 이만 나는 가보겠소."
 					});
 
@@ -9762,7 +9762,7 @@ namespace Lore
 
 					ShowMenu(MenuMode.ReadScroll, new string[] {
 						"그 문서를 읽어 보고 싶다",
-						"그냥 지나 가겠다"
+						"그냥 지나가겠다"
 					});
 				}
 				else
@@ -10014,8 +10014,8 @@ namespace Lore
 			if (mAnimationEvent == AnimationType.MeetSkeleton) {
 				AppendText(new string[] { $" 나는 스켈레톤이라 불리는 종족의 사람이오.",
 						" 우리 종족의 사람들은 나를 제외하고는 모두 네크로맨서에게 굴복하여 그의 부하가 되었지만 나는 그렇지 않소." +
-						" 나는 네크로맨서 의 영향을 피해서 이곳 로어 성으로 왔지만 나의 혐오스런 생김새 때문에 이곳 사람들에게 배척되어서 지금은 어디로도 갈 수 없는 존재가 되었소." +
-						" 이제 나에게 남은 것은 네크로맨서 의 타도 밖에 없소. 그래서 당신들의 일행에 끼고 싶소."
+						" 나는 네크로맨서의 영향을 피해서 이곳 로어 성으로 왔지만 나의 혐오스러운 생김새 때문에 이곳 사람들에게 배척되어서 지금은 어디로도 갈 수 없는 존재가 되었소." +
+						" 이제 나에게 남은 것은 네크로맨서의 타도밖에 없소. 그래서 당신들의 일행에 끼고 싶소."
 					});
 
 				ShowMenu(MenuMode.JoinSkeleton, new string[] {
@@ -10047,7 +10047,7 @@ namespace Lore
 			else if (mAnimationEvent == AnimationType.EnterSwampGate) {
 				if ((mParty.Etc[34] & (1 << 5)) == 0)
 				{
-					Talk($"[color={RGB.White}] 스왐프 게이트 로 들어가고 있는 당신에게 허공에서 갑자가 누군가가 말을 꺼낸다[/color]");
+					Talk($"[color={RGB.White}] 스왐프 게이트로 들어가고 있는 당신에게 허공에서 갑자가 누군가가 말을 꺼낸다[/color]");
 					mSpecialEvent = SpecialEventType.EnterSwampGate;
 				}
 				else
@@ -10071,17 +10071,17 @@ namespace Lore
 			}
 			else if (mAnimationEvent == AnimationType.AstralMud) {
 				Talk($" [color={RGB.LightMagenta}]나는 네크로맨서 와 함께 다른 차원에서 내려온 아스트랄 머드 이다. 여기는 그가 세운 최고의 동굴이자 너가 마지막으로 거칠 동굴이다." +
-				" 나를 만만하게 보지마라. 다른 차원의 능력들을 너가 맛볼 기회를 가진다는 것에 대해 고맙게 생각하기 바란다. 하하하 ...[/color]");
+				" 나를 만만하게 보지 마라. 다른 차원의 능력들을 너가 맛볼 기회를 가진다는 것에 대해 고맙게 생각하기 바란다. 하하하 ...[/color]");
 
 				mSpecialEvent = SpecialEventType.BattleAstralMud;
 			}
 			else if (mAnimationEvent == AnimationType.PanzerViper) {
-				Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]" });
+				Talk(new string[] { $" [color={RGB.LightMagenta}] 여기까지 잘도 왔구나. 나의 임무는 너희 같은 쓰레기들 때문에 네크로맨서 님이 수고하시지 않도록 미리 처단해 버리는 것이다.[/color]" });
 
 				mSpecialEvent = SpecialEventType.BattlePanzerViper;
 			}
 			else if (mAnimationEvent == AnimationType.BlackKnight) {
-				Talk(new string[] { $" 두말이 필요없다. 덤벼라 !![/color]" });
+				Talk(new string[] { $" 두말이 필요 없다. 덤벼라!![/color]" });
 
 				mSpecialEvent = SpecialEventType.BattleBlackKnight;
 			}
@@ -10096,10 +10096,10 @@ namespace Lore
 			}
 			else if (mAnimationEvent == AnimationType.FinalBattle) {
 				Talk(new string[] {
-					" 당신들이 나를 없에겠다고 온자들인가?",
-					" 그럼 예의를 갖추고 소개를 하지. 당신의 오른쪽의 사람은 ArchiMonk라고 하며 맨손을 사용하는 무예의 일인자로 통하지." +
-					" 그리고 당신의 정면의 사람은 ArchiMage 라고 하는 마법사 중의 마법사이라네. 당신들은 우리 셋 보다도 숫자가 많군." +
-					" 그렇다면 나도 그것에 대비를 해야겠지. 내가 여기서 약간의 인원을 늘인다고 너무 섭섭하게 생각말게. 그렇다면 이제 서로의 실력을 겨뤄볼 시간이 다 되었나보군." +
+					" 당신들이 나를 없애겠다고 온 자들인가?",
+					" 그럼 예의를 갖추고 소개를 하지. 당신의 오른쪽의 사람은 아키몽크라고 하며 맨손을 사용하는 무예의 일인자로 통하지." +
+					" 그리고 당신의 정면의 사람은 아키메이지라고 하는 마법사 중의 마법사이라네. 당신들은 우리 셋보다도 숫자가 많군." +
+					" 그렇다면 나도 그것에 대비를 해야겠지. 내가 여기서 약간의 인원을 늘린다고 너무 섭섭하게 생각말게. 그렇다면 이제 서로의 실력을 겨뤄볼 시간이 다 되었나 보군." +
 					" 당신의 행운을 빌겠네."
 				});
 
@@ -11181,7 +11181,7 @@ namespace Lore
 			if (allPlayerDead) {
 				mParty.Etc[5] = 255;
 
-				ShowGameOver(new string[] { "일행은 모험중에 모두 목숨을 잃었다." });
+				ShowGameOver(new string[] { "일행은 모험 중에 모두 목숨을 잃었다." });
 				mTriggeredDownEvent = true;
 			}
 		}
@@ -11207,16 +11207,16 @@ namespace Lore
 				{
 
 					AppendText(new string[] { $"  [color={RGB.White}]북쪽 :[/color]",
-						$"       [color={RGB.White}]배리안트 피플즈 가는길[/color]",
+						$"       [color={RGB.White}]배리안트 피플즈 가는 길[/color]",
 						$"  [color={RGB.White}]남쪽 :[/color]",
-						$"       [color={RGB.White}]가이아 테라 가는길[/color]" }, true);
+						$"       [color={RGB.White}]가이아 테라 가는 길[/color]" }, true);
 				}
 				else if (x == 43 && y == 76)
 				{
 					AppendText(new string[] { $"  [color={RGB.White}]북동쪽 :[/color]",
-						$"       [color={RGB.White}]퀘이크 가는길[/color]",
+						$"       [color={RGB.White}]퀘이크 가는 길[/color]",
 						$"  [color={RGB.White}]남서쪽 :[/color]",
-						$"       [color={RGB.White}]가이아 테라 가는길[/color]" }, true);
+						$"       [color={RGB.White}]가이아 테라 가는 길[/color]" }, true);
 				}
 			}
 			else if (mParty.Map == 6)
@@ -11246,9 +11246,9 @@ namespace Lore
 						"         여러분을 환영합니다" }, true);
 				}
 				else if (x == 38 && y == 7)
-					AppendText(new string[] { $"       [color={RGB.LightRed}]여기는 피라미드 의 입구[/color]" }, true);
+					AppendText(new string[] { $"       [color={RGB.LightRed}]여기는 피라미드의 입구[/color]" }, true);
 				else if (x == 53 && y == 8)
-					AppendText(new string[] { $"     [color={RGB.LightGreen}]여기는 지하 출입구 의 입구[/color]" }, true);
+					AppendText(new string[] { $"     [color={RGB.LightGreen}]여기는 지하 출입구의 입구[/color]" }, true);
 			}
 			else if (mParty.Map == 8)
 			{
@@ -11259,7 +11259,7 @@ namespace Lore
 					$"   [color={RGB.White}]우리는 어떤 악에도 굽히지 않는다[/color]" }, true);
 				}
 				else
-					AppendText(new string[] { $"     [color={RGB.LightRed}]여기는 이블 씰 의 입구[/color]" }, true);
+					AppendText(new string[] { $"     [color={RGB.LightRed}]여기는 이블 씰의 입구[/color]" }, true);
 			}
 			else if (mParty.Map == 9)
 			{
@@ -11322,23 +11322,23 @@ namespace Lore
 				}
 				else if (x == 50 && y == 29)
 				{
-					AppendText(new string[] { "", $"       [color={RGB.White}]오른쪽 : 히드라 의 보물창고[/color]",
-						$"         [color={RGB.White}]왼  쪽 : 히드라 가 있는 방[/color]" }, true);
+					AppendText(new string[] { "", $"       [color={RGB.White}]오른쪽 : 히드라의 보물창고[/color]",
+						$"         [color={RGB.White}]왼  쪽 : 히드라가 있는 방[/color]" }, true);
 				}
 				else if (x == 65 && y == 12)
-					AppendText($"     [color={RGB.White}]일찌감치 이 곳 탐험을 포기해라[/color]", true);
+					AppendText($"     [color={RGB.White}]일찌감치 이곳 탐험을 포기해라[/color]", true);
 				else if (x == 8 && y == 27)
 					AppendText($"[color={RGB.White}]         위쪽이 진짜 보물창고임[/color]", true);
 			}
 			else if (mParty.Map == 19)
 			{
-				AppendText(new string[] { $"       [color={RGB.White}]이 길을 통과하고자하는 사람은[/color]",
-					$"     [color={RGB.White}]양측의 늪속에 있는 레버를 당기시오[/color]" }, true);
+				AppendText(new string[] { $"       [color={RGB.White}]이 길을 통과하고자 하는 사람은[/color]",
+					$"     [color={RGB.White}]양측의 늪 속에 있는 레버를 당기시오[/color]" }, true);
 			}
 			else if (mParty.Map == 23)
 			{
 				AppendText(new string[] { $"      [color={RGB.White}](25,27)에 있는 레버를 움직이면[/color]",
-				$"          [color={RGB.White}]성을 볼수 있을 것이오.[/color]",
+				$"          [color={RGB.White}]성을 볼 수 있을 것이오.[/color]",
 				"",
 				$"             [color={RGB.LightGreen}]제작자 안 영기 씀[/color]" }, true);
 				mMapLayer[24 + mMapWidth * 26] = 52;

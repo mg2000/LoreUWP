@@ -12,15 +12,15 @@
 		<TextBlock x:Name="EndingText" Foreground="#FFFFFF55" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="30" Visibility="Collapsed">
 밖은 비바람이 치기 시작한다. 이번 계절에 들어 처음 오는 비였다.<LineBreak/>
 마치 Necromancer의 기구한 운명을 애도하는 듯이 ...<LineBreak/>
-하지만 그는 또다른 운명의 아이러니 때문에 새로운 길을 떠났다.<LineBreak/>
-그가 이런 역사를 몇번이나 반복했는지 그 자신도 모른다.<LineBreak/>
-그가 최후로 정착할 곳 마저 알수가 없었다<LineBreak/>
-아니, 그가 정착할 곳이 있는지 조차도 알수가 없었다.<LineBreak/><LineBreak/>
-당신도 이제 할일을 모두 끝냈다. 이제 편안하게 쉴 기회를 가지게 된것이다.<LineBreak/>
+하지만 그는 또 다른 운명의 아이러니 때문에 새로운 길을 떠났다.<LineBreak/>
+그가 이런 역사를 몇 번이나 반복했는지 그 자신도 모른다.<LineBreak/>
+그가 최후로 정착할 곳마저 알 수가 없었다<LineBreak/>
+아니, 그가 정착할 곳이 있는지조차도 알 수가 없었다.<LineBreak/><LineBreak/>
+당신도 이제 할 일을 모두 끝냈다. 이제 편안하게 쉴 기회를 가지게 된 것이다.<LineBreak/>
 이제는 다시 이런 일이 일어나지 않을 것이다.<LineBreak/>
-후세의 사람들은 말하겠지, 수천억년에 한번 날까 말까한 일이라고.<LineBreak/>
-아마 이 일도 별로 오래 기억되지 않을 것같다.<LineBreak/>
-몇 천년만 지나면 전설로서, 아니 잋혀진 애기로만 남을테니까 ...
+후세의 사람들은 말하겠지, 수천억 년에 한번 날까 말까 한 일이라고.<LineBreak/>
+아마 이 일도 별로 오래 기억되지 않을 것 같다.<LineBreak/>
+몇 천년만 지나면 전설로서, 아니 잊힌 애기로만 남을 테니까 ...
 		</TextBlock>
 	</Grid>
 </Page>

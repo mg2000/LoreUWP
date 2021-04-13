@@ -32,13 +32,13 @@
         <TextBlock Foreground="#ffe97d" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" TextAlignment="Center">
             거친 황야의 대륙과 높은 산으로 둘러 싸인 대륙과 물속에 잠기고
             <LineBreak/>
-            늪으로 덮히고 용암이 흐르는 대륙도  당신이 어쩔수 없이 거쳐야
+            늪으로 덮이고 용암이 흐르는 대륙도 당신이 어쩔 수 없이 거쳐야
             <LineBreak/>
-            될 운명의 길입니다. 운명을 피하려 하지 마십시오.  당신 앞에는
+            될 운명의 길입니다. 운명을 피하려 하지 마십시오. 당신 앞에는
             <LineBreak/>
             언제나 당신을 지켜보며 도와주는 내가 있고 당신의 신이 있고 당
             <LineBreak/>
-            신의 동료들이 있습니다. 당신이 이 세계에 들어 오는 그 날이 바
+            신의 동료들이 있습니다. 당신이 이 세계에 들어오는 그날이 바
             <LineBreak/>
             로 그 모든 운명을 지게 되는 시작임을 잊지 말기를 빕니다.
         </TextBlock>

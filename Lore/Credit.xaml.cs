@@ -139,14 +139,14 @@ namespace Lore
 			};
 
 			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, $"이름은 {mPlayerName}. 바로 당신이다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 70, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
-			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Hydra, NOTICE 동굴의 보스였다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 166, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
-			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Huge Dragon, LOCKUP 동굴의 보스였다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 292, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
-			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Minotaur, 여기서 두번 등장하는 생물이다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 420, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
-			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Panzer Viper, DUNGEON OF EVIL 을 지키던 기계 생물.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 516, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
-			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Black Knight, Necromancer 쪽의 제 2 인자 이다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 612, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
-			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "ArchiMonk, Necromancer의 왼팔 역할의 실력자.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 708, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
-			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "ArchiMage, Necromancer의 오른팔인 마법사.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 804, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
-			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "Neo-Necromancer, 바로 당신의 목표였던 그자.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 932, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "히드라, 노티스 동굴의 보스였다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 166, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "거대 드래곤, 락업 동굴의 보스였다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 292, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "미노타우루스, 여기서 두 번 등장하는 생물이다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 420, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "기갑 독사, 던전 오브 이블을 지키던 기계 생물.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 516, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "검은 기사, 네크로맨서 쪽의 제 2인자 이다.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 612, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "아키몽크, 네크로맨서의 왼팔 역할의 실력자.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 708, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "아키메이지, 네크로맨서의 오른팔인 마법사.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 804, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
+			args.DrawingSession.DrawTextLayout(new CanvasTextLayout(sender, "네오-네크로맨서, 바로 당신의 목표였던 그자.", descText, (float)sender.Size.Width, (float)sender.Size.Height), 400, 932, new CanvasSolidColorBrush(sender, Color.FromArgb(0xff, 0x55, 0xff, 0x55)));
 
 			//var ds = args.DrawingSession;
 			//using (ds.CreateLayer(0))
