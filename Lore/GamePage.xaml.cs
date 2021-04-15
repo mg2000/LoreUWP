@@ -165,11 +165,19 @@ namespace Lore
 		private TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyDownEvent = null;
 		private TypedEventHandler<CoreWindow, KeyEventArgs> gamePageKeyUpEvent = null;
 
+		private const int DIALOG_MAX_LINES = 13;
+
+		private readonly List<string> mCureResult = new List<string>();
+		private readonly List<string> mRemainBattleResult = new List<string>();
+
+
 		public GamePage()
 		{
 			var rootFrame = Window.Current.Content as Frame;
 
 			this.InitializeComponent();
+
+			DialogText.Tag = 0;
 
 			mPlayerNameList.Add(PlayerName0);
 			mPlayerNameList.Add(PlayerName1);
@@ -1234,6 +1242,26 @@ namespace Lore
 					}
 				}
 
+				void ShowCureResult()
+				{
+					var resultPart = new List<string>();
+					if (mCureResult.Count > DIALOG_MAX_LINES)
+					{
+						for (var i = 0; i < DIALOG_MAX_LINES; i++)
+						{
+							resultPart.Add(mCureResult[0]);
+							mCureResult.RemoveAt(0);
+						}
+					}
+					else
+					{
+						resultPart.AddRange(mCureResult);
+						mCureResult.Clear();
+					}
+
+					Talk(resultPart.ToArray());
+				}
+
 				Debug.WriteLine($"키보드 Up 테스트: {args.VirtualKey}, " + mTriggeredDownEvent);
 
 				if (mMoveEvent || mLoading || (mAnimationEvent != AnimationType.None && ContinueText.Visibility != Visibility.Visible && mMenuMode == MenuMode.None) || mTriggeredDownEvent)
@@ -2258,6 +2286,12 @@ namespace Lore
 						args.VirtualKey == VirtualKey.Down || args.VirtualKey == VirtualKey.GamepadLeftThumbstickDown || args.VirtualKey == VirtualKey.GamepadDPadDown)
 						return;
 
+					if (StatPanel.Visibility == Visibility.Visible)
+						StatPanel.Visibility = Visibility.Collapsed;
+
+					if (DialogText.Visibility == Visibility.Collapsed)
+						DialogText.Visibility = Visibility.Visible;
+
 					ContinueText.Visibility = Visibility.Collapsed;
 
 					if (mBattleTurn == BattleTurn.None)
@@ -2266,9 +2300,25 @@ namespace Lore
 						DialogText.TextHighlighters.Clear();
 					}
 
-					if (mSpecialEvent > 0)
+					if (mCureResult.Count > 0)
+						ShowCureResult();
+					else if (mRemainBattleResult.Count > 0) {
+						DialogText.Blocks.Clear();
+						DialogText.TextHighlighters.Clear();
+
+						var added = true;
+						while (added && mRemainBattleResult.Count > 0) {
+							added = AppendText(mRemainBattleResult[0], true);
+							if (added)
+								mRemainBattleResult.RemoveAt(0);
+						}
+
+						ContinueText.Visibility = Visibility.Visible;
+					}
+					else if (mSpecialEvent > 0)
 						await InvokeSpecialEventLaterPart();
-					else if (mCureBattle) {
+					else if (mCureBattle)
+					{
 						mCureBattle = false;
 						AddBattleCommand(true);
 					}
@@ -2276,7 +2326,8 @@ namespace Lore
 					{
 						mPenetration = false;
 					}
-					else if (mTelescopeXCount != 0 || mTelescopeYCount != 0) {
+					else if (mTelescopeXCount != 0 || mTelescopeYCount != 0)
+					{
 						if ((mTelescopeXCount != 0 && (mParty.XAxis + mTelescopeXCount <= 4 || mParty.XAxis + mTelescopeXCount >= mMapWidth - 3)) ||
 							(mTelescopeXCount != 0 && (mParty.YAxis + mTelescopeYCount <= 4 || mParty.YAxis + mTelescopeYCount >= mMapHeight - 3)))
 						{
@@ -2307,7 +2358,8 @@ namespace Lore
 					}
 					else if (mBattleTurn == BattleTurn.Player)
 					{
-						if (mBattleCommandQueue.Count == 0) {
+						if (mBattleCommandQueue.Count == 0)
+						{
 							var allUnavailable = true;
 							foreach (var enemy in mEncounterEnemyList)
 							{
@@ -2853,24 +2905,39 @@ namespace Lore
 							{
 								mMenuMode = MenuMode.None;
 
-								var shieldStr = mPlayerList[mMenuFocusID].Shield != 0 ? $"[color={RGB.Green}]방패 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Shield)}[/color]" : "";
-								var armorStr = mPlayerList[mMenuFocusID].Armor != 0 ? $"[color={RGB.Green}]갑옷 - {Common.GetDefenseStr(mPlayerList[mMenuFocusID].Armor)}[/color]" : "";
+								AppendText("");
 
-								AppendText(new string[] { $"# 이름 : {mPlayerList[mMenuFocusID].Name}",
-								$"# 성별 : {mPlayerList[mMenuFocusID].GenderName}",
-								$"# 계급 : {Common.GetClassStr(mPlayerList[mMenuFocusID])}",
-								"",
-								$"[color={RGB.Cyan}]체력 : {mPlayerList[mMenuFocusID].Strength}[/color]\t[color={RGB.Cyan}]정신력 : {mPlayerList[mMenuFocusID].Mentality}[/color]\t[color={RGB.Cyan}]집중력 : {mPlayerList[mMenuFocusID].Concentration}[/color]\t[color={RGB.Cyan}]인내력 : {mPlayerList[mMenuFocusID].Endurance}[/color]",
-								$"[color={RGB.Cyan}]저항력 : {mPlayerList[mMenuFocusID].Resistance}[/color]\t[color={RGB.Cyan}]민첩성 : {mPlayerList[mMenuFocusID].Agility}[/color]\t[color={RGB.Cyan}]행운 : {mPlayerList[mMenuFocusID].Luck}[/color]",
-								"",
-								$"[color={RGB.Cyan}]무기의 정확성 : {mPlayerList[mMenuFocusID].Accuracy[0]}[/color]\t\t[color={RGB.Cyan}]전투 레벨 : {mPlayerList[mMenuFocusID].Level[0]}[/color]",
-								$"[color={RGB.Cyan}]정신력의 정확성 : {mPlayerList[mMenuFocusID].Accuracy[1]}[/color]\t[color={RGB.Cyan}]마법 레벨 : {mPlayerList[mMenuFocusID].Level[1]}[/color]",
-								$"[color={RGB.Cyan}]초감각의 정확성 : {mPlayerList[mMenuFocusID].Accuracy[2]}[/color]\t[color={RGB.Cyan}]초감각 레벨 : {mPlayerList[mMenuFocusID].Level[2]}[/color]",
-								"",
-								$"[color={RGB.Cyan}]## 경험치 : {mPlayerList[mMenuFocusID].Experience}[/color]",
-								"",
-								$"[color={RGB.Green}]사용 무기 - {Common.GetWeaponStr(mPlayerList[mMenuFocusID].Weapon)}[/color]\t{shieldStr}\t{armorStr}"
-							});
+								StatPlayerName.Text = mPlayerList[mMenuFocusID].Name;
+								StatPlayerGender.Text = mPlayerList[mMenuFocusID].GenderName;
+								StatPlayerClass.Text = Common.GetClassStr(mPlayerList[mMenuFocusID]);
+
+								StatStrength.Text = mPlayerList[mMenuFocusID].Strength.ToString();
+								StatMentality.Text = mPlayerList[mMenuFocusID].Mentality.ToString();
+								StatConcentration.Text = mPlayerList[mMenuFocusID].Concentration.ToString();
+								StatEndurance.Text = mPlayerList[mMenuFocusID].Endurance.ToString();
+
+								StatResistance.Text = mPlayerList[mMenuFocusID].Resistance.ToString();
+								StatAgility.Text = mPlayerList[mMenuFocusID].Agility.ToString();
+								StatLuck.Text = mPlayerList[mMenuFocusID].Luck.ToString();
+
+								StatWeaponAccuracy.Text = mPlayerList[mMenuFocusID].Accuracy[0].ToString();
+								StatMagicAccuracy.Text = mPlayerList[mMenuFocusID].Accuracy[1].ToString();
+								StatESPAccuracy.Text = mPlayerList[mMenuFocusID].Accuracy[2].ToString();
+
+								StatAttackLevel.Text = mPlayerList[mMenuFocusID].Level[0].ToString();
+								StatMagicLevel.Text = mPlayerList[mMenuFocusID].Level[1].ToString();
+								StatESPLevel.Text = mPlayerList[mMenuFocusID].Level[2].ToString();
+
+								StatExp.Text = mPlayerList[mMenuFocusID].Experience.ToString();
+
+								StatWeapon.Text = Common.GetWeaponStr(mPlayerList[mMenuFocusID].Weapon);
+								StatShield.Text = Common.GetWeaponStr(mPlayerList[mMenuFocusID].Shield);
+								StatArmor.Text = Common.GetWeaponStr(mPlayerList[mMenuFocusID].Armor);
+
+								DialogText.Visibility = Visibility.Collapsed;
+								StatPanel.Visibility = Visibility.Visible;
+
+								ContinueText.Visibility = Visibility.Visible;
 							}
 							else if (mMenuMode == MenuMode.CastSpell)
 							{
@@ -2958,9 +3025,9 @@ namespace Lore
 								DialogText.TextHighlighters.Clear();
 								DialogText.Blocks.Clear();
 
-								CureSpell(mMagicPlayer, mMagicWhomPlayer, mMenuFocusID);
+								CureSpell(mMagicPlayer, mMagicWhomPlayer, mMenuFocusID, mCureResult);
 
-								ContinueText.Visibility = Visibility.Visible;
+								ShowCureResult();
 							}
 							else if (mMenuMode == MenuMode.ApplyCureAllMagic)
 							{
@@ -2969,9 +3036,9 @@ namespace Lore
 								DialogText.TextHighlighters.Clear();
 								DialogText.Blocks.Clear();
 
-								CureAllSpell(mMagicPlayer, mMenuFocusID);
+								CureAllSpell(mMagicPlayer, mMenuFocusID, mCureResult);
 
-								ContinueText.Visibility = Visibility.Visible;
+								ShowCureResult();
 							}
 							else if (mMenuMode == MenuMode.ApplyPhenominaMagic)
 							{
@@ -4869,11 +4936,11 @@ namespace Lore
 								DialogText.TextHighlighters.Clear();
 								DialogText.Blocks.Clear();
 
-								CureSpell(mPlayerList[mBattlePlayerID], mMagicWhomPlayer, mMenuFocusID);
-
-								ContinueText.Visibility = Visibility.Visible;
+								CureSpell(mPlayerList[mBattlePlayerID], mMagicWhomPlayer, mMenuFocusID, mCureResult);
 
 								mCureBattle = true;
+
+								ShowCureResult();
 							}
 							else if (mMenuMode == MenuMode.ApplyBattleCureAllSpell)
 							{
@@ -4882,11 +4949,11 @@ namespace Lore
 								DialogText.TextHighlighters.Clear();
 								DialogText.Blocks.Clear();
 
-								CureAllSpell(mPlayerList[mBattlePlayerID], mMenuFocusID);
-
-								ContinueText.Visibility = Visibility.Visible;
+								CureAllSpell(mPlayerList[mBattlePlayerID], mMenuFocusID, mCureResult);
 
 								mCureBattle = true;
+
+								ShowCureResult();
 							}
 							else if (mMenuMode == MenuMode.BattleLose)
 							{
@@ -5671,8 +5738,6 @@ namespace Lore
 
 			void ShowBattleResult(List<string> battleResult)
 			{
-				const int maxLines = 13;
-
 				var lineHeight = 0d;
 				if (DialogText.Blocks.Count > 0)
 				{
@@ -5683,7 +5748,7 @@ namespace Lore
 				var lineCount = lineHeight == 0 ? 0 : (int)Math.Ceiling(DialogText.ActualHeight / lineHeight);
 
 				var append = false;
-				if (lineCount + battleResult.Count + 1 <= maxLines)
+				if (lineCount + battleResult.Count + 1 <= DIALOG_MAX_LINES)
 				{
 					if (lineHeight > 0)
 						battleResult.Insert(0, "");
@@ -7172,55 +7237,70 @@ namespace Lore
 			{
 				if (mParty.Food <= 0)
 					AppendText(new string[] { $"[color={RGB.Red}]일행은 식량이 바닥났다[/color]" }, append);
-				else 
-				if (player.Dead > 0)
-					AppendText(new string[] { $"{player.Name}(은)는 죽었다" }, append);
-				else if (player.Unconscious > 0 && player.Poison == 0)
-				{
-					player.Unconscious = player.Unconscious - player.Level[0] - player.Level[1] - player.Level[2];
-					if (player.Unconscious <= 0)
-					{
-						AppendText(new string[] { $"{player.Name}(은)는 의식이 회복되었다" }, append);
-						player.Unconscious = 0;
-						if (player.HP <= 0)
-							player.HP = 1;
-
-						//mParty.Food--;
-					}
-					else
-						AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 의식이 회복되었다[/color]" }, append);
-				}
-				else if (player.Unconscious > 0 && player.Poison > 0)
-					AppendText(new string[] { $"독때문에 {player.Name}의 의식은 회복되지 않았다" }, append);
-				else if (player.Poison > 0)
-					AppendText(new string[] { $"독때문에 {player.Name}의 건강은 회복되지 않았다" }, append);
 				else
 				{
-					var recoverPoint = (player.Level[0] + player.Level[1] + player.Level[2]) * 2;
-					if (player.HP >= player.Endurance * player.Level[0])
+					if (player.Dead > 0)
+						AppendText(new string[] { $"{player.Name}(은)는 죽었다" }, append);
+					else if (player.Unconscious > 0 && player.Poison == 0)
 					{
-						if (mParty.Food < 255)
+						player.Unconscious = player.Unconscious - player.Level[0] - player.Level[1] - player.Level[2];
+						if (player.Unconscious <= 0)
 						{
-							//mParty.Food++;
+							AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 의식이 회복되었다[/color]" }, append);
+							player.Unconscious = 0;
+							if (player.HP <= 0)
+								player.HP = 1;
+
+#if DEBUG
+							//mParty.Food--;
+#else
+							mParty.Food--;
+#endif
+
 						}
+						else
+							AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 여전히 의식 불명이다[/color]" }, append);
 					}
-
-					player.HP += recoverPoint;
-
-					if (player.HP >= player.Endurance * player.Level[0])
-					{
-						player.HP = player.Endurance * player.Level[0];
-
-						AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 모든 건강이 회복되었다[/color]" }, append);
-					}
+					else if (player.Unconscious > 0 && player.Poison > 0)
+						AppendText(new string[] { $"독때문에 {player.Name}의 의식은 회복되지 않았다" }, append);
+					else if (player.Poison > 0)
+						AppendText(new string[] { $"독때문에 {player.Name}의 건강은 회복되지 않았다" }, append);
 					else
-						AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 치료되었다[/color]" }, append);
+					{
+						var recoverPoint = (player.Level[0] + player.Level[1] + player.Level[2]) * 2;
+						if (player.HP >= player.Endurance * player.Level[0])
+						{
+							if (mParty.Food < 255)
+							{
+#if DEBUG
+								//mParty.Food++;
+#else
+								mParty.Food++;
+#endif
+							}
+						}
 
-					//mParty.Food--;
+						player.HP += recoverPoint;
+
+						if (player.HP >= player.Endurance * player.Level[0])
+						{
+							player.HP = player.Endurance * player.Level[0];
+
+							AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 모든 건강이 회복되었다[/color]" }, append);
+						}
+						else
+							AppendText(new string[] { $"[color={RGB.White}]{player.Name}(은)는 치료되었다[/color]" }, append);
+
+#if DEBUG
+						//mParty.Food--;
+#else
+						mParty.Food--;
+#endif
+					}
+
+					if (append == false)
+						append = true;
 				}
-
-				if (append == false)
-					append = true;
 			});
 
 			if (mParty.Etc[0] > 0)
@@ -8420,24 +8500,17 @@ namespace Lore
 			}
 		}
 
-		private void ShowCureResult(string message, List<string> cureResult) {
-			if (cureResult == null)
-				AppendText(new string[] { message }, true);
-			else
-				cureResult.Add(message);
-		}
-
 		private void HealOne(Lore player, Lore whomPlayer, List<string> cureResult)
 		{
 			if (whomPlayer.Dead > 0 || whomPlayer.Unconscious > 0 || whomPlayer.Poison > 0)
 			{
 				if (mParty.Etc[5] == 0)
-					ShowCureResult($"{whomPlayer.Name}(은)는 치료될 상태가 아닙니다.", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 치료될 상태가 아닙니다.");
 			}
 			else if (whomPlayer.HP >= whomPlayer.Endurance * whomPlayer.Level[0])
 			{
 				if (mParty.Etc[5] == 0)
-					ShowCureResult($"{whomPlayer.Name}(은)는 치료할 필요가 없습니다..", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 치료할 필요가 없습니다.");
 			}
 			else
 			{
@@ -8445,7 +8518,7 @@ namespace Lore
 				if (player.SP < needSP)
 				{
 					if (mParty.Etc[5] == 0)
-						ShowNotEnoughSP();
+						ShowNotEnoughSP(cureResult);
 				}
 				else
 				{
@@ -8456,7 +8529,7 @@ namespace Lore
 					if (whomPlayer.HP > whomPlayer.Level[0] * whomPlayer.Endurance)
 						whomPlayer.HP = whomPlayer.Level[0] * whomPlayer.Endurance;
 
-					ShowCureResult($"[color={RGB.White}]{whomPlayer.Name}(은)는 치료되어 졌습니다.[/color]", cureResult);
+						cureResult.Add($"[color={RGB.White}]{whomPlayer.Name}(은)는 치료되어 졌습니다.[/color]");
 				}
 			}
 		}
@@ -8466,17 +8539,17 @@ namespace Lore
 			if (whomPlayer.Dead > 0 || whomPlayer.Unconscious > 0)
 			{
 				if (mParty.Etc[5] == 0)
-					ShowCureResult($"{whomPlayer.Name}(은)는 독이 치료될 상태가 아닙니다.", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 독이 치료될 상태가 아닙니다.");
 			}
 			else if (whomPlayer.Poison == 0)
 			{
 				if (mParty.Etc[5] == 0)
-					ShowCureResult($"{whomPlayer.Name}(은)는 독에 걸리지 않았습니다.", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 독에 걸리지 않았습니다.");
 			}
 			else if (player.SP < 15)
 			{
 				if (mParty.Etc[5] == 0)
-					ShowNotEnoughSP();
+					ShowNotEnoughSP(cureResult);
 
 			}
 			else
@@ -8486,7 +8559,7 @@ namespace Lore
 
 				whomPlayer.Poison = 0;
 
-				ShowCureResult($"[color={RGB.White}]{whomPlayer.Name}의 독은 제거 되었습니다.[/color]", cureResult);
+				cureResult.Add($"[color={RGB.White}]{whomPlayer.Name}의 독은 제거 되었습니다.[/color]");
 			}
 		}
 
@@ -8495,12 +8568,12 @@ namespace Lore
 			if (whomPlayer.Dead > 0)
 			{
 				if (mParty.Etc[5] == 0)
-					ShowCureResult($"{whomPlayer.Name}(은)는 의식이 돌아올 상태가 아닙니다.", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 의식이 돌아올 상태가 아닙니다.");
 			}
 			else if (whomPlayer.Unconscious == 0)
 			{
 				if (mParty.Etc[5] == 0)
-					ShowCureResult($"{whomPlayer.Name}(은)는 의식불명이 아닙니다.", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 의식불명이 아닙니다.");
 			}
 			else
 			{
@@ -8508,7 +8581,7 @@ namespace Lore
 				if (player.SP < needSP)
 				{
 					if (mParty.Etc[5] == 0)
-						ShowNotEnoughSP();
+						ShowNotEnoughSP(cureResult);
 				}
 				else
 				{
@@ -8519,7 +8592,7 @@ namespace Lore
 					if (whomPlayer.HP <= 0)
 						whomPlayer.HP = 1;
 
-					ShowCureResult($"{whomPlayer.Name}(은)는 의식을 되찾았습니다.", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 의식을 되찾았습니다.");
 				}
 			}
 		}
@@ -8529,7 +8602,7 @@ namespace Lore
 			if (whomPlayer.Dead == 0)
 			{
 				if (mParty.Etc[5] == 0)
-					ShowCureResult($"{whomPlayer.Name}(은)는 아직 살아 있습니다.", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 아직 살아 있습니다.");
 			}
 			else
 			{
@@ -8537,7 +8610,7 @@ namespace Lore
 				if (player.SP < needSP)
 				{
 					if (mParty.Etc[5] == 0)
-						ShowNotEnoughSP();
+						ShowNotEnoughSP(cureResult);
 				}
 				else
 				{
@@ -8551,7 +8624,7 @@ namespace Lore
 					if (whomPlayer.Unconscious == 0)
 						whomPlayer.Unconscious = 1;
 
-					ShowCureResult($"{whomPlayer.Name}(은)는 다시 생명을 얻었습니다.", cureResult);
+					cureResult.Add($"{whomPlayer.Name}(은)는 다시 생명을 얻었습니다.");
 
 				}
 			}
@@ -8589,19 +8662,31 @@ namespace Lore
 			});
 		}
 
-		private void ShowNotEnoughSP()
+		private void ShowNotEnoughSP(List<string> result = null)
 		{
-			AppendText(new string[] { "그러나, 마법 지수가 충분하지 않습니다." }, true);
-			ContinueText.Visibility = Visibility.Visible;
+			var message = "그러나, 마법 지수가 충분하지 않습니다.";
+			if (result == null)
+			{
+				AppendText(new string[] { message }, true);
+				ContinueText.Visibility = Visibility.Visible;
+			}
+			else
+				result.Add(message);
 		}
 
-		private void ShowNotEnoughESP()
+		private void ShowNotEnoughESP(List<string> result = null)
 		{
-			AppendText(new string[] { "ESP 지수가 충분하지 않습니다." }, true);
-			ContinueText.Visibility = Visibility.Visible;
+			var message = "ESP 지수가 충분하지 않습니다.";
+			if (result == null)
+			{
+				AppendText(new string[] { message }, true);
+				ContinueText.Visibility = Visibility.Visible;
+			}
+			else
+				result.Add(message);
 		}
 
-		private void ShowNotEnoughMoney()
+		private void ShowNotEnoughMoney(List<string> result = null)
 		{
 			AppendText(new string[] { "당신은 충분한 돈이 없습니다." }, true);
 			ContinueText.Visibility = Visibility.Visible;
@@ -8739,11 +8824,30 @@ namespace Lore
 			}
 		}
 
-		private void AppendText(string str, bool append = false) {
-			AppendText(DialogText, str, append);
+		private bool AppendText(string str, bool append = false) {
+			return AppendText(DialogText, str, append);
 		}
 
-		private void AppendText(RichTextBlock textBlock, string str, bool append = false) {
+		private void AppendText(string[] text, bool append = false)
+		{
+			var added = true;
+			for (var i = 0; i < text.Length; i++)
+			{
+				if (added)
+				{
+					if (i == 0)
+						added = AppendText(text[i], append);
+					else
+						added = AppendText(text[i], true);
+				}
+
+				if (!added)
+					mRemainBattleResult.Add(text[i]);
+			}
+		}
+
+		private bool AppendText(RichTextBlock textBlock, string str, bool append = false) {
+
 			var totalLen = 0;
 
 			if (append)
@@ -8762,6 +8866,7 @@ namespace Lore
 				textBlock.Blocks.Clear();
 			}
 
+			var highlighters = new List<TextHighlighter>();
 			var paragraph = new Paragraph();
 			textBlock.Blocks.Add(paragraph);
 
@@ -8781,7 +8886,7 @@ namespace Lore
 				};
 
 				paragraph.Inlines.Add(preRun);
-				textBlock.TextHighlighters.Add(new TextHighlighter()
+				var preTextHighlighter = new TextHighlighter()
 				{
 					Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(RGB.LightGray.Substring(0, 2), 16), Convert.ToByte(RGB.LightGray.Substring(2, 2), 16), Convert.ToByte(RGB.LightGray.Substring(4, 2), 16))),
 					Background = new SolidColorBrush(Colors.Transparent),
@@ -8791,7 +8896,10 @@ namespace Lore
 								Length = preRun.Text.Length
 							}
 						}
-				});
+				};
+
+				highlighters.Add(preTextHighlighter);
+				textBlock.TextHighlighters.Add(preTextHighlighter);
 
 				totalLen += preRun.Text.Length;
 				str = str.Substring(startIdx + 1);
@@ -8819,17 +8927,21 @@ namespace Lore
 					};
 
 					paragraph.Inlines.Add(tagRun);
-					textBlock.TextHighlighters.Add(new TextHighlighter()
+
+					var textHighlighter = new TextHighlighter()
 					{
 						Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(tagData[1].Substring(0, 2), 16), Convert.ToByte(tagData[1].Substring(2, 2), 16), Convert.ToByte(tagData[1].Substring(4, 2), 16))),
 						Background = new SolidColorBrush(Colors.Transparent),
 						Ranges = { new TextRange()
-											{
-												StartIndex = totalLen,
-												Length = tagRun.Text.Length
-											}
-										}
-					});
+							{
+								StartIndex = totalLen,
+								Length = tagRun.Text.Length
+							}
+						}
+					};
+
+					highlighters.Add(textHighlighter);
+					textBlock.TextHighlighters.Add(textHighlighter);
 
 					totalLen += tagRun.Text.Length;
 				}
@@ -8844,7 +8956,7 @@ namespace Lore
 			};
 
 			paragraph.Inlines.Add(run);
-			textBlock.TextHighlighters.Add(new TextHighlighter()
+			var postTextHighlighter = new TextHighlighter()
 			{
 				Foreground = new SolidColorBrush(Color.FromArgb(0xff, Convert.ToByte(RGB.LightGray.Substring(0, 2), 16), Convert.ToByte(RGB.LightGray.Substring(2, 2), 16), Convert.ToByte(RGB.LightGray.Substring(4, 2), 16))),
 				Background = new SolidColorBrush(Colors.Transparent),
@@ -8854,19 +8966,36 @@ namespace Lore
 							Length = run.Text.Length
 						}
 					}
-			});
+			};
+
+			highlighters.Add(postTextHighlighter);
+			textBlock.TextHighlighters.Add(postTextHighlighter);
 
 			totalLen += run.Text.Length;
-		}
 
-		private void AppendText(string[] text, bool append = false)
-		{
-			for (var i = 0; i < text.Length; i++) {
-				if (i == 0)
-					AppendText(text[i], append);
-				else
-					AppendText(text[i], true);
+
+			textBlock.UpdateLayout();
+			//var DialogText.Tag
+
+			var lineHeight = 0d;
+			if (textBlock.Blocks.Count > 0)
+			{
+				var startRect = DialogText.Blocks[0].ContentStart.GetCharacterRect(LogicalDirection.Forward);
+				lineHeight = startRect.Height;
 			}
+
+			var lineCount = lineHeight == 0 ? 0 : (int)Math.Ceiling(DialogText.ActualHeight / lineHeight);
+			
+			if (lineCount > DIALOG_MAX_LINES)
+			{
+				textBlock.Blocks.Remove(paragraph);
+				foreach (var highlighter in highlighters)
+					textBlock.TextHighlighters.Remove(highlighter);
+
+				return false;
+			}
+			else
+				return true;
 		}
 
 		private void Talk(string dialog)
