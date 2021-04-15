@@ -182,6 +182,58 @@
 							<TextBlock Grid.Column="5" x:Name="StatArmor" FontSize="25" Foreground="#00AA00" HorizontalAlignment="Left">없음</TextBlock>
 						</Grid>
 					</Grid>
+					<Grid x:Name="StatHealthPanel" Margin="30, 30, 30, 0" Visibility="Collapsed">
+						<Grid.RowDefinitions>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+							<RowDefinition/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+							<ColumnDefinition/>
+						</Grid.ColumnDefinitions>
+
+						<TextBlock Grid.Row="0" Grid.Column="0" FontSize="25" Foreground="White" HorizontalAlignment="Center">이름</TextBlock>
+						<TextBlock Grid.Row="0" Grid.Column="1" FontSize="25" Foreground="#ff5555" HorizontalAlignment="Center">중독</TextBlock>
+						<TextBlock Grid.Row="0" Grid.Column="2" FontSize="25" Foreground="#ff5555" HorizontalAlignment="Center">의식불명</TextBlock>
+						<TextBlock Grid.Row="0" Grid.Column="3" FontSize="25" Foreground="#ff5555" HorizontalAlignment="Center">죽음</TextBlock>
+
+						<TextBlock Grid.Row="1" Grid.Column="0" x:Name="HealthPlayerName1" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Center">이름1</TextBlock>
+						<TextBlock Grid.Row="1" Grid.Column="1" x:Name="HealthPoison1" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="1" Grid.Column="2" x:Name="HealthUnconscious1" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="1" Grid.Column="3" x:Name="HealthDead1" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+
+						<TextBlock Grid.Row="2" Grid.Column="0" x:Name="HealthPlayerName2" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Center">이름2</TextBlock>
+						<TextBlock Grid.Row="2" Grid.Column="1" x:Name="HealthPoison2" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="2" Grid.Column="2" x:Name="HealthUnconscious2" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="2" Grid.Column="3" x:Name="HealthDead2" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+
+						<TextBlock Grid.Row="3" Grid.Column="0" x:Name="HealthPlayerName3" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Center">이름3</TextBlock>
+						<TextBlock Grid.Row="3" Grid.Column="1" x:Name="HealthPoison3" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="3" Grid.Column="2" x:Name="HealthUnconscious3" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="3" Grid.Column="3" x:Name="HealthDead3" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+
+						<TextBlock Grid.Row="4" Grid.Column="0" x:Name="HealthPlayerName4" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Center">이름4</TextBlock>
+						<TextBlock Grid.Row="4" Grid.Column="1" x:Name="HealthPoison4" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="4" Grid.Column="2" x:Name="HealthUnconscious4" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="4" Grid.Column="3" x:Name="HealthDead4" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+
+						<TextBlock Grid.Row="5" Grid.Column="0" x:Name="HealthPlayerName5" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Center">이름5</TextBlock>
+						<TextBlock Grid.Row="5" Grid.Column="1" x:Name="HealthPoison5" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="5" Grid.Column="2" x:Name="HealthUnconscious5" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="5" Grid.Column="3" x:Name="HealthDead5" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+
+						<TextBlock Grid.Row="6" Grid.Column="0" x:Name="HealthPlayerName6" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Center">이름6</TextBlock>
+						<TextBlock Grid.Row="6" Grid.Column="1" x:Name="HealthPoison6" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="6" Grid.Column="2" x:Name="HealthUnconscious6" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+						<TextBlock Grid.Row="6" Grid.Column="3" x:Name="HealthDead6" FontSize="25" Foreground="#aaaaaa" HorizontalAlignment="Right" Margin="0, 0, 70, 0">0</TextBlock>
+					</Grid>
 					<TextBlock x:Name="GameMenuText0" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴1</TextBlock>
 					<TextBlock x:Name="GameMenuText1" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴2</TextBlock>
 					<TextBlock x:Name="GameMenuText2" Foreground="LightGray" FontSize="25" Margin="30, 0, 30, 0" Visibility="Collapsed">메뉴3</TextBlock>

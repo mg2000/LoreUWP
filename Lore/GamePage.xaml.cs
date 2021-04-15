@@ -63,6 +63,8 @@ namespace Lore
 		private List<TextBlock> mEnemyTextList = new List<TextBlock>();
 		private List<Border> mEnemyBlockList = new List<Border>();
 
+		private List<HealthTextBlock> mHealthTextList = new List<HealthTextBlock>();
+
 		private List<TextBlock> mMenuList = new List<TextBlock>();
 		private MenuMode mMenuMode = MenuMode.None;
 		private int mMenuCount = 0;
@@ -281,6 +283,13 @@ namespace Lore
 			mEnterTypeMap[EnterType.LastShelter] = "라스트 쉘터";
 			mEnterTypeMap[EnterType.DungeonOfEvil] = "던전 오브 이블";
 			mEnterTypeMap[EnterType.ChamberOfNecromancer] = "챔버 오브 네크로맨서";
+
+			mHealthTextList.Add(new HealthTextBlock(HealthPlayerName1, HealthPoison1, HealthUnconscious1, HealthDead1));
+			mHealthTextList.Add(new HealthTextBlock(HealthPlayerName2, HealthPoison2, HealthUnconscious2, HealthDead2));
+			mHealthTextList.Add(new HealthTextBlock(HealthPlayerName3, HealthPoison3, HealthUnconscious3, HealthDead3));
+			mHealthTextList.Add(new HealthTextBlock(HealthPlayerName4, HealthPoison4, HealthUnconscious4, HealthDead4));
+			mHealthTextList.Add(new HealthTextBlock(HealthPlayerName5, HealthPoison5, HealthUnconscious5, HealthDead5));
+			mHealthTextList.Add(new HealthTextBlock(HealthPlayerName6, HealthPoison6, HealthUnconscious6, HealthDead6));
 
 			gamePageKeyDownEvent = (sender, args) =>
 			{
@@ -2289,6 +2298,9 @@ namespace Lore
 					if (StatPanel.Visibility == Visibility.Visible)
 						StatPanel.Visibility = Visibility.Collapsed;
 
+					if (StatHealthPanel.Visibility == Visibility.Visible)
+						StatHealthPanel.Visibility = Visibility.Collapsed;
+
 					if (DialogText.Visibility == Visibility.Collapsed)
 						DialogText.Visibility = Visibility.Visible;
 
@@ -2861,16 +2873,18 @@ namespace Lore
 								}
 								else if (mMenuFocusID == 2)
 								{
-									AppendText(new string[] { "[color={RGB.White}]이름[/color]\t\t[color=cd5c5c]중독\t\t의식불명\t죽음[/color]" });
-									mPlayerList.ForEach(delegate (Lore player)
-									{
-										string space;
-										if (player.Name.Length >= 4)
-											space = "\t";
+									AppendText("");
+									DialogText.Visibility = Visibility.Collapsed;
+
+									for (var i = 0; i < 6; i++) {
+										if (i < mPlayerList.Count)
+											mHealthTextList[i].Update(mPlayerList[i].Name, mPlayerList[i].Poison, mPlayerList[i].Unconscious, mPlayerList[i].Dead);
 										else
-											space = "\t\t";
-										AppendText(new string[] { $"{player.Name}{space}{player.Poison}\t\t{player.Unconscious}\t\t{player.Dead}" }, true);
-									});
+											mHealthTextList[i].Clear();
+									}
+
+									StatHealthPanel.Visibility = Visibility.Visible;
+									ContinueText.Visibility = Visibility.Visible;
 								}
 								else if (mMenuFocusID == 3)
 								{
@@ -11687,6 +11701,34 @@ namespace Lore
 			BattlePrison,
 			RunawayMadJoe,
 			Ending
+		}
+
+		private class HealthTextBlock {
+			private TextBlock mName;
+			private TextBlock mPoison;
+			private TextBlock mUnconscious;
+			private TextBlock mDead;
+
+			public HealthTextBlock(TextBlock name, TextBlock poison, TextBlock unconscious, TextBlock dead) {
+				mName = name;
+				mPoison = poison;
+				mUnconscious = unconscious;
+				mDead = dead;
+			}
+
+			public void Update(string name, int poison, int unconscious, int dead) {
+				mName.Text = name;
+				mPoison.Text = poison.ToString();
+				mUnconscious.Text = unconscious.ToString();
+				mDead.Text = dead.ToString();
+			}
+
+			public void Clear() {
+				mName.Text = "";
+				mPoison.Text = "";
+				mUnconscious.Text = "";
+				mDead.Text = "";
+			}
 		}
 	}
 
