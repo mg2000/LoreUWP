@@ -2772,6 +2772,20 @@ namespace Lore
 							mEnemyBlockList[mEnemyFocusID].Background = new SolidColorBrush(Colors.LightGray);
 						}
 
+						void ShowFileMenu(MenuMode mode) {
+							if (mode == MenuMode.ChooseLoadGame)
+								AppendText("불러내고 싶은 게임을 선택하십시오.");
+							else
+								AppendText("게임의 저장 장소를 선택하십시오.");
+
+							ShowMenu(mode, new string[] {
+								"본 게임 데이터",
+								"게임 데이터 1 (부)",
+								"게임 데이터 2 (부)",
+								"게임 데이터 3 (부)"
+							});
+						}
+
 						async Task LoadGame()
 						{
 							await LoadFile();
@@ -2794,6 +2808,8 @@ namespace Lore
 
 							AppendText(new string[] { $"[color={RGB.LightCyan}]저장했던 게임을 다시 불러옵니다[/color]" });
 						}
+
+
 
 						if (mMenuMode == MenuMode.EnemySelectMode)
 						{
@@ -10721,10 +10737,14 @@ namespace Lore
 			mEnemyDataList = JsonConvert.DeserializeObject<List<EnemyData>>(await FileIO.ReadTextAsync(enemyFileFile));
 		}
 
-		private async Task LoadFile() {
+		private async Task LoadFile(int id = 0) {
 			mLoading = true;
 
 			var storageFolder = ApplicationData.Current.LocalFolder;
+
+			var idStr = "";
+			if (id > 0)
+				idStr = id.ToString();
 
 			var saveFile = await storageFolder.CreateFileAsync("loreSave.dat", CreationCollisionOption.OpenIfExists);
 			var saveData = JsonConvert.DeserializeObject<SaveData>(await FileIO.ReadTextAsync(saveFile));
@@ -11511,7 +11531,9 @@ namespace Lore
 			JoinSpica,
 			QnA,
 			ReadScroll,
-			TeleportationDirection
+			TeleportationDirection,
+			ChooseLoadGame,
+			ChooseSaveGame
 		}
 
 		private enum SpinnerType {
