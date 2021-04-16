@@ -8,9 +8,11 @@ using System.Numerics;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Gaming.XboxLive.Storage;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -75,7 +77,7 @@ namespace Lore
 		private void InitializeKeyEvent()
 		{
 			TypedEventHandler<CoreWindow, KeyEventArgs> mainPageKeyUpEvent = null;
-			mainPageKeyUpEvent = (sender, args) =>
+			mainPageKeyUpEvent = async (sender, args) =>
 			{
 				Debug.WriteLine($"키보드 테스트: {args.VirtualKey}");
 
@@ -97,8 +99,16 @@ namespace Lore
 						}
 						else if (mFocusItem == 2)
 						{
-							Window.Current.CoreWindow.KeyUp -= mainPageKeyUpEvent;
-							Frame.Navigate(typeof(GamePage));
+							var saveFile = await ApplicationData.Current.LocalFolder.TryGetItemAsync("loreSave.dat");
+							if (saveFile == null)
+							{
+								await new MessageDialog("저장된 게임이 없습니다. 새로운 게임을 시작해 주십시오.", "저장된 게임 없음").ShowAsync();
+							}
+							else
+							{
+								Window.Current.CoreWindow.KeyUp -= mainPageKeyUpEvent;
+								Frame.Navigate(typeof(GamePage));
+							}
 						}
 						else
 						{

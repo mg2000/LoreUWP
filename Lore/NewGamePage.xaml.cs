@@ -498,6 +498,11 @@ namespace Lore
 							mFocusItem = FocusItem.Gender;
 						}
 					}
+					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
+					{
+						Window.Current.CoreWindow.KeyUp -= newGamePageKeyEvent;
+						Frame.Navigate(typeof(MainPage));
+					}
 				}
 				else if (mFocusItem == FocusItem.Gender)
 				{

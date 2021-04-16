@@ -2709,7 +2709,7 @@ namespace Lore
 					}
 					else if (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadB)
 					{
-						if (mMenuMode != MenuMode.None && mSpecialEvent == 0)
+						if (mMenuMode != MenuMode.None && mMenuMode != MenuMode.BattleLose && mMenuMode != MenuMode.ChooseGameOverLoadGame && mSpecialEvent == 0)
 						{
 							if (mMenuMode == MenuMode.CastOneMagic ||
 							mMenuMode == MenuMode.CastAllMagic ||
@@ -2773,7 +2773,7 @@ namespace Lore
 						}
 
 						void ShowFileMenu(MenuMode mode) {
-							if (mode == MenuMode.ChooseLoadGame)
+							if (mode == MenuMode.ChooseLoadGame || mode == MenuMode.ChooseGameOverLoadGame)
 								AppendText("불러내고 싶은 게임을 선택하십시오.");
 							else
 								AppendText("게임의 저장 장소를 선택하십시오.");
@@ -2786,27 +2786,37 @@ namespace Lore
 							});
 						}
 
-						async Task LoadGame()
+						async Task<bool> LoadGame(int id)
 						{
-							await LoadFile();
-
 							mMenuMode = MenuMode.None;
 
-							mBattlePlayerID = 0;
-							mBattleFriendID = 0;
-							mBattleCommandID = 0;
-							mBattleToolID = 0;
-							mEnemyFocusID = 0;
-							mBattleCommandQueue.Clear();
-							mBatteEnemyQueue.Clear();
-							mBattleTurn = BattleTurn.None;
+							var success = await LoadFile(id);
+							if (success)
+							{
+								mBattlePlayerID = 0;
+								mBattleFriendID = 0;
+								mBattleCommandID = 0;
+								mBattleToolID = 0;
+								mEnemyFocusID = 0;
+								mBattleCommandQueue.Clear();
+								mBatteEnemyQueue.Clear();
+								mBattleTurn = BattleTurn.None;
 
-							mSpecialEvent = SpecialEventType.None;
-							mBattleEvent = 0;
+								mSpecialEvent = SpecialEventType.None;
+								mBattleEvent = 0;
 
-							ShowMap();
+								ShowMap();
 
-							AppendText(new string[] { $"[color={RGB.LightCyan}]저장했던 게임을 다시 불러옵니다[/color]" });
+								AppendText(new string[] { $"[color={RGB.LightCyan}]저장했던 게임을 다시 불러옵니다.[/color]" });
+
+								return true;
+							}
+							else {
+								AppendText(new string[] { $"[color={RGB.LightRed}]해당 슬롯에는 저장된 게임이 없습니다. 다른 슬롯을 선택해 주십시오.[/color]" });
+
+								ShowFileMenu(MenuMode.ChooseLoadGame);
+								return false;
+							}
 						}
 
 
@@ -2862,25 +2872,7 @@ namespace Lore
 
 								if (mMenuFocusID == 0)
 								{
-									string CheckEnable(int i)
-									{
-										if (mParty.Etc[i] == 0)
-											return "불가";
-										else
-											return "가능";
-									}
-
-									AppendText(new string[] { $"X 축 = {mParty.XAxis + 1 }",
-										$"Y 축 = {mParty.YAxis + 1}",
-										"",
-										$"남은 식량 = {mParty.Food}",
-										$"남은 황금 = {mParty.Gold}",
-										"",
-										$"마법의 횃불 : {CheckEnable(0)}",
-										$"공중 부상 : {CheckEnable(3)}",
-										$"물위를 걸음 : {CheckEnable(1)}",
-										$"늪위를 걸음 : {CheckEnable(2)}"
-									});
+									ShowPartyStatus();
 								}
 								else if (mMenuFocusID == 1)
 								{
@@ -3658,31 +3650,11 @@ namespace Lore
 								}
 								else if (mMenuFocusID == 3)
 								{
-									await LoadGame();
+									ShowFileMenu(MenuMode.ChooseLoadGame);
 								}
 								else if (mMenuFocusID == 4)
 								{
-									var saveData = new SaveData()
-									{
-										PlayerList = mPlayerList,
-										Party = mParty,
-										Map = new Map()
-										{
-											Width = mMapWidth,
-											Height = mMapHeight,
-											Data = mMapLayer
-										},
-										Encounter = mEncounter,
-										MaxEnemy = mMaxEnemy
-									};
-
-									var saveJSON = JsonConvert.SerializeObject(saveData);
-
-									var storageFolder = ApplicationData.Current.LocalFolder;
-									var saveFile = await storageFolder.CreateFileAsync("loreSave.dat", CreationCollisionOption.ReplaceExisting);
-									await FileIO.WriteTextAsync(saveFile, saveJSON);
-
-									AppendText(new string[] { $"[color={RGB.LightRed}]현재의 게임을 저장합니다.[/color]" });
+									ShowFileMenu(MenuMode.ChooseSaveGame);
 								}
 								else if (mMenuFocusID == 5)
 								{
@@ -4990,15 +4962,9 @@ namespace Lore
 								mMenuMode = MenuMode.None;
 
 								if (mMenuFocusID == 0)
-								{
-									await LoadGame();
-
-
-								}
+									ShowFileMenu(MenuMode.ChooseGameOverLoadGame);
 								else
-								{
 									CoreApplication.Exit();
-								}
 							}
 							else if (mMenuMode == MenuMode.AskEnter)
 							{
@@ -5674,8 +5640,58 @@ namespace Lore
 
 								mSpecialEvent = SpecialEventType.ReadScroll;
 							}
+							else if (mMenuMode == MenuMode.ChooseLoadGame || mMenuMode == MenuMode.ChooseGameOverLoadGame) {
+								mMenuMode = MenuMode.None;
+
+								await LoadGame(mMenuFocusID);
+							}
+							else if (mMenuMode == MenuMode.ChooseSaveGame) {
+								mMenuMode = MenuMode.None;
+
+								var saveData = new SaveData()
+								{
+									PlayerList = mPlayerList,
+									Party = mParty,
+									Map = new Map()
+									{
+										Width = mMapWidth,
+										Height = mMapHeight,
+										Data = mMapLayer
+									},
+									Encounter = mEncounter,
+									MaxEnemy = mMaxEnemy
+								};
+
+								var saveJSON = JsonConvert.SerializeObject(saveData);
+
+								var idStr = "";
+								if (mMenuFocusID > 0)
+									idStr = mMenuFocusID.ToString();
+
+								var storageFolder = ApplicationData.Current.LocalFolder;
+								var saveFile = await storageFolder.CreateFileAsync($"loreSave{idStr}.dat", CreationCollisionOption.ReplaceExisting);
+								await FileIO.WriteTextAsync(saveFile, saveJSON);
+
+								AppendText(new string[] { $"[color={RGB.LightRed}]현재의 게임을 저장합니다.[/color]" });
+							}
 						}
 					}
+				}
+				else if (args.VirtualKey == VirtualKey.P || args.VirtualKey == VirtualKey.GamepadView)
+				{
+					ShowPartyStatus();
+				}
+				else if (args.VirtualKey == VirtualKey.V || args.VirtualKey == VirtualKey.GamepadLeftTrigger) {
+					AppendText(new string[] { "능력을 보고 싶은 인물을 선택하시오" });
+					ShowCharacterMenu(MenuMode.ViewCharacter);
+				}
+				else if (args.VirtualKey == VirtualKey.C || args.VirtualKey == VirtualKey.GamepadRightShoulder) {
+					AppendText(new string[] { $"[color={RGB.LightGreen}]한명을 고르시오 ---[/color]" }, true);
+					ShowCharacterMenu(MenuMode.CastSpell);
+				}
+				else if (args.VirtualKey == VirtualKey.E || args.VirtualKey == VirtualKey.GamepadRightShoulder) {
+					AppendText(new string[] { $"[color={RGB.LightGreen}]한명을 고르시오 ---[/color]" }, true);
+					ShowCharacterMenu(MenuMode.Extrasense);
 				}
 				else if (args.VirtualKey == VirtualKey.R || args.VirtualKey == VirtualKey.GamepadLeftShoulder)
 				{
@@ -7258,6 +7274,28 @@ namespace Lore
 					});
 
 			ShowCharacterMenu(MenuMode.TrainingCenter);
+		}
+
+		private void ShowPartyStatus() {
+			string CheckEnable(int i)
+			{
+				if (mParty.Etc[i] == 0)
+					return "불가";
+				else
+					return "가능";
+			}
+
+			AppendText(new string[] { $"X 축 = {mParty.XAxis + 1 }",
+				$"Y 축 = {mParty.YAxis + 1}",
+				"",
+				$"남은 식량 = {mParty.Food}",
+				$"남은 황금 = {mParty.Gold}",
+				"",
+				$"마법의 횃불 : {CheckEnable(0)}",
+				$"공중 부상 : {CheckEnable(3)}",
+				$"물위를 걸음 : {CheckEnable(1)}",
+				$"늪위를 걸음 : {CheckEnable(2)}"
+			});
 		}
 
 		private void Rest()
@@ -10737,7 +10775,7 @@ namespace Lore
 			mEnemyDataList = JsonConvert.DeserializeObject<List<EnemyData>>(await FileIO.ReadTextAsync(enemyFileFile));
 		}
 
-		private async Task LoadFile(int id = 0) {
+		private async Task<bool> LoadFile(int id = 0) {
 			mLoading = true;
 
 			var storageFolder = ApplicationData.Current.LocalFolder;
@@ -10746,8 +10784,14 @@ namespace Lore
 			if (id > 0)
 				idStr = id.ToString();
 
-			var saveFile = await storageFolder.CreateFileAsync("loreSave.dat", CreationCollisionOption.OpenIfExists);
+			var saveFile = await storageFolder.CreateFileAsync($"loreSave{idStr}.dat", CreationCollisionOption.OpenIfExists);
 			var saveData = JsonConvert.DeserializeObject<SaveData>(await FileIO.ReadTextAsync(saveFile));
+
+			if (saveData == null)
+			{
+				mLoading = false;
+				return false;
+			}
 
 			mParty = saveData.Party;
 			mPlayerList = saveData.PlayerList;
@@ -10779,6 +10823,8 @@ namespace Lore
 			InitializeMap();
 
 			mLoading = false;
+
+			return true;
 		}
 
 		private void DisplayPlayerInfo() {
@@ -11533,6 +11579,7 @@ namespace Lore
 			ReadScroll,
 			TeleportationDirection,
 			ChooseLoadGame,
+			ChooseGameOverLoadGame,
 			ChooseSaveGame
 		}
 
