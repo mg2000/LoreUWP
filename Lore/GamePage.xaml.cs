@@ -293,9 +293,6 @@ namespace Lore
 
 			gamePageKeyDownEvent = (sender, args) =>
 			{
-
-				Debug.WriteLine($"키보드 Down 테스트: {args.VirtualKey}");
-
 				if (mLoading || mMoveEvent || mSpecialEvent > 0 || mAnimationEvent != AnimationType.None)
 					return;
 				else if (ContinueText.Visibility == Visibility.Visible)
@@ -1270,8 +1267,6 @@ namespace Lore
 
 					Talk(resultPart.ToArray());
 				}
-
-				Debug.WriteLine($"키보드 Up 테스트: {args.VirtualKey}, " + mTriggeredDownEvent);
 
 				if (mMoveEvent || mLoading || (mAnimationEvent != AnimationType.None && ContinueText.Visibility != Visibility.Visible && mMenuMode == MenuMode.None) || mTriggeredDownEvent)
 				{
