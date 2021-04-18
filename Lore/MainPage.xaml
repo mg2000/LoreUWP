@@ -19,7 +19,12 @@
 		<TextBlock Text="또다른 지식의 성전  제 1 부" Foreground="#FFE57EE7" FontSize="60" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0">
 		</TextBlock>
 
-		<canvas:CanvasAnimatedControl x:Name="prologControl" ClearColor="#3f383f" Grid.Row="1" CreateResources="prologControl_CreateResources" Update="prologControl_Update" Draw="prologControl_Draw" Visibility="Visible" Margin="200 0 200 0"/>
+		<Grid x:Name="SyncPanel" Grid.Row="1" Background="#3f383f" Visibility="Visible" Margin="200 0 200 0">
+			<TextBlock FontSize="30" Grid.Row="1" Foreground="#ffffff" Margin="0,0,0,0" HorizontalAlignment="Center" VerticalAlignment="Center">클라우드 데이터 동기화중...</TextBlock>
+		</Grid>
+
+		<canvas:CanvasAnimatedControl x:Name="prologControl" ClearColor="#3f383f" Grid.Row="1" CreateResources="prologControl_CreateResources" Update="prologControl_Update" Draw="prologControl_Draw" Visibility="Collapsed" Margin="200 0 200 0"/>
+
 		<Grid x:Name="mainmenuPanel" Grid.Row="1" Background="#3f383f" Visibility="Collapsed" Margin="200 0 200 0">
 
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">

@@ -6,10 +6,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Gaming.XboxLive.Storage;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.System.Profile;
 using Windows.UI;
@@ -5654,7 +5657,8 @@ namespace Lore
 										Data = mMapLayer
 									},
 									Encounter = mEncounter,
-									MaxEnemy = mMaxEnemy
+									MaxEnemy = mMaxEnemy,
+									SaveTime = DateTime.Now.Ticks
 								};
 
 								var saveJSON = JsonConvert.SerializeObject(saveData);
@@ -5667,7 +5671,41 @@ namespace Lore
 								var saveFile = await storageFolder.CreateFileAsync($"loreSave{idStr}.dat", CreationCollisionOption.ReplaceExisting);
 								await FileIO.WriteTextAsync(saveFile, saveJSON);
 
-								AppendText(new string[] { $"[color={RGB.LightRed}]현재의 게임을 저장합니다.[/color]" });
+								var users = await User.FindAllAsync();
+								var gameSaveTask = await GameSaveProvider.GetForUserAsync(users[0], "00000000-0000-0000-0000-000063336555");
+
+								if (gameSaveTask.Status == GameSaveErrorStatus.Ok)
+								{
+									var gameSaveProvider = gameSaveTask.Value;
+
+									var gameSaveContainer = gameSaveProvider.CreateContainer("LoreSaveContainer");
+
+									var buffer = Encoding.UTF8.GetBytes(saveJSON);
+
+									var writer = new DataWriter();
+									writer.WriteUInt32((uint)buffer.Length);
+									writer.WriteBytes(buffer);
+									var dataBuffer = writer.DetachBuffer();
+
+									var blobsToWrite = new Dictionary<string, IBuffer>();
+									blobsToWrite.Add($"loreSave{idStr}", dataBuffer);
+
+									var gameSaveOperationResult = await gameSaveContainer.SubmitUpdatesAsync(blobsToWrite, null, "LoreSave");
+									if (gameSaveOperationResult.Status == GameSaveErrorStatus.Ok)
+										AppendText(new string[] { $"[color={RGB.LightRed}]현재의 게임을 저장합니다.[/color]" });
+									else
+										AppendText(new string[] {
+											$"[color={RGB.LightRed}]현재의 게임을 기기에 저장했지만, 클라우드에 저장하지 못했습니다.[/color]",
+											$"[color={RGB.LightRed}]에러 코드: {gameSaveOperationResult.Status}[/color]"
+										});
+								}
+								else
+								{
+									AppendText(new string[] {
+											$"[color={RGB.LightRed}]현재의 게임을 기기에 저장했지만, 클라우드에 연결할 수 없습니다.[/color]",
+											$"[color={RGB.LightRed}]에러 코드: {gameSaveTask.Status}[/color]"
+										});
+								}
 							}
 						}
 					}

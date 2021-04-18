@@ -2,13 +2,17 @@
 using Microsoft.Graphics.Canvas.Brushes;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.Text;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using System.Text;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Gaming.XboxLive.Storage;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
@@ -32,7 +36,7 @@ namespace Lore
 		private float mOffset = 0;
 		private float mVelocity = 0;
 		private const float mTargetSpeed = 1;
-		private float mTargetVelocity = mTargetSpeed;
+		private float mTargetVelocity = 0;
 
 		private CanvasLinearGradientBrush mTextOpacityBrush;
 		private CanvasLinearGradientBrush mBlurOpacityBrush;
@@ -66,16 +70,158 @@ namespace Lore
 
 		private async void SyncSaveData()
 		{
-			//var users = await User.FindAllAsync();
-			//var gameSaveTask = await GameSaveProvider.GetForUserAsync(users[0], "00000000-0000-0000-0000-000063336555");
+			var users = await User.FindAllAsync();
+			var gameSaveTask = await GameSaveProvider.GetForUserAsync(users[0], "00000000-0000-0000-0000-000063336555");
 
-			//Debug.WriteLine($"클라우드 동기화 연결 결과: {gameSaveTask.Status}");
+			Debug.WriteLine($"클라우드 동기화 연결 결과: {gameSaveTask.Status}");
 
-			InitializeKeyEvent();
+			if (gameSaveTask.Status == GameSaveErrorStatus.Ok) {
+				var gameSaveProvider = gameSaveTask.Value;
+
+				var gameSaveContainer = gameSaveProvider.CreateContainer("LoreSaveContainer");
+
+				var saveData = new List<SaveData>();
+				var loadFailed = false;
+
+				for (var i = 0; i < 4; i++)
+				{
+					string saveName;
+					if (i == 0)
+						saveName = "loreSave";
+					else
+						saveName = $"loreSave{i}";
+
+					var result = await gameSaveContainer.GetAsync(new string[] { saveName });
+					if (result.Status == GameSaveErrorStatus.Ok)
+					{
+						IBuffer loadedBuffer;
+
+						result.Value.TryGetValue(saveName, out loadedBuffer);
+
+						if (loadedBuffer == null)
+						{
+							loadFailed = true;
+							break;
+						}
+
+						var reader = DataReader.FromBuffer(loadedBuffer);
+						var dataSize = reader.ReadUInt32();
+
+						var buffer = new byte[dataSize];
+
+						reader.ReadBytes(buffer);
+
+						var loadData = Encoding.UTF8.GetString(buffer);
+
+						saveData.Add(JsonConvert.DeserializeObject<SaveData>(loadData));
+					}
+					else if (result.Status == GameSaveErrorStatus.BlobNotFound) {
+						saveData.Add(null);
+					}
+					else if (result.Status != GameSaveErrorStatus.BlobNotFound)
+					{
+						loadFailed = true;
+						break;
+					}
+				}
+
+				if (loadFailed)
+					await new MessageDialog("클라우드 서버에서 세이브를 가져올 수 없습니다. 기기에 저장된 세이브를 사용합니다.").ShowAsync();
+				else {
+					var storageFolder = ApplicationData.Current.LocalFolder;
+					var differentBuilder = new StringBuilder();
+					var differentID = new List<int>();
+
+					for (var i = 0; i < saveData.Count; i++) {
+						string GetSaveName(int id)
+						{
+							if (id == 0)
+								return "본 게임 데이터";
+							else
+								return $"게임 데이터 {id} (부)";
+						}
+
+
+						string idStr;
+						if (i == 0)
+							idStr = "";
+						else
+							idStr = i.ToString();
+
+						var localSaveFile = await storageFolder.CreateFileAsync($"loreSave{idStr}.dat", CreationCollisionOption.OpenIfExists);
+						var localSaveData = JsonConvert.DeserializeObject<SaveData>(await FileIO.ReadTextAsync(localSaveFile));
+
+						if (localSaveData == null) {
+							if (saveData[i] != null)
+							{
+								differentBuilder.Append(GetSaveName(i)).Append("\r\n");
+								differentBuilder.Append("클라우드 데이터만 존재").Append("\r\n\r\n");
+
+								differentID.Add(i);
+							}
+						}
+						else {
+							if (saveData[i] == null) {
+								differentBuilder.Append(GetSaveName(i)).Append("\r\n");
+								differentBuilder.Append("기기 데이터만 존재").Append("\r\n\r\n"); ;
+								
+								differentID.Add(i);
+							}
+							else {
+								if (saveData[i].SaveTime != localSaveData.SaveTime) {
+									differentBuilder.Append(GetSaveName(i)).Append("\r\n");
+									differentBuilder.Append($"클라우드: {new DateTime(saveData[i].SaveTime):yyyy.MM.dd HH:mm:ss}").Append("\r\n");
+									differentBuilder.Append($"기기: {new DateTime(localSaveData.SaveTime):yyyy.MM.dd HH:mm:ss}").Append("\r\n\r\n");
+
+									differentID.Add(i);
+								}
+							}
+						}
+					}
+
+					if (differentID.Count > 0)
+					{ 
+						var differentDialog = new MessageDialog("클라우드/기기간 데이터 동기화가 되어 있지 않습니다. 어느 데이터를 사용하시겠습니까?\r\n\r\n" + differentBuilder.ToString());
+						differentDialog.Commands.Add(new UICommand("클라우드"));
+						differentDialog.Commands.Add(new UICommand("기기"));
+
+						differentDialog.DefaultCommandIndex = 0;
+						differentDialog.CancelCommandIndex = 1;
+
+						var chooseData = await differentDialog.ShowAsync();
+						if (chooseData.Label == "클라우드")
+						{
+							for (var i = 0; i < differentID.Count; i++) {
+								if (saveData[differentID[i]] != null)
+								{
+									string idStr;
+									if (differentID[i] == 0)
+										idStr = "";
+									else
+										idStr = differentID[i].ToString();
+
+									var saveFile = await storageFolder.CreateFileAsync($"loreSave{idStr}.dat", CreationCollisionOption.ReplaceExisting);
+									await FileIO.WriteTextAsync(saveFile, JsonConvert.SerializeObject(saveData[differentID[i]]));
+								}
+							}
+						}
+					}
+				}
+
+				InitializeKeyEvent();
+			}
+			else {
+				await new MessageDialog("클라우드 서버에 접속할 수 없습니다. 기기에 저장된 세이브를 사용합니다.").ShowAsync();
+				InitializeKeyEvent();
+			}
 		}
 
 		private void InitializeKeyEvent()
 		{
+			SyncPanel.Visibility = Visibility.Collapsed;
+			prologControl.Visibility = Visibility.Visible;
+			mTargetVelocity = mTargetSpeed;
+
 			TypedEventHandler<CoreWindow, KeyEventArgs> mainPageKeyUpEvent = null;
 			mainPageKeyUpEvent = async (sender, args) =>
 			{

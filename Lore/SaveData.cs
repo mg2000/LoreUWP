@@ -6,34 +6,39 @@ using System.Threading.Tasks;
 
 namespace Lore
 {
-    class SaveData
-    {
-        public List<Lore> PlayerList
-        {
-            get;
-            set;
-        }
-
-        public LorePlayer Party
-        {
-            get;
-            set;
-        }
-
-        public Map Map
-        {
-            get;
-            set;
-        }
-
-        public int Encounter {
-            get;
-            set;
+	class SaveData
+	{
+		public List<Lore> PlayerList
+		{
+			get;
+			set;
 		}
 
-        public int MaxEnemy {
-            get;
-            set;
+		public LorePlayer Party
+		{
+			get;
+			set;
 		}
-    }
+
+		public Map Map
+		{
+			get;
+			set;
+		}
+
+		public int Encounter {
+			get;
+			set;
+		}
+
+		public int MaxEnemy {
+			get;
+			set;
+		}
+
+		public long SaveTime {
+			get;
+			set;
+		}
+	}
 }
