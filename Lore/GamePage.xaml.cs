@@ -10332,6 +10332,9 @@ namespace Lore
 				return;
 			}
 
+			var playerX = mParty.XAxis;
+			var playerY = mParty.YAxis;
+
 			var xOffset = 0;
 			var yOffset = 0;
 			if (mTelescopeXCount != 0) {
@@ -10349,7 +10352,7 @@ namespace Lore
 					yOffset = mTelescopePeriod - Math.Abs(mTelescopeYCount);
 			}
 
-			var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(64 * (mParty.XAxis - 4 + xOffset), 64 * (mParty.YAxis - 4 + yOffset)));
+			var transform = Matrix3x2.Identity * Matrix3x2.CreateTranslation(-new Vector2(64 * (playerX - 4 + xOffset), 64 * (playerY - 4 + yOffset)));
 			args.DrawingSession.Transform = transform;
 
 			var size = sender.Size.ToVector2();
@@ -10363,21 +10366,25 @@ namespace Lore
 			{
 				lock (mapLock)
 				{
-					if (mMapLayer != null)
-						DrawLayer(sb, mMapLayer);
+					if (mMapLayer != null) {
+						for (int i = 0; i < mMapLayer.Length; ++i)
+						{
+							DrawTile(sb, mMapLayer, i, playerX, playerY);
+						}
+					}
 				}
 
 				if (mCharacterTiles != null) {
 					if (mAnimationEvent == AnimationType.EnterSwampGate)
 					{
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - mAnimationFrame), Vector4.One);
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - mAnimationFrame), Vector4.One);
 					}
 					else if (mAnimationEvent == AnimationType.EnterChamberOfNecromancer)
 					{
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis + (5 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY + (5 - mAnimationFrame)), Vector4.One);
 					}
 					else
-						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis), Vector4.One);
+						mCharacterTiles.Draw(sb, mFace, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY), Vector4.One);
 
 					if (mSpecialEvent == SpecialEventType.MeetLoreSolider)
 						mCharacterTiles.Draw(sb, 24, mCharacterTiles.SpriteSize * new Vector2(50, 71), Vector4.One);
@@ -10395,19 +10402,19 @@ namespace Lore
 								firstHead = mAnimationFrame > 2 ? 2 : mAnimationFrame;
 
 							for (var i = 4; i > 4 - firstHead; i--)
-								mCharacterTiles.Draw(sb, 8, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - i, mParty.YAxis), Vector4.One);
-							mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (4 - firstHead), mParty.YAxis), Vector4.One);
+								mCharacterTiles.Draw(sb, 8, mCharacterTiles.SpriteSize * new Vector2(playerX - i, playerY), Vector4.One);
+							mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(playerX - (4 - firstHead), playerY), Vector4.One);
 
 							if (mAnimationFrame > 3)
 							{
 								int remainHead = mAnimationFrame > 5 ? 3 : mAnimationFrame - 2;
 								for (var i = 4; i > 4 - remainHead; i--)
 								{
-									mCharacterTiles.Draw(sb, 8, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - i, mParty.YAxis - 1), Vector4.One);
-									mCharacterTiles.Draw(sb, 8, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - i, mParty.YAxis + 1), Vector4.One);
+									mCharacterTiles.Draw(sb, 8, mCharacterTiles.SpriteSize * new Vector2(playerX - i, playerY - 1), Vector4.One);
+									mCharacterTiles.Draw(sb, 8, mCharacterTiles.SpriteSize * new Vector2(playerX - i, playerY + 1), Vector4.One);
 								}
-								mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (4 - remainHead), mParty.YAxis - 1), Vector4.One);
-								mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (4 - remainHead), mParty.YAxis + 1), Vector4.One);
+								mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(playerX - (4 - remainHead), playerY - 1), Vector4.One);
+								mCharacterTiles.Draw(sb, 12, mCharacterTiles.SpriteSize * new Vector2(playerX - (4 - remainHead), playerY + 1), Vector4.One);
 							}
 						}
 						else
@@ -10415,18 +10422,18 @@ namespace Lore
 					}
 					else if (mAnimationEvent == AnimationType.Minotaur || mAnimationEvent == AnimationType.Minotaur2) {
 						if (mAnimationFrame > 0)
-							mCharacterTiles.Draw(sb, 9, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 9, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (5 - mAnimationFrame)), Vector4.One);
 					}
 					else if (mAnimationEvent == AnimationType.HugeDragon) {
 						if (mAnimationFrame > 0) {
-							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - (6 - mAnimationFrame)), Vector4.One);
-							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (6 - mAnimationFrame)), Vector4.One);
-							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (6 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(playerX - 1, playerY - (6 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (6 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(playerX + 1, playerY - (6 - mAnimationFrame)), Vector4.One);
 
 
-							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
-							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
-							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(playerX - 1, playerY - (5 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (5 - mAnimationFrame)), Vector4.One);
+							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(playerX + 1, playerY - (5 - mAnimationFrame)), Vector4.One);
 						}
 					}
 					else if (mAnimationEvent == AnimationType.Dragon3)
@@ -10434,66 +10441,66 @@ namespace Lore
 						if (mAnimationFrame > 0)
 						{
 							if (mAnimationFrame >= 4) {
-								mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - (9 - mAnimationFrame)), Vector4.One);
-								mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (9 - mAnimationFrame)), Vector4.One);
-								mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (9 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(playerX - 1, playerY - (9 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (9 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(playerX + 1, playerY - (9 - mAnimationFrame)), Vector4.One);
 
 
-								mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - (8 - mAnimationFrame)), Vector4.One);
-								mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (8 - mAnimationFrame)), Vector4.One);
-								mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - (8 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(playerX - 1, playerY - (8 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (8 - mAnimationFrame)), Vector4.One);
+								mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(playerX + 1, playerY - (8 - mAnimationFrame)), Vector4.One);
 							}
 
 							var aniYOffset = mAnimationFrame > 4 ? 2 : 6 - mAnimationFrame;
 								
-							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 3, mParty.YAxis - aniYOffset), Vector4.One);
-							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 2, mParty.YAxis - aniYOffset), Vector4.One);
-							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(playerX - 3, playerY - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(playerX - 2, playerY - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(playerX - 1, playerY - aniYOffset), Vector4.One);
 
 
-							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 3, mParty.YAxis - aniYOffset + 1), Vector4.One);
-							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 2, mParty.YAxis - aniYOffset + 1), Vector4.One);
-							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - 1, mParty.YAxis - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(playerX - 3, playerY - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(playerX - 2, playerY - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(playerX - 1, playerY - aniYOffset + 1), Vector4.One);
 
-							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - aniYOffset), Vector4.One);
-							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 2, mParty.YAxis - aniYOffset), Vector4.One);
-							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 3, mParty.YAxis - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 10, mCharacterTiles.SpriteSize * new Vector2(playerX + 1, playerY - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 14, mCharacterTiles.SpriteSize * new Vector2(playerX + 2, playerY - aniYOffset), Vector4.One);
+							mCharacterTiles.Draw(sb, 18, mCharacterTiles.SpriteSize * new Vector2(playerX + 3, playerY - aniYOffset), Vector4.One);
 
 
-							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 1, mParty.YAxis - aniYOffset + 1), Vector4.One);
-							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 2, mParty.YAxis - aniYOffset + 1), Vector4.One);
-							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 3, mParty.YAxis - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 11, mCharacterTiles.SpriteSize * new Vector2(playerX + 1, playerY - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 15, mCharacterTiles.SpriteSize * new Vector2(playerX + 2, playerY - aniYOffset + 1), Vector4.One);
+							mCharacterTiles.Draw(sb, 19, mCharacterTiles.SpriteSize * new Vector2(playerX + 3, playerY - aniYOffset + 1), Vector4.One);
 						}
 					}
 					else if (mAnimationEvent == AnimationType.AstralMud) {
-						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (5 - mAnimationFrame), mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
-						mCharacterTiles.Draw(sb, 28, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (4 - mAnimationFrame), mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, 13, mCharacterTiles.SpriteSize * new Vector2(playerX - (5 - mAnimationFrame), playerY - (5 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, 28, mCharacterTiles.SpriteSize * new Vector2(playerX - (4 - mAnimationFrame), playerY - (5 - mAnimationFrame)), Vector4.One);
 					}
 					else if (mAnimationEvent == AnimationType.PanzerViper) {
-						mCharacterTiles.Draw(sb, 23, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - mAnimationFrame)), Vector4.One);
+						mCharacterTiles.Draw(sb, 23, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (5 - mAnimationFrame)), Vector4.One);
 					}
 					else if (mAnimationEvent == AnimationType.BlackKnight) {
-						mCharacterTiles.Draw(sb, 22, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + xEnemyOffset, mParty.YAxis + yEnemyOffset), Vector4.One);
+						mCharacterTiles.Draw(sb, 22, mCharacterTiles.SpriteSize * new Vector2(playerX + xEnemyOffset, playerY + yEnemyOffset), Vector4.One);
 					}
 					else if (mAnimationEvent == AnimationType.FinalBattle) {
 						if (mAnimationFrame > 0)
 						{
 							var archiMonkOffset = mAnimationFrame > 3 ? 3 : mAnimationFrame;
 
-							mCharacterTiles.Draw(sb, 26, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis + 2, mParty.YAxis - (5 - archiMonkOffset)), Vector4.One);
+							mCharacterTiles.Draw(sb, 26, mCharacterTiles.SpriteSize * new Vector2(playerX + 2, playerY - (5 - archiMonkOffset)), Vector4.One);
 
 							if (mAnimationFrame >= 4) {
 								var archiMageOffset = mAnimationFrame > 6 ? 3 : mAnimationFrame - 3;
 
-								mCharacterTiles.Draw(sb, 25, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis, mParty.YAxis - (5 - archiMageOffset)), Vector4.One);
+								mCharacterTiles.Draw(sb, 25, mCharacterTiles.SpriteSize * new Vector2(playerX, playerY - (5 - archiMageOffset)), Vector4.One);
 							}
 
 							if (mAnimationFrame >= 7) {
 								var necromancerXOffset = mAnimationFrame > 9 ? 3 : mAnimationFrame - 6;
 								var necromancerYOffset = mAnimationFrame > 9 ? mAnimationFrame - 9 : 0;
 
-								mCharacterTiles.Draw(sb, 16, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (5 - necromancerXOffset), mParty.YAxis - 3 + necromancerYOffset), Vector4.One);
-								mCharacterTiles.Draw(sb, 17, mCharacterTiles.SpriteSize * new Vector2(mParty.XAxis - (5 - necromancerXOffset), mParty.YAxis - 2 + necromancerYOffset), Vector4.One);
+								mCharacterTiles.Draw(sb, 16, mCharacterTiles.SpriteSize * new Vector2(playerX - (5 - necromancerXOffset), playerY - 3 + necromancerYOffset), Vector4.One);
+								mCharacterTiles.Draw(sb, 17, mCharacterTiles.SpriteSize * new Vector2(playerX - (5 - necromancerXOffset), playerY - 2 + necromancerYOffset), Vector4.One);
 							}
 						}
 					}
@@ -10501,15 +10508,7 @@ namespace Lore
 			}
 		}
 
-		void DrawLayer(CanvasSpriteBatch sb, byte[] layer)
-		{
-			for (int i = 0; i < layer.Length; ++i)
-			{
-				DrawTile(sb, layer, i);
-			}
-		}
-
-		void DrawTile(CanvasSpriteBatch sb, byte[] layer, int index)
+		void DrawTile(CanvasSpriteBatch sb, byte[] layer, int index, int playerX, int playerY)
 		{
 			int row = index / mMapWidth;
 			int column = index % mMapWidth;
@@ -10518,7 +10517,7 @@ namespace Lore
 
 			if (mMapTiles != null)
 			{
-				if (mAnimationEvent == AnimationType.MeetSkeleton && mAnimationFrame > 0 && column == mParty.XAxis && mParty.YAxis - row == 5 - mAnimationFrame)
+				if (mAnimationEvent == AnimationType.MeetSkeleton && mAnimationFrame > 0 && column == playerX && playerY - row == 5 - mAnimationFrame)
 					mMapTiles.Draw(sb, 48, mMapTiles.SpriteSize * new Vector2(column, row), tint);
 				else if (mSpecialEvent == SpecialEventType.MeetLoreSolider && (index == 50 + mMapWidth * 71))
 					mMapTiles.Draw(sb, 44, mMapTiles.SpriteSize * new Vector2(column, row), tint);
