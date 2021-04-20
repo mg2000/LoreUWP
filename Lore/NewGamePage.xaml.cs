@@ -599,12 +599,12 @@ namespace Lore
 					}
 					else if (args.VirtualKey == VirtualKey.Enter || args.VirtualKey == VirtualKey.GamepadA)
 					{
+						mTransdata[mQuestionList[mQuestionID].PointID[mAnswerID]]++;
+
 						mQuestionID++;
+
 						if (mQuestionID < mQuestionList.Length)
-						{
-							mTransdata[mAnswerID]++;
 							ShowQuestion();
-						}
 						else
 						{
 							for (var i = 0; i < 5; i++)
