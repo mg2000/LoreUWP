@@ -3337,7 +3337,7 @@ namespace Lore
 								{
 									if (mPlayerList[mMenuFocusID].Class != 2 && mPlayerList[mMenuFocusID].Class != 3 && mPlayerList[mMenuFocusID].Class != 6 && (mParty.Etc[37] & 1) == 0)
 									{
-										AppendText(new string[] { $"당신에게는 아직 능력이 없습니다.'" }, true);
+										AppendText(new string[] { $"당신에게는 아직 능력이 없습니다." }, true);
 										ContinueText.Visibility = Visibility.Visible;
 									}
 									else
