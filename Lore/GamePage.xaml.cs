@@ -263,7 +263,7 @@ namespace Lore
 			mEnemyTextList.Add(EnemyText7);
 
 			mEnterTypeMap[EnterType.CastleLore] = "로어 성";
-			mEnterTypeMap[EnterType.Menace] = "메나스";
+			mEnterTypeMap[EnterType.Menace] = "메너스";
 			mEnterTypeMap[EnterType.LastDitch] = "라스트디치";
 			mEnterTypeMap[EnterType.GroundGate] = "지하 출입구";
 			
@@ -3519,7 +3519,7 @@ namespace Lore
 										var predictStr = new string[]
 										{
 										"로드 안을 만날",
-										"메나스를 탐험할",
+										"메너스를 탐험할",
 										"로드 안에게 다시 돌아갈",
 										"라스트디치로 갈",
 										"라스트디치의 성주를 만날",
@@ -7798,7 +7798,7 @@ namespace Lore
 				else if (((mParty.XAxis == 24 && mParty.YAxis == 7) || (mParty.XAxis == 25 && mParty.YAxis == 7)) && mParty.Etc[9] == 3)
 				{
 					AppendText(new string[] {
-						$"여기가 '메나스'의 중심이다.",
+						$"여기가 '메너스'의 중심이다.",
 						$"[color={RGB.White}]당신의 탐험은 성공적이었다.[/color]",
 						$"[color={RGB.White}]이제 로드 안에게 돌아가는 일만 남았다.[/color]"
 					});
@@ -9157,7 +9157,7 @@ namespace Lore
 					}
 					else
 					{
-						AppendText(new string[] { " '메나스'속에는 드와프, 거인, 식인 늑대, 독사 같은 괴물들이 살고 있소." });
+						AppendText(new string[] { " '메너스'속에는 드와프, 거인, 식인 늑대, 독사 같은 괴물들이 살고 있소." });
 
 						ContinueText.Visibility = Visibility.Visible;
 					}
@@ -9185,7 +9185,7 @@ namespace Lore
 				}
 				else if (moveX == 93 && moveY == 67)
 				{
-					AppendText(new string[] { " 우리는 메나스의 동쪽에 있는 나무로부터 많은 식량을 얻은 적이 있습니다." });
+					AppendText(new string[] { " 우리는 메너스의 동쪽에 있는 나무로부터 많은 식량을 얻은 적이 있습니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9373,8 +9373,8 @@ namespace Lore
 				else if (moveX == 62 && moveY == 9)
 				{
 					AppendText(new string[] { " 안녕하시오. 나는 한때 이곳의 유명한 도둑이었던 사람이오. 결국 그 때문에 나는 잡혀서 평생 여기에 있게 되었지만...",
-					$" 그건 그렇고, 내가 로어 성의 보물인 [color={RGB.LightCyan}]황금의 방패[/color]를 훔쳐 달아나다. 그만 그것을 메나스라는 금광에 숨겨 놓은 채 잡혀 버리고 말았소.",
-					"나는 이제 그것을 가져봤자 쓸 때도 없으니 차라리 당신이 그걸 가지시오. 가만있자... 어디였더라... 그래! 메나스의 가운데쯤에 벽으로 사방이 둘러 싸여진 곳이었는데.." +
+					$" 그건 그렇고, 내가 로어 성의 보물인 [color={RGB.LightCyan}]황금의 방패[/color]를 훔쳐 달아나다. 그만 그것을 메너스라는 금광에 숨겨 놓은 채 잡혀 버리고 말았소.",
+					"나는 이제 그것을 가져봤자 쓸 때도 없으니 차라리 당신이 그걸 가지시오. 가만있자... 어디였더라... 그래! 메너스의 가운데쯤에 벽으로 사방이 둘러 싸여진 곳이었는데.." +
 					" 당신들이라면 지금 여기에 들어온 것과 같은 방법으로 들어가서 방패를 찾을수 있을 것이오. 행운을 빌겠소."
 					});
 
@@ -9398,13 +9398,13 @@ namespace Lore
 				}
 				else if (moveX == 50 && moveY == 13)
 				{
-					AppendText(new string[] { "메나스 에는 금덩이가 많다던데..." });
+					AppendText(new string[] { "메너스 에는 금덩이가 많다던데..." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
 				else if (moveX == 82 && moveY == 26)
 				{
-					AppendText(new string[] { "메나스는 한때 금광이었습니다." });
+					AppendText(new string[] { "메너스는 한때 금광이었습니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
 				}
@@ -9523,7 +9523,7 @@ namespace Lore
 						}
 						else if (mParty.Etc[9] == 3)
 						{
-							AppendText(new string[] { $" 대륙의 남서쪽에 있는 '[color={RGB.LightCyan}]메나스[/color]'를 탐사해 주시오." });
+							AppendText(new string[] { $" 대륙의 남서쪽에 있는 '[color={RGB.LightCyan}]메너스[/color]'를 탐사해 주시오." });
 							ContinueText.Visibility = Visibility.Visible;
 						}
 						else if (mParty.Etc[9] == 4)
@@ -9575,7 +9575,7 @@ namespace Lore
 					else if (mTalkMode == 2)
 					{
 						AppendText(new string[] { $" 그는 현재 이 세계의 반을 그의 세력권 안에 넣고 있소. 여기서 당신의 궁극적인 임무는 바로 '[color={RGB.LightCyan}]네크로만서의 야심을 봉쇄 시키는 것[/color]'이라는 걸 명심해 두시오.",
-						" 네크로만서의 영향력은 이미 로어 대륙까지 도달해있소. 또한 그들은 이 대륙의 남서쪽에 '메나스'라고 불리는 지하 동굴을 얼마 전에 구축했소. 그래서, 그 동굴의 존재 때문에 우리들은 그에게 위협을 당하게 되었던 것이오.",
+						" 네크로만서의 영향력은 이미 로어 대륙까지 도달해있소. 또한 그들은 이 대륙의 남서쪽에 '메너스'라고 불리는 지하 동굴을 얼마 전에 구축했소. 그래서, 그 동굴의 존재 때문에 우리들은 그에게 위협을 당하게 되었던 것이오.",
 						" 하지만, 로어 특공대가 이 대륙을 떠난 후로는 그 일당들에게 대적할 용사는 이미 남아있지 않았소. 그래서 부탁하건대, 그 동굴을 중심부까지 탐사해 주시오.",
 						" 나는 당신들에게 네크로만서에 대한 일을 맡기고 싶지만, 아직은 당신들의 확실한 능력을 모르는 상태이지요. 그래서 이 일은 당신들의 잠재력을 증명해 주는 좋은 기회가 될 것이오.",
 						" 만약 당신들이 무기가 필요하다면 무기고에서 약간의 무기를 가져가도록 허락하겠소."
