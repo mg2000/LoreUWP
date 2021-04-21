@@ -750,7 +750,7 @@ namespace Lore
 
 				void ShowHealType()
 				{
-					AppendText(new string[] { $"[color={RGB.White}]어떤 치료입니까 ?[/color]" });
+					AppendText(new string[] { $"[color={RGB.White}]어떤 치료입니까?[/color]" });
 
 					ShowMenu(MenuMode.HealType, new string[]
 					{
@@ -1207,7 +1207,7 @@ namespace Lore
 					else if (mBattleTurn == BattleTurn.Lose) {
 						ShowGameOver(new string[] {
 							$"[color={RGB.LightMagenta}]일행은 모두 전투에서 패했다 !![/color]",
-							$"[color={RGB.LightGreen}]    어떻게 하시겠습니까 ?[/color]"
+							$"[color={RGB.LightGreen}]    어떻게 하시겠습니까?[/color]"
 						});
 					}
 					
@@ -1448,7 +1448,7 @@ namespace Lore
 						}
 						else if (mSpecialEvent == SpecialEventType.FindOedipusSpear2)
 						{
-							AppendText($"[color={RGB.LightCyan}]누가 오이디푸스의 창을 다루겠습니까 ?[/color]");
+							AppendText($"[color={RGB.LightCyan}]누가 오이디푸스의 창을 다루겠습니까?[/color]");
 
 							ShowCharacterMenu(MenuMode.ChooseOedipusSpear);
 
@@ -2131,7 +2131,7 @@ namespace Lore
 						{
 							Talk(new string[] {
 								$"[color={RGB.White}] 그 물속에서 당신은 한 시대의 운명을 바라다 보고있었다[/color]",
-								$"[color={RGB.White}] 당신은 왜 하필이면 당신이 이 세계에 뛰어들어 단신으로 악과 싸워야 하는 이유를 아는가 ?[/color]",
+								$"[color={RGB.White}] 당신은 왜 하필이면 당신이 이 세계에 뛰어들어 단신으로 악과 싸워야 하는 이유를 아는가?[/color]",
 								$"[color={RGB.White}] 여기서 당신은 로드 안, 에인션트 이블, 네크로만서의 관계를 기술한 예언서를 발견하여 읽기 시작했다.[/color]"
 							});
 
@@ -3672,7 +3672,7 @@ namespace Lore
 								if (mMaxEnemy == 2)
 									mMaxEnemy = 5;
 
-								AppendText(new string[] { $"[color={RGB.LightRed}]일행들의 지금 성격은 어떻습니까 ?[/color]" });
+								AppendText(new string[] { $"[color={RGB.LightRed}]일행들의 지금 성격은 어떻습니까?[/color]" });
 
 								ShowMenu(MenuMode.SetEncounterType, new string[]
 								{
@@ -7277,7 +7277,7 @@ namespace Lore
 			AppendText(new string[] {
 						$"[color={RGB.White}]여기는 무기상점입니다.[/color]",
 						$"[color={RGB.White}]우리들은 무기, 방패, 갑옷을 팔고있습니다.[/color]",
-						$"[color={RGB.White}]어떤 종류를 원하십니까 ?[/color]"
+						$"[color={RGB.White}]어떤 종류를 원하십니까?[/color]"
 					});
 
 			ShowMenu(MenuMode.WeaponType, new string[]
@@ -7292,7 +7292,7 @@ namespace Lore
 		{
 			AppendText(new string[] {
 						$"[color={RGB.White}]여기는 병원입니다.[/color]",
-						$"[color={RGB.White}]누가 치료를 받겠습니까 ?[/color]"
+						$"[color={RGB.White}]누가 치료를 받겠습니까?[/color]"
 					});
 
 			ShowCharacterMenu(MenuMode.Hospital);
@@ -7303,7 +7303,7 @@ namespace Lore
 						$"[color={RGB.White}] 여기는 군사 훈련소 입니다.[/color]",
 						$"[color={RGB.White}] 만약 당신이 충분한 전투 경험을 쌓았다면, 당신은 더욱 능숙하게 무기를 다룰 것입니다.[/color]",
 						"",
-						$"[color={RGB.White}]누가 훈련을 받겠습니까 ?[/color]"
+						$"[color={RGB.White}]누가 훈련을 받겠습니까?[/color]"
 					});
 
 			ShowCharacterMenu(MenuMode.TrainingCenter);
@@ -7427,7 +7427,7 @@ namespace Lore
 		{
 			mTryEnterType = enterType;
 
-			AppendText(new string[] { $"{mEnterTypeMap[enterType]}에 들어가기를 원합니까 ?" });
+			AppendText(new string[] { $"{mEnterTypeMap[enterType]}에 들어가기를 원합니까?" });
 
 			ShowMenu(MenuMode.AskEnter, new string[] {
 				"예, 그렇습니다.",
@@ -7841,7 +7841,7 @@ namespace Lore
 				{
 					AppendText(new string[] {
 						$"[color={RGB.White}]당신은 황금의 방패를 발견했다.[/color]",
-						$"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까 ?[/color]"
+						$"[color={RGB.LightCyan}]누가 이 황금의 방패를 장착 하겠습니까?[/color]"
 					});
 
 					ShowCharacterMenu(MenuMode.ChooseGoldShield);
@@ -8833,7 +8833,7 @@ namespace Lore
 			}
 			else
 			{
-				AppendText(new string[] { "교체 시킬 인물은 누구입니까 ?" });
+				AppendText(new string[] { "교체 시킬 인물은 누구입니까?" });
 				var memberNames = new string[mPlayerList.Count - 1];
 				for (var i = 1; i < mPlayerList.Count; i++)
 					memberNames[i - 1] = mPlayerList[i].Name;
@@ -9229,7 +9229,7 @@ namespace Lore
 				}
 				else if (moveX == 17 && moveY == 32)
 				{
-					AppendText(new string[] { " 당신은 스켈레톤족의 한 명이 우리와 함께 생활하려 한다는 것에 대해서 어떻게 생각하십니까 ?",
+					AppendText(new string[] { " 당신은 스켈레톤족의 한 명이 우리와 함께 생활하려 한다는 것에 대해서 어떻게 생각하십니까?",
 					" 저는 그 말을 들었을 때 너무 혐오스러웠습니다. 어서 빨리 그 살아있는 뼈다귀를 여기서 쫓아냈으면 좋겠습니다." });
 
 					ContinueText.Visibility = Visibility.Visible;
@@ -11382,7 +11382,7 @@ namespace Lore
 
 
 		private void ShowExitMenu() {
-			AppendText(new string[] { $"[color={RGB.LightCyan}]여기서 나가기를 원합니까 ?[/color]" });
+			AppendText(new string[] { $"[color={RGB.LightCyan}]여기서 나가기를 원합니까?[/color]" });
 
 			ShowMenu(MenuMode.ConfirmExitMap, new string[] {
 			"예, 그렇습니다.",
