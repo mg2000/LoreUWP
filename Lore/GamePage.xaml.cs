@@ -6485,7 +6485,7 @@ namespace Lore
 							}
 
 							enemy.Dead = true;
-							battleResult.Add($"{enemy.Name}(은)는 겁을 먹고는 도망가 버렸다");
+							battleResult.Add($"[color={RGB.LightGreen}]{enemy.Name}(은)는 겁을 먹고는 도망가 버렸다[/color]");
 						}
 						else if (13 <= espType && espType <= 14)
 						{
@@ -8725,7 +8725,7 @@ namespace Lore
 					if (whomPlayer.Unconscious == 0)
 						whomPlayer.Unconscious = 1;
 
-					cureResult.Add($"[color={RGB.White]{whomPlayer.Name}(은)는 다시 생명을 얻었습니다.[/color]");
+					cureResult.Add($"[color={RGB.White}]{whomPlayer.Name}(은)는 다시 생명을 얻었습니다.[/color]");
 
 				}
 			}
