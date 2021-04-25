@@ -8693,7 +8693,7 @@ namespace Lore
 					if (whomPlayer.HP <= 0)
 						whomPlayer.HP = 1;
 
-					cureResult.Add($"{whomPlayer.Name}(은)는 의식을 되찾았습니다.");
+					cureResult.Add($"[color={RGB.White}]{whomPlayer.Name}(은)는 의식을 되찾았습니다.[/color]");
 				}
 			}
 		}
