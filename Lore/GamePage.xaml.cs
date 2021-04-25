@@ -6648,7 +6648,7 @@ namespace Lore
 							liveEnemyCount++;
 					}
 
-					if (enemy.SpecialCastLevel > 0 && enemy.ENumber == 0)
+					if (enemy.SpecialCastLevel > 0 && enemy.ENumber > 0)
 					{
 						if (liveEnemyCount < (mRand.Next(3) + 2) && mRand.Next(3) == 0)
 						{
@@ -6692,7 +6692,7 @@ namespace Lore
 										battleResult.Add($"그러나, {player.Name}(은)는 죽음의 공격을 피했다");
 									else
 									{
-										battleResult.Add($"[color={RGB.Red}]{player.Name}(은)는 죽었다 !![/color]");
+										battleResult.Add($"[color={RGB.Red}]{player.Name}(은)는 죽었다!![/color]");
 
 										if (player.Dead == 0)
 										{
@@ -6879,7 +6879,7 @@ namespace Lore
 							if (destPlayer.HP > 0)
 								destPlayer.HP -= attackPoint;
 
-							battleResult.Add($"[color={RGB.LightMagenta}]{enemy.Name}(은)는 {destPlayer.Name}에게 공격 받았다[/color]");
+							battleResult.Add($"[color={RGB.LightMagenta}]{destPlayer.Name}(은)는 {enemy.Name}에게 공격받았다[/color]");
 							battleResult.Add($"[color={RGB.Magenta}]{destPlayer.Name}(은)는[/color] [color={RGB.LightMagenta}]{attackPoint}[/color][color={RGB.Magenta}]만큼의 피해를 입었다[/color]");
 						}
 
@@ -6894,6 +6894,12 @@ namespace Lore
 								if (mRand.Next(20) >= enemy.Accuracy[1])
 								{
 									battleResult.Add($"{enemy.Name}의 마법공격은 빗나갔다");
+									return;
+								}
+
+								if (mRand.Next(50) < player.Resistance)
+								{
+									battleResult.Add($"그러나, {player.Name}(은)는 적의 마법을 저지했다");
 									return;
 								}
 
@@ -6917,7 +6923,7 @@ namespace Lore
 								battleResult.Add($"[color={RGB.Magenta}]{player.Name}(은)는[/color] [color={RGB.LightMagenta}]{castPower}[/color][color={RGB.Magenta}]만큼의 피해를 입었다[/color]");
 							}
 
-							void CastAttckOne(Lore player)
+							void CastAttackOne(Lore player)
 							{
 								string castName;
 								int castPower;
@@ -6938,12 +6944,12 @@ namespace Lore
 								}
 								else if (11 <= enemy.Mentality && enemy.Mentality <= 14)
 								{
-									castName = "고통";
+									castName = "혹한";
 									castPower = 6;
 								}
 								else if (15 <= enemy.Mentality && enemy.Mentality <= 18)
 								{
-									castName = "고통";
+									castName = "화염";
 									castPower = 7;
 								}
 								else
@@ -7086,7 +7092,7 @@ namespace Lore
 												weakestPlayer = player;
 										}
 
-										CastAttckOne(weakestPlayer);
+										CastAttackOne(weakestPlayer);
 									}
 									else
 										CastAttackAll(destPlayerList);
@@ -7106,16 +7112,16 @@ namespace Lore
 
 							if (enemy.CastLevel == 1)
 							{
-								CastAttckOne(destPlayer);
+								CastAttackOne(destPlayer);
 							}
 							else if (enemy.CastLevel == 2)
 							{
-								CastAttckOne(destPlayer);
+								CastAttackOne(destPlayer);
 							}
 							else if (enemy.CastLevel == 3)
 							{
 								if (mRand.Next(normalList.Count) < 2)
-									CastAttckOne(destPlayer);
+									CastAttackOne(destPlayer);
 								else
 									CastAttackAll(normalList);
 							}
@@ -7124,7 +7130,7 @@ namespace Lore
 								if ((enemy.HP < enemy.Endurance * enemy.Level / 3) && mRand.Next(2) == 0)
 									CureEnemy(enemy, enemy.Level * enemy.Mentality / 4);
 								else if (mRand.Next(normalList.Count) < 2)
-									CastAttckOne(destPlayer);
+									CastAttackOne(destPlayer);
 								else
 									CastAttackAll(normalList);
 							}
@@ -7160,7 +7166,7 @@ namespace Lore
 												weakestPlayer = player;
 										}
 
-										CastAttckOne(weakestPlayer);
+										CastAttackOne(weakestPlayer);
 									}
 								}
 								else
@@ -11054,7 +11060,7 @@ namespace Lore
 		}
 
 		private BattleEnemyData TurnMind(Lore player) {
-			var enemy = new BattleEnemyData(1, new EnemyData()
+			var enemy = new BattleEnemyData(0, new EnemyData()
 			{
 				Name = player.Name,
 				Strength = player.Strength,
@@ -11067,8 +11073,13 @@ namespace Lore
 				Special = player.Class == 7 ? 2 : 0,
 				CastLevel = player.Level[1] / 4,
 				SpecialCastLevel = 0,
-				Level = player.Level[0],
+				Level = player.Level[0]
 			});
+
+			enemy.HP = enemy.Endurance * enemy.Level;
+			enemy.Posion = false;
+			enemy.Unconscious = false;
+			enemy.Dead = false;
 
 			AssignEnemy(enemy);
 
