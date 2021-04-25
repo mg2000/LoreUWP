@@ -8725,7 +8725,7 @@ namespace Lore
 					if (whomPlayer.Unconscious == 0)
 						whomPlayer.Unconscious = 1;
 
-					cureResult.Add($"{whomPlayer.Name}(은)는 다시 생명을 얻었습니다.");
+					cureResult.Add($"[color={RGB.White]{whomPlayer.Name}(은)는 다시 생명을 얻었습니다.[/color]");
 
 				}
 			}
