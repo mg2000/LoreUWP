@@ -6173,7 +6173,7 @@ namespace Lore
 							return;
 						}
 
-						if (mRand.Next(60) > enemy.Accuracy[1])
+						if (mRand.Next(60) > battleCommand.Player.Accuracy[1])
 						{
 							battleResult.Add($"기술 무력화 공격은 빗나갔다");
 							return;
@@ -6206,7 +6206,7 @@ namespace Lore
 						else
 							resistancePoint = 25;
 
-						if (mRand.Next(resistancePoint) > enemy.Accuracy[1])
+						if (mRand.Next(resistancePoint) > battleCommand.Player.Accuracy[1])
 						{
 							battleResult.Add($"방어 무력화 공격은 빗나갔다");
 							return;
@@ -6240,7 +6240,7 @@ namespace Lore
 						}
 
 
-						if (mRand.Next(30) > enemy.Accuracy[1])
+						if (mRand.Next(30) > battleCommand.Player.Accuracy[1])
 						{
 							battleResult.Add($"능력 저하 공격은 빗나갔다");
 							return;
@@ -6272,7 +6272,7 @@ namespace Lore
 						}
 
 
-						if (mRand.Next(100) > enemy.Accuracy[1])
+						if (mRand.Next(100) > battleCommand.Player.Accuracy[1])
 						{
 							battleResult.Add($"마법 불능 공격은 빗나갔다");
 							return;
@@ -6304,7 +6304,7 @@ namespace Lore
 						}
 
 
-						if (mRand.Next(100) > enemy.Accuracy[1])
+						if (mRand.Next(100) > battleCommand.Player.Accuracy[1])
 						{
 							battleResult.Add($"탈 초인화 공격은 빗나갔다");
 							return;
