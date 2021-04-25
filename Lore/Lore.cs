@@ -152,7 +152,7 @@ namespace Lore
 		public bool IsAvailable {
 			get
 			{
-				if (Unconscious == 0 && Dead == 0 && HP >= 0)
+				if (Unconscious == 0 && Dead == 0 && HP > 0)
 					return true;
 				else
 					return false;

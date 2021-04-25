@@ -825,7 +825,7 @@ namespace Lore
 							" 그렇지만 다시는 나와 만날 인연은 없으니까. 블랙홀이 생기기 시작하는구나. 다음 공간에서 또다시 힘을 길러야 겠군." +
 							" 내가 이 블랙홀로 들어간다면 다시 이 공간으로 올 확률이 거의 제로이지. 흠, 멋진 나의 도전자여 안녕. 나는 이런 공간의 패러독스를 운명적으로 반복하는 생명체로 태어난 내가 참으로 비참하지." +
 							" 무한히 많은 3 차원의 공간중에서 내가 여기로 온것도 이 공간의 생명이 끝날때까지도 한번 있을까 말까한 희귀한 일이었다고 기억해다오." +
-							" 이제 블랙홀이 완전히 생겼군. 자! 나의 멋진 도전자 친구여 영원히 안녕 ! !'[/color]",
+							" 이제 블랙홀이 완전히 생겼군. 자! 나의 멋진 도전자 친구여 영원히 안녕 !![/color]",
 						});
 
 						mSpecialEvent = SpecialEventType.Ending;
@@ -3656,7 +3656,7 @@ namespace Lore
 								}
 								else if (mMenuFocusID == 5)
 								{
-									AppendText(new string[] { $"[color={RGB.LightGreen}]정말로 끝내겠습니까 ?[/color]" });
+									AppendText(new string[] { $"[color={RGB.LightGreen}]정말로 끝내겠습니까?[/color]" });
 
 									ShowMenu(MenuMode.ConfirmExit, new string[] {
 									"<< 아니오 >>",
@@ -5624,13 +5624,13 @@ namespace Lore
 								mMenuMode = MenuMode.None;
 
 								Talk(new string[] {
-									$"[color={RGB.White}] Durant l''estoille cheuelue apparente,[/color]",
+									$"[color={RGB.White}] Durant l'estoille cheuelue apparente,[/color]",
 									" 머리를 푼 별이 나타날 때",
 									$"[color={RGB.White}] Les trois grand princes seront faits ennemies,[/color]",
 									" 거대한 세 왕자가 서로를 적대한다",
 									$"[color={RGB.White}] Frappez du ciel paix terre trembulente,[/color]",
 									" 평화는 하늘에서 당하고 대지는 요동한다",
-									$"[color={RGB.White}] En son haut auge de l''exaltation,[/color]",
+									$"[color={RGB.White}] En son haut auge de l'exaltation,[/color]",
 									" 그 찬미해야 할 높은 오류 속에서",
 									$"[color={RGB.White}] Neromancer sur le bord mis.[/color]",
 									" 네크로만서는 해안으로 밀려나리라."
@@ -9116,7 +9116,7 @@ namespace Lore
 			{
 				AppendText(new string[] {
 						$"[color={RGB.White}]여기는 식료품점 입니다.[/color]",
-						$"[color={RGB.White}]몇개를 원하십니까 ?[/color]"
+						$"[color={RGB.White}]몇개를 원하십니까?[/color]"
 					});
 
 
@@ -11484,7 +11484,7 @@ namespace Lore
 				{
 					AppendText(new string[] { $"        [color={RGB.White}]패스코드 x 패스코드 는 Z 라면[/color]",
 						"",
-						$"            [color={RGB.White}]패스코드는 무엇인가 ?[/color]" }, true);
+						$"            [color={RGB.White}]패스코드는 무엇인가?[/color]" }, true);
 				}
 				else if (y == 28)
 				{
