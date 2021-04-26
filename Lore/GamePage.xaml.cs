@@ -914,7 +914,7 @@ namespace Lore
 
 							mParty.Gold += goldPlus;
 
-							endMessage = $"일행은 {goldPlus}개의 금을 얻었다.";
+							endMessage = $"[color={RGB.White}]일행은 {goldPlus}개의 금을 얻었다.[/color]";
 
 							AppendText(new string[] { endMessage, "" });
 						}
@@ -6589,6 +6589,8 @@ namespace Lore
 				}
 				else if (battleCommand.Method == 6)
 				{
+					GetBattleStatus(null);	
+
 					if (mRand.Next(50) > battleCommand.Player.Agility)
 						battleResult.Add($"그러나, 일행은 성공하지 못했다");
 					else
@@ -10948,7 +10950,7 @@ namespace Lore
 				mPlayerList[index].Dead = 1;
 
 			if (mPlayerList[index].Dead > 0)
-				return "사망";
+				return "죽은 상태";
 
 			if (mPlayerList[index].Unconscious > 0)
 				return "의식불명";
@@ -11644,7 +11646,6 @@ namespace Lore
 			Player,
 			Enemy,
 			RunAway,
-			AlmostWin,
 			Win,
 			Lose
 		}
