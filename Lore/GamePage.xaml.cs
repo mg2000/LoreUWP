@@ -4009,7 +4009,7 @@ namespace Lore
 									else if (mCurePlayer.Poison > 0)
 										AppendText(new string[] { $"{mCurePlayer.Name}(은)는 독이 퍼진 상태입니다" });
 									else if (mCurePlayer.HP >= mCurePlayer.Endurance * mCurePlayer.Level[0])
-										AppendText(new string[] { $"{mCurePlayer.Name}(은)는 치료가 필요하지 않습니다" });
+										AppendText(new string[] { $"[color={RGB.White}]{mCurePlayer.Name}(은)는 치료가 필요하지 않습니다[/color]" });
 
 									if (mCurePlayer.Dead > 0 || mCurePlayer.Unconscious > 0 || mCurePlayer.Poison > 0 || mCurePlayer.HP >= mCurePlayer.Endurance * mCurePlayer.Level[0])
 									{
@@ -4049,7 +4049,7 @@ namespace Lore
 									else if (mCurePlayer.Unconscious > 0)
 										AppendText(new string[] { $"{mCurePlayer.Name}(은)는 이미 의식불명입니다" });
 									else if (mCurePlayer.Poison == 0)
-										AppendText(new string[] { $"{mCurePlayer.Name}(은)는 독에 걸리지 않았습니다" });
+										AppendText(new string[] { $"[color={RGB.White}]{mCurePlayer.Name}(은)는 독에 걸리지 않았습니다[/color]" });
 
 									if (mCurePlayer.Dead > 0 || mCurePlayer.Unconscious > 0 || mCurePlayer.Poison == 0)
 									{
@@ -4085,7 +4085,7 @@ namespace Lore
 									if (mCurePlayer.Dead > 0)
 										AppendText(new string[] { $"{mCurePlayer.Name}(은)는 이미 죽은 상태입니다" });
 									else if (mCurePlayer.Unconscious == 0)
-										AppendText(new string[] { $"{mCurePlayer.Name}(은)는 의식불명이 아닙니다" });
+										AppendText(new string[] { $"[color={RGB.White}]{mCurePlayer.Name}(은)는 의식불명이 아닙니다[/color]" });
 
 									if (mCurePlayer.Dead > 0 || mCurePlayer.Unconscious == 0)
 									{
@@ -4121,7 +4121,7 @@ namespace Lore
 								else if (mMenuFocusID == 3)
 								{
 									if (mCurePlayer.Dead == 0)
-										AppendText(new string[] { $"{mCurePlayer.Name}(은)는 죽지 않았습니다" });
+										AppendText(new string[] { $"[color={RGB.White}]{mCurePlayer.Name}(은)는 죽지 않았습니다[/color]" });
 
 									if (mCurePlayer.Dead == 0)
 									{
