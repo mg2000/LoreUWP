@@ -265,7 +265,7 @@ namespace Lore
 			mEnterTypeMap[EnterType.CastleLore] = "로어 성";
 			mEnterTypeMap[EnterType.Menace] = "메너스";
 			mEnterTypeMap[EnterType.LastDitch] = "라스트디치";
-			mEnterTypeMap[EnterType.GroundGate] = "지하 출입구";
+			mEnterTypeMap[EnterType.GroundGate] = "그라운드 게이트";
 			
 			mEnterTypeMap[EnterType.AnotherLore] = "또다른 성전";
 			mEnterTypeMap[EnterType.ValiantPeoples] = "배리안트 피플즈";
@@ -3525,7 +3525,7 @@ namespace Lore
 										"라스트디치의 성주를 만날",
 										"피라미드 속의 미이라 장군을 물리칠",
 										"라스트디치의 성주에게로 돌아갈",
-										"라스트디치의 지하 출입구로 갈",
+										"라스트디치의 그라운드 게이트로 갈",
 										"가이아 테라의 성주를 만날",
 										"이블 씰에서 황금의 봉인을 발견할",
 										"가이아 테라의 성주에게 돌아갈",
@@ -9608,13 +9608,13 @@ namespace Lore
 				else if (moveX == 42 && moveY == 8)
 					Talk("당신은 피라미드 안에서 쉽게 창을 발견할 수 있을 것입니다.");
 				else if (moveX == 64 && moveY == 9)
-					Talk("지하 출입구는 여기로부터 서쪽에 나타나곤 합니다.");
+					Talk("그라운드 게이트는 여기로부터 서쪽에 나타나곤 합니다.");
 				else if (moveX == 13 && moveY == 67)
 					Talk("로어 특공대의 지휘관은 저의 남편인데 '로어 헌터'라고 불렸습니다.");
 				else if (moveX == 56 && moveY == 41)
 					Talk("미이라 장군과 두 마리의 스핑크스의 공격은 가히 치명적입니다.");
 				else if (moveX == 43 && moveY == 33)
-					Talk("지하 출입구는 당신을 다른 대륙으로 인도해 줄 것입니다.");
+					Talk("그라운드 게이트는 당신을 다른 대륙으로 인도해 줄 것입니다.");
 				else if (moveX == 31 && moveY == 55)
 					Talk("로어 특공대의 지휘관은 상당히 능력 있는 인물이었습니다.");
 				else if ((moveX == 35 && moveY == 18) || (moveX == 35 && moveY == 20) || (moveX == 40 && moveY == 17) || (moveX == 40 && moveY == 19) || (moveX == 40 && moveY == 21) || (moveX == 39 && moveY == 40))
@@ -9684,8 +9684,8 @@ namespace Lore
 					else if (mParty.Etc[12] == 3)
 					{
 						Talk(new string[] {
-							$" 이 성의 북동쪽에 '[color={RGB.LightCyan}]지하 출입구[/color]'라는 것이 있소." +
-							$" 만약 당신이 '[color={RGB.LightCyan}]지하 출입구[/color]' 속에 들어간다면 '[color={RGB.LightCyan}]배리안트 피플즈[/color]'성으로 통하게 될것이오.",
+							$" 이 성의 북동쪽에 '[color={RGB.LightCyan}]그라운드 게이트[/color]'라는 것이 있소." +
+							$" 만약 당신이 '[color={RGB.LightCyan}]그라운드 게이트[/color]' 속에 들어간다면 '[color={RGB.LightCyan}]배리안트 피플즈[/color]'성으로 통하게 될것이오.",
 							$"'[color={RGB.LightCyan}]배리안트 피플즈[/color]'는 네크로만서에게 매우 심하게 영향을 받고 있소"
 						});
 					}
@@ -11455,7 +11455,7 @@ namespace Lore
 				else if (x == 38 && y == 7)
 					AppendText(new string[] { $"       [color={RGB.LightRed}]여기는 피라미드의 입구[/color]" }, true);
 				else if (x == 53 && y == 8)
-					AppendText(new string[] { $"     [color={RGB.LightGreen}]여기는 지하 출입구의 입구[/color]" }, true);
+					AppendText(new string[] { $"     [color={RGB.LightGreen}]여기는 그라운드 게이트의 입구[/color]" }, true);
 			}
 			else if (mParty.Map == 8)
 			{
