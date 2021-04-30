@@ -3182,7 +3182,7 @@ namespace Lore
 
 										AppendText(new string[] { $"[color={RGB.White}]식량 제조 마법은 성공적으로 수행되었습니다[/color]",
 									$"[color={RGB.White}]            {count} 개의 식량이 증가됨[/color]",
-									$"[color={RGB.White}]      일행의 현재 식량은 {mParty.Food} 개 입니다[/color]" }, true);
+									$"[color={RGB.LightCyan}]      일행의 현재 식량은 {mParty.Food} 개 입니다[/color]" }, true);
 									}
 								}
 
