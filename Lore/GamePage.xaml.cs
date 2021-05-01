@@ -3355,7 +3355,7 @@ namespace Lore
 								}
 								else
 								{
-									AppendText(new string[] { $"{GetGenderData(mPlayerList[mMenuFocusID])}는 초감각을 사용할수있는 상태가 아닙니다" });
+									AppendText(new string[] { $"{GetGenderData(mPlayerList[mMenuFocusID])}는 초감각을 사용할 수 있는 상태가 아닙니다" });
 								}
 							}
 							else if (mMenuMode == MenuMode.ChooseExtrasense)
@@ -3373,6 +3373,9 @@ namespace Lore
 									{
 										mPenetration = true;
 										Talk($"[color={RGB.White}]일행은 주위를 투시하고 있다.[/color]");
+
+										mMagicPlayer.ESP -= 10;
+										DisplayESP();
 									}
 								}
 								else if (mMenuFocusID == 1)
@@ -3545,23 +3548,18 @@ namespace Lore
 										"네크로만서와 마지막 결전을 벌일"
 										};
 
-										if (mMagicPlayer.ESP < 5)
-											ShowNotEnoughESP();
+										var predictResult = GetPredict();
+
+										AppendText(new string[] { $" 당신은 당신의 미래를 예언한다 ...", "" });
+										if (0 <= predictResult && predictResult < predictStr.Length)
+											AppendText(new string[] { $"[color={RGB.LightGreen}] #[/color] [color={RGB.White}]당신은 {predictStr[predictResult]} 것이다[/color]" }, true);
 										else
-										{
-											var predict = GetPredict();
+											AppendText(new string[] { $"[color={RGB.LightGreen}] #[/color] [color={RGB.White}]당신은 어떤 힘에 의해 예언을 방해 받고 있다[/color]" }, true);
 
-											AppendText(new string[] { $" 당신은 당신의 미래를 예언한다 ...", "" });
-											if (0 <= predict && predict < predictStr.Length)
-												AppendText(new string[] { $" # 당신은 [color={RGB.LightGreen}]{predictStr[predict]} 것이다[/color]" }, true);
-											else
-												AppendText(new string[] { $" # [color={RGB.LightGreen}]당신은 어떤 힘에 의해 예언을 방해 받고 있다[/color]" }, true);
+										mMagicPlayer.ESP -= 5;
+										DisplayESP();
 
-											mMagicPlayer.ESP -= 5;
-											DisplayESP();
-
-											ContinueText.Visibility = Visibility.Visible;
-										}
+										ContinueText.Visibility = Visibility.Visible;
 									}
 								}
 								else if (mMenuFocusID == 2)
@@ -3572,6 +3570,9 @@ namespace Lore
 									{
 										AppendText(new string[] { $"[color={RGB.White}]당신은 잠시 동안 다른 사람의 마음을 읽을 수 있다.[/color]" });
 										mParty.Etc[4] = 3;
+
+										mMagicPlayer.ESP -= 20;
+										DisplayESP();
 									}
 								}
 								else if (mMenuFocusID == 3)
@@ -3635,7 +3636,7 @@ namespace Lore
 								}
 								else if (mMenuFocusID == 1)
 								{
-									AppendText(new string[] { $"[color={RGB.LightRed}]한번에 출현하는 적들의 최대치를 기입하십시오[/color]",
+									AppendText(new string[] { $"[color={RGB.LightRed}]현재의 일원의 전투 순서를 정렬 하십시오.[/color]",
 								"[color=e0ffff]순서를 바꿀 일원[/color]" });
 
 									ShowCharacterMenu(MenuMode.OrderFromCharacter);
