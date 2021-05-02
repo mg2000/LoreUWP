@@ -825,7 +825,7 @@ namespace Lore
 							" 그렇지만 다시는 나와 만날 인연은 없으니까. 블랙홀이 생기기 시작하는구나. 다음 공간에서 또다시 힘을 길러야 겠군." +
 							" 내가 이 블랙홀로 들어간다면 다시 이 공간으로 올 확률이 거의 제로이지. 흠, 멋진 나의 도전자여 안녕. 나는 이런 공간의 패러독스를 운명적으로 반복하는 생명체로 태어난 내가 참으로 비참하지." +
 							" 무한히 많은 3 차원의 공간중에서 내가 여기로 온것도 이 공간의 생명이 끝날때까지도 한번 있을까 말까한 희귀한 일이었다고 기억해다오." +
-							" 이제 블랙홀이 완전히 생겼군. 자! 나의 멋진 도전자 친구여 영원히 안녕 !![/color]",
+							" 이제 블랙홀이 완전히 생겼군. 자! 나의 멋진 도전자 친구여 영원히 안녕!![/color]",
 						});
 
 						mSpecialEvent = SpecialEventType.Ending;
@@ -1052,7 +1052,7 @@ namespace Lore
 
 							AppendText(new string[] {
 								$"[color={RGB.LightMagenta}] 환상에서 벗어나다니 대단한 의지력이군.[/color]",
-								$"[color={RGB.LightMagenta}] 하지만 진짜 적은 바로 나다. 받아라 !![/color]"
+								$"[color={RGB.LightMagenta}] 하지만 진짜 적은 바로 나다. 받아라!![/color]"
 							}, true);
 
 							ContinueText.Visibility = Visibility.Visible;
@@ -1064,7 +1064,7 @@ namespace Lore
 						else if (mBattleEvent == 22)
 						{
 							AppendText(new string[] { $"[color={RGB.LightMagenta}] 욱! 너의 힘은 대단하구나. 나는 너에게 졌다고 인정하겠다. 흐흐, 그러나 사실 나는 너희 찾던 네크로만서님이 아니다. 만약 그분이라 이렇게 쉽게 당하지는 않았을 테니까." +
-							" 내 생명이 얼마 안남았구나. 네크로만서님 만세 !![/color]" }, true);
+							" 내 생명이 얼마 안남았구나. 네크로만서님 만세!![/color]" }, true);
 
 							ContinueText.Visibility = Visibility.Visible;
 
@@ -1206,7 +1206,7 @@ namespace Lore
 					}
 					else if (mBattleTurn == BattleTurn.Lose) {
 						ShowGameOver(new string[] {
-							$"[color={RGB.LightMagenta}]일행은 모두 전투에서 패했다 !![/color]",
+							$"[color={RGB.LightMagenta}]일행은 모두 전투에서 패했다!![/color]",
 							$"[color={RGB.LightGreen}]    어떻게 하시겠습니까?[/color]"
 						});
 					}
@@ -5960,7 +5960,7 @@ namespace Lore
 
 					if (!enemy.Unconscious)
 					{
-						battleResult.Add($"[color={RGB.Yellow}]{battleCommand.Player.Name}(은)는[/color] [color={RGB.LightCyan}]{exp}[/color][color={RGB.Yellow}]만큼 경험치를 얻었다 ![/color]");
+						battleResult.Add($"[color={RGB.Yellow}]{battleCommand.Player.Name}(은)는[/color] [color={RGB.LightCyan}]{exp}[/color][color={RGB.Yellow}]만큼 경험치를 얻었다![/color]");
 						battleCommand.Player.Experience += exp;
 					}
 					else
@@ -6743,7 +6743,7 @@ namespace Lore
 									return;
 								}
 
-								battleResult.Add($"[color={RGB.Red}]{destPlayer.Name}(은)는 중독 되었다 !![/color]");
+								battleResult.Add($"[color={RGB.Red}]{destPlayer.Name}(은)는 중독 되었다!![/color]");
 
 								if (destPlayer.Poison == 0)
 									destPlayer.Poison = 1;
@@ -6773,7 +6773,7 @@ namespace Lore
 									return;
 								}
 
-								battleResult.Add($"[color={RGB.Red}]{destPlayer.Name}(은)는 의식불명이 되었다 !![/color]");
+								battleResult.Add($"[color={RGB.Red}]{destPlayer.Name}(은)는 의식불명이 되었다!![/color]");
 
 								if (destPlayer.Unconscious == 0)
 								{
@@ -6808,7 +6808,7 @@ namespace Lore
 									return;
 								}
 
-								battleResult.Add($"[color={RGB.Red}]{destPlayer.Name}(은)는 죽었다 !![/color]");
+								battleResult.Add($"[color={RGB.Red}]{destPlayer.Name}(은)는 죽었다!![/color]");
 
 								if (destPlayer.Dead == 0)
 								{
@@ -7739,7 +7739,7 @@ namespace Lore
 						mParty.Etc[13] = 2;
 
 						Talk(new string[] {
-						$"[color={RGB.Yellow}]당신은 황금의 봉인을 찾았다 !![/color]",
+						$"[color={RGB.Yellow}]당신은 황금의 봉인을 찾았다!![/color]",
 						$"[color={RGB.White}]그러므로 당신의 임무는 성공했다.[/color]",
 						$"[color={RGB.White}]이제는 가이아 테라로 돌아가라.[/color]"
 						});
@@ -9436,7 +9436,7 @@ namespace Lore
 					if (mTalkMode == 0)
 					{
 						if ((mParty.Etc[29] & 1) == 1)
-							AppendText(new string[] { "행운을 빌겠소 !!!" });
+							AppendText(new string[] { "행운을 빌겠소!!!" });
 						else if (mParty.Etc[9] < 3)
 							AppendText(new string[] { "저희 성주님을 만나 보십시오." });
 						else
@@ -11004,7 +11004,7 @@ namespace Lore
 			if (mParty.Etc[2] > 0)
 				mParty.Etc[2]--;
 			else {
-				AppendText(new string[] { $"[color={RGB.LightRed}]일행은 독이 있는 늪에 들어갔다 !!![/color]", "" });
+				AppendText(new string[] { $"[color={RGB.LightRed}]일행은 독이 있는 늪에 들어갔다!!![/color]", "" });
 
 				foreach (var player in mPlayerList) {
 					if (mRand.Next(20) + 1 >= player.Luck) {
@@ -11020,12 +11020,12 @@ namespace Lore
 		}
 
 		private void EnterLava() {
-			AppendText(new string[] { $"[color={RGB.LightRed}]일행은 용암지대로 들어섰다 !!![/color]", "" });
+			AppendText(new string[] { $"[color={RGB.LightRed}]일행은 용암지대로 들어섰다!!![/color]", "" });
 
 			foreach (var player in mPlayerList) {
 				var damage = mRand.Next(40) + 40 - 2 * mRand.Next(player.Luck);
 
-				AppendText(new string[] { $"[color={RGB.LightMagenta}]{player.Name}(은)는 {damage}의 피해를 입었다 ![/color]" }, true);
+				AppendText(new string[] { $"[color={RGB.LightMagenta}]{player.Name}(은)는 {damage}의 피해를 입었다![/color]" }, true);
 
 				if (player.HP > 0 && player.Unconscious == 0)
 				{
@@ -11040,9 +11040,9 @@ namespace Lore
 					if (player.Unconscious > player.Endurance * player.Level[0])
 						player.Dead = 1;
 				}
-				else if (player.Dead == 1) {
-					if (player.Dead + damage > 30000)
-						player.Dead = 30000;
+				else if (player.Dead > 0) {
+					if (player.Dead + damage > 30_000)
+						player.Dead = 30_000;
 					else
 						player.Dead += damage;
 
@@ -11323,7 +11323,7 @@ namespace Lore
 
 			avgAgility /= mEncounterEnemyList.Count;
 
-			AppendText(new string[] { $"[color={RGB.LightMagenta}]적이 출현했다 !!![/color]", "", $"[color={RGB.LightCyan}]적의 평균 민첩성 : {avgAgility}[/color]" });
+			AppendText(new string[] { $"[color={RGB.LightMagenta}]적이 출현했다!!![/color]", "", $"[color={RGB.LightCyan}]적의 평균 민첩성 : {avgAgility}[/color]" });
 
 			ShowMenu(MenuMode.BattleStart, new string[] {
 				"적과 교전한다",
@@ -11440,7 +11440,7 @@ namespace Lore
 				{
 					AppendText(new string[] { "",
 						$"             [color={RGB.White}]여기는 로어 주점[/color]",
-						$"       [color={RGB.White}]여러분 모두를 환영합니다 !![/color]" }, true);
+						$"       [color={RGB.White}]여러분 모두를 환영합니다!![/color]" }, true);
 				}
 				else if ((x == 50 && y == 17) || (x == 51 && y == 17))
 					AppendText(new string[] { "",
