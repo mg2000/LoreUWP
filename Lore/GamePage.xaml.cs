@@ -2420,7 +2420,7 @@ namespace Lore
 						GoHospital();
 					}
 				}
-				else if (mTalkMode == 0 && mMenuMode == MenuMode.None && (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadMenu))
+				else if (mTalkMode == 0 && mMenuMode == MenuMode.None && mSpinnerType == SpinnerType.None && (args.VirtualKey == VirtualKey.Escape || args.VirtualKey == VirtualKey.GamepadMenu))
 				{
 					AppendText(new string[] { "당신의 명령을 고르시오 ===>" });
 
