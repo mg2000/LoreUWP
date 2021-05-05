@@ -347,15 +347,16 @@ namespace Lore
 							DisplayCondition();
 						}
 
-						DetectGameOver();
-
-						if (mParty.Etc[4] > 0)
-							mParty.Etc[4]--;
-
-						if (!(mMapLayer[moveX + mMapWidth * moveY] == 0 || (mPosition == PositionType.Den && mMapLayer[moveX + mMapWidth * moveY] == 52)) && mRand.Next(mEncounter * 20) == 0)
+						if (!DetectGameOver())
 						{
-							EncounterEnemy();
-							mTriggeredDownEvent = true;
+							if (mParty.Etc[4] > 0)
+								mParty.Etc[4]--;
+
+							if (!(mMapLayer[moveX + mMapWidth * moveY] == 0 || (mPosition == PositionType.Den && mMapLayer[moveX + mMapWidth * moveY] == 52)) && mRand.Next(mEncounter * 20) == 0)
+							{
+								EncounterEnemy();
+								mTriggeredDownEvent = true;
+							}
 						}
 					}
 
@@ -507,16 +508,15 @@ namespace Lore
 							{
 								if (EnterWater())
 									MovePlayer(x, y);
-								mTriggeredDownEvent = true;
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 25)
 							{
-								EnterSwamp();
-								MovePlayer(x, y);
+								if (EnterSwamp())
+									MovePlayer(x, y);
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 26)
 							{
-								EnterLava();
+								if (EnterLava())
 								MovePlayer(x, y);
 							}
 							else if (27 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 47)
@@ -554,17 +554,16 @@ namespace Lore
 							{
 								if (EnterWater())
 									MovePlayer(x, y);
-								mTriggeredDownEvent = true;
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 23 || mMapLayer[x + mMapWidth * y] == 49)
 							{
-								EnterSwamp();
-								MovePlayer(x, y);
+								if (EnterSwamp())
+									MovePlayer(x, y);
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 50)
 							{
-								EnterLava();
-								MovePlayer(x, y);
+								if (EnterLava())
+									MovePlayer(x, y);
 							}
 							else if (24 <= mMapLayer[x + mMapWidth * y] && mMapLayer[x + mMapWidth * y] <= 47)
 							{
@@ -598,17 +597,16 @@ namespace Lore
 							{
 								if (EnterWater())
 									MovePlayer(x, y);
-								mTriggeredDownEvent = true;
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 49)
 							{
-								EnterSwamp();
-								MovePlayer(x, y);
+								if (EnterSwamp())
+									MovePlayer(x, y);
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 50)
 							{
-								EnterLava();
-								MovePlayer(x, y);
+								if (EnterLava())
+									MovePlayer(x, y);
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 54)
 							{
@@ -649,17 +647,16 @@ namespace Lore
 							{
 								if (EnterWater())
 									MovePlayer(x, y);
-								mTriggeredDownEvent = true;
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 49)
 							{
-								EnterSwamp();
-								MovePlayer(x, y);
+								if (EnterSwamp())
+									MovePlayer(x, y);
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 50)
 							{
-								EnterLava();
-								MovePlayer(x, y);
+								if (EnterLava())
+									MovePlayer(x, y);
 							}
 							else if (mMapLayer[x + mMapWidth * y] == 54)
 							{
@@ -10976,7 +10973,7 @@ namespace Lore
 				return false;
 		}
 
-		private void EnterSwamp() {
+		private bool EnterSwamp() {
 			foreach (var player in mPlayerList) {
 				if (player.Poison > 0)
 					player.Poison++;
@@ -11016,10 +11013,13 @@ namespace Lore
 			}
 
 			UpdatePlayersStat();
-			DetectGameOver();
+			if (!DetectGameOver())
+				return true;
+			else
+				return false;
 		}
 
-		private void EnterLava() {
+		private bool EnterLava() {
 			AppendText(new string[] { $"[color={RGB.LightRed}]일행은 용암지대로 들어섰다!!![/color]", "" });
 
 			foreach (var player in mPlayerList) {
@@ -11050,7 +11050,10 @@ namespace Lore
 			}
 
 			UpdatePlayersStat();
-			DetectGameOver();
+			if (!DetectGameOver())
+				return true;
+			else
+				return false;
 		}
 
 		private BattleEnemyData JoinEnemy(int ENumber)
@@ -11330,7 +11333,8 @@ namespace Lore
 				"도망간다"
 			});
 
-			HideMap();			
+			HideMap();
+			mTriggeredDownEvent = true;
 		}
 
 		private Color GetEnemyColor(BattleEnemyData enemy) {
@@ -11376,7 +11380,7 @@ namespace Lore
 			});
 		}
 
-		private void DetectGameOver()
+		private bool DetectGameOver()
 		{
 			var allPlayerDead = true;
 			foreach (var player in mPlayerList) {
@@ -11386,12 +11390,17 @@ namespace Lore
 				}
 			}
 
-			if (allPlayerDead) {
+			if (allPlayerDead)
+			{
 				mParty.Etc[5] = 255;
 
 				ShowGameOver(new string[] { "일행은 모험 중에 모두 목숨을 잃었다." });
 				mTriggeredDownEvent = true;
+
+				return true;
 			}
+			else
+				return false;
 		}
 
 
