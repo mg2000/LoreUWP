@@ -6249,7 +6249,7 @@ namespace Lore
 							enemy.Level--;
 
 						enemy.Resistance -= 10;
-						if (enemy.Resistance > 0)
+						if (enemy.Resistance < 0)
 							enemy.Resistance = 0;
 					}
 					else if (battleCommand.Tool == 4)

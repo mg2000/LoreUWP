@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Numerics;
 using System.Text;
 using Windows.ApplicationModel.Core;
@@ -132,7 +133,8 @@ namespace Lore
 					var differentBuilder = new StringBuilder();
 					var differentID = new List<int>();
 
-					for (var i = 0; i < saveData.Count; i++) {
+					for (var i = 0; i < saveData.Count; i++)
+					{
 						string GetSaveName(int id)
 						{
 							if (id == 0)
@@ -148,33 +150,53 @@ namespace Lore
 						else
 							idStr = i.ToString();
 
-						var localSaveFile = await storageFolder.CreateFileAsync($"loreSave{idStr}.dat", CreationCollisionOption.OpenIfExists);
-						var localSaveData = JsonConvert.DeserializeObject<SaveData>(await FileIO.ReadTextAsync(localSaveFile));
+						try
+						{
+							var localSaveFile = await storageFolder.GetFileAsync($"loreSave{idStr}.dat");
+							var localSaveData = JsonConvert.DeserializeObject<SaveData>(await FileIO.ReadTextAsync(localSaveFile));
 
-						if (localSaveData == null) {
+							if (localSaveData == null)
+							{
+								if (saveData[i] != null)
+								{
+									differentBuilder.Append(GetSaveName(i)).Append("\r\n");
+									differentBuilder.Append("클라우드 데이터만 존재").Append("\r\n\r\n");
+
+									differentID.Add(i);
+								}
+							}
+							else
+							{
+								if (saveData[i] == null)
+								{
+									differentBuilder.Append(GetSaveName(i)).Append("\r\n");
+									differentBuilder.Append("기기 데이터만 존재").Append("\r\n\r\n"); ;
+
+									differentID.Add(i);
+								}
+								else
+								{
+									if (saveData[i].SaveTime != localSaveData.SaveTime)
+									{
+										differentBuilder.Append(GetSaveName(i)).Append("\r\n");
+										differentBuilder.Append($"클라우드: {new DateTime(saveData[i].SaveTime):yyyy.MM.dd HH:mm:ss}").Append("\r\n");
+										differentBuilder.Append($"기기: {new DateTime(localSaveData.SaveTime):yyyy.MM.dd HH:mm:ss}").Append("\r\n\r\n");
+
+										differentID.Add(i);
+									}
+								}
+							}
+						}
+						catch (FileNotFoundException e)
+						{
+							Debug.WriteLine($"세이브 파일 없음: {e.Message}");
+
 							if (saveData[i] != null)
 							{
 								differentBuilder.Append(GetSaveName(i)).Append("\r\n");
 								differentBuilder.Append("클라우드 데이터만 존재").Append("\r\n\r\n");
 
 								differentID.Add(i);
-							}
-						}
-						else {
-							if (saveData[i] == null) {
-								differentBuilder.Append(GetSaveName(i)).Append("\r\n");
-								differentBuilder.Append("기기 데이터만 존재").Append("\r\n\r\n"); ;
-								
-								differentID.Add(i);
-							}
-							else {
-								if (saveData[i].SaveTime != localSaveData.SaveTime) {
-									differentBuilder.Append(GetSaveName(i)).Append("\r\n");
-									differentBuilder.Append($"클라우드: {new DateTime(saveData[i].SaveTime):yyyy.MM.dd HH:mm:ss}").Append("\r\n");
-									differentBuilder.Append($"기기: {new DateTime(localSaveData.SaveTime):yyyy.MM.dd HH:mm:ss}").Append("\r\n\r\n");
-
-									differentID.Add(i);
-								}
 							}
 						}
 					}
