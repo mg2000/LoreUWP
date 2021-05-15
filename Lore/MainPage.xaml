@@ -28,9 +28,9 @@
 		<Grid x:Name="mainmenuPanel" Grid.Row="1" Background="#3f383f" Visibility="Collapsed" Margin="200 0 200 0">
 
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-			<TextBlock x:Name="newGameItem" Text="1] 새로운 주인공을 생성 시킴" FontSize="30" Grid.Row="1" Foreground="#ffffff" Margin="0,0,0,0"/>
-			<TextBlock x:Name="loadGameItem" Text="2] 이전의 게임을 재개 시킴" FontSize="30" Grid.Row="2"  Foreground="#5350f7" Margin="0,50,0,0"/>
-			<TextBlock x:Name="exitGameItem" Text="3] 게임 종료" FontSize="30" Grid.Row="3"  Foreground="#5350f7" Margin="0,50,0,0"/>
+				<TextBlock x:Name="newGameItem" Text="1] 새로운 주인공을 생성 시킴" FontSize="30" Grid.Row="1" Foreground="#ffffff" Margin="0,0,0,0"/>
+				<TextBlock x:Name="loadGameItem" Text="2] 이전의 게임을 재개 시킴" FontSize="30" Grid.Row="2"  Foreground="#5350f7" Margin="0,50,0,0"/>
+				<TextBlock x:Name="exitGameItem" Text="3] 라이센스 정보" FontSize="30" Grid.Row="3"  Foreground="#5350f7" Margin="0,50,0,0"/>
 			</StackPanel>
 		</Grid>
 

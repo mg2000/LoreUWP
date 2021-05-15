@@ -9,7 +9,7 @@
   <Identity
     Name="3765mg2000.LoreUWP"
     Publisher="CN=12E3275F-582E-483B-9C22-EF47E03481D6"
-    Version="0.7.7.0" />
+    Version="0.8.9.0" />
 
   <mp:PhoneIdentity PhoneProductId="2f3fbf57-9431-4ed4-a8f0-e1161b479695" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

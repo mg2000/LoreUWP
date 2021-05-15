@@ -280,7 +280,11 @@ namespace Lore
 						}
 						else
 						{
-							CoreApplication.Exit();
+							await new MessageDialog("원작: 또다른 지식의 성전(안영기, 1993)\r\n\r\n" +
+							"음악: \r\n" +
+							"Town, Ground: https://www.zapsplat.com/\r\n" +
+							"Den: https://juhanijunkala.com/\r\n" +
+							"Keep: https://opengameart.org/content/boss-battle-theme", "저작권 정보").ShowAsync();
 						}
 					}
 					else if (mFocusItem == 1)
